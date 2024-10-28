@@ -1,27 +1,34 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LineChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
 import Snackbar from 'react-native-snackbar';
+import { uploadRestaurantImage } from '../utils/firebaseUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { updateRestaurantApi } from '../api/restaurantApi';
+import { useNavigation } from '@react-navigation/native';
 
-const screenWidth = Dimensions.get("window").width;
-
-const RestaurantProfileScreen = () => {
+const RegisterInf = () => {
+    const navigation = useNavigation()
     const [restaurant, setRestaurant] = useState({
-        name: 'Nhà hàng ABC',
-        address: '123 Đường Thành Công, TP.HCM',
-        phone: '0901234567',
-        description: 'Chuyên phục vụ các món ăn ngon và chất lượng.',
-        type: 'Đồ uống'
+        name: '',
+        image: '',
+        address: '',
+        opening_hours: '',
+        phone_number: '',
+        description: '',
     });
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [userId, setUserId] = useState(null);
+    //Lấy thông tin ú
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            setUserId(storedUserId);  // Now the userId is available to use
+        };
 
-    const [dailySales, setDailySales] = useState([150000, 200000, 180000, 250000, 120000]);
-    const [weeklySales, setWeeklySales] = useState([800000, 900000, 850000, 700000, 950000]);
+        fetchUserId();
+    }, []);  // Fetch userId once when the component mounts
 
-    // Giờ hoạt động theo tuần
     const [workingHours, setWorkingHours] = useState([
         { day: 'Thứ 2', open: '08:00', close: '22:00' },
         { day: 'Thứ 3', open: '08:00', close: '22:00' },
@@ -32,19 +39,74 @@ const RestaurantProfileScreen = () => {
         { day: 'Chủ nhật', open: '09:00', close: '23:00' },
     ]);
 
-
-    // Hàm xử lý khi nhấn nút chỉnh sửa/lưu
-    const toggleEditMode = () => {
-        if (isEditing) {
-            Snackbar.show({
-                text: 'Hồ sơ đã được cập nhật!',
-                duration: Snackbar.LENGTH_SHORT,
-            });
-        }
-        setIsEditing(!isEditing);
+    const selectImage = () => {
+        launchImageLibrary({ mediaType: 'photo' }, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                const selectedImage = response.assets[0];
+                setRestaurant({ ...restaurant, image: selectedImage.uri });
+            }
+        });
     };
 
-    // Hàm cập nhật giờ mở và đóng cửa
+    const uploadImage = async () => {
+        try {
+            if (restaurant.image && userId) {
+                const url = await uploadRestaurantImage(userId, restaurant.image);
+                Snackbar.show({
+                    text: 'Ảnh nhà hàng đã được cập nhật!',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+                return url;
+            } else {
+                Snackbar.show({
+                    text: 'Không có ảnh nào được chọn hoặc thiếu userId',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+                return null;
+            }
+        } catch (error) {
+            console.error('Upload image failed: ', error);
+        }
+    };
+
+    const toggleEditMode = async () => {
+        const workingHoursString = JSON.stringify(workingHours);
+        const imageUrl = await uploadImage();
+
+        if (imageUrl) {
+            const updatedRestaurant = {
+                ...restaurant,
+                image: imageUrl,
+                opening_hours: workingHoursString,
+            };
+            try {
+                const response = await updateRestaurantApi(updatedRestaurant);
+                if (response.success) {
+                    Snackbar.show({
+                        text: 'Thông tin nhà hàng đã được cập nhật!',
+                        duration: Snackbar.LENGTH_SHORT,
+                    });
+                    navigation.navigate('Trangchủ')
+                } else {
+                    Snackbar.show({
+                        text: 'Cập nhật thất bại, vui lòng thử lại.',
+                        duration: Snackbar.LENGTH_SHORT,
+                    });
+                }
+            } catch (error) {
+                console.error('API update failed: ', error);
+                Snackbar.show({
+                    text: 'Có lỗi xảy ra, vui lòng thử lại.',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+            }
+        }
+    };
+
     const updateWorkingHours = (day, field, value) => {
         const updatedHours = workingHours.map(item =>
             item.day === day ? { ...item, [field]: value } : item
@@ -53,16 +115,21 @@ const RestaurantProfileScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <ScrollView>
-                {/* Hồ sơ nhà hàng */}
                 <View style={styles.profileSection}>
+                    <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
+                        {restaurant.image ? (
+                            <Image source={{ uri: restaurant.image }} style={styles.image} />
+                        ) : (
+                            <Text style={styles.imagePlaceholderText}>Chọn ảnh nhà hàng</Text>
+                        )}
+                    </TouchableOpacity>
                     <View style={styles.profileInfo}>
                         <Text style={styles.label}>Tên nhà hàng:</Text>
                         <TextInput
                             style={styles.input}
                             value={restaurant.name}
-                            editable={isEditing}
                             onChangeText={(text) => setRestaurant({ ...restaurant, name: text })}
                         />
                     </View>
@@ -72,7 +139,6 @@ const RestaurantProfileScreen = () => {
                         <TextInput
                             style={styles.input}
                             value={restaurant.address}
-                            editable={isEditing}
                             onChangeText={(text) => setRestaurant({ ...restaurant, address: text })}
                         />
                     </View>
@@ -81,9 +147,8 @@ const RestaurantProfileScreen = () => {
                         <Text style={styles.label}>Số điện thoại:</Text>
                         <TextInput
                             style={styles.input}
-                            value={restaurant.phone}
-                            editable={isEditing}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, phone: text })}
+                            value={restaurant.phone_number}
+                            onChangeText={(text) => setRestaurant({ ...restaurant, phone_number: text })}
                         />
                     </View>
 
@@ -92,21 +157,11 @@ const RestaurantProfileScreen = () => {
                         <TextInput
                             style={styles.input}
                             value={restaurant.description}
-                            editable={isEditing}
                             onChangeText={(text) => setRestaurant({ ...restaurant, description: text })}
                             multiline
                         />
                     </View>
-                    <View style={styles.profileInfo}>
-                        <Text style={styles.label}>Loại nhà hàng</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={restaurant.type}
-                            editable={isEditing}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, type: text })}
-                        />
-                    </View>
-                    {/* Giờ hoạt động */}
+
                     <View style={styles.workingHoursSection}>
                         <Text style={styles.sectionTitle}>Giờ hoạt động</Text>
                         {workingHours.map((item) => (
@@ -116,7 +171,6 @@ const RestaurantProfileScreen = () => {
                                     style={styles.workingHoursInput}
                                     value={item.open}
                                     onChangeText={(value) => updateWorkingHours(item.day, 'open', value)}
-                                    editable={isEditing}
                                     keyboardType="numeric"
                                 />
                                 <Text style={styles.workingHoursText}> - </Text>
@@ -124,7 +178,6 @@ const RestaurantProfileScreen = () => {
                                     style={styles.workingHoursInput}
                                     value={item.close}
                                     onChangeText={(value) => updateWorkingHours(item.day, 'close', value)}
-                                    editable={isEditing}
                                     keyboardType="numeric"
                                 />
                             </View>
@@ -132,15 +185,14 @@ const RestaurantProfileScreen = () => {
                     </View>
                 </View>
             </ScrollView>
-            {/* Nút chỉnh sửa */}
             <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
-                <Text style={styles.editButtonText}>{isEditing ? 'Lưu' : 'Chỉnh sửa'}</Text>
+                <Text style={styles.editButtonText}>Lưu</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     );
 };
 
-export default RestaurantProfileScreen;
+export default RegisterInf;
 
 const styles = StyleSheet.create({
     container: {
@@ -207,5 +259,23 @@ const styles = StyleSheet.create({
     },
     workingHoursText: {
         fontSize: 16,
+    },
+    imagePicker: {
+        width: 120,
+        height: 120,
+        backgroundColor: '#ddd',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        alignSelf: 'center',
+    },
+    imagePlaceholderText: {
+        color: '#888',
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
     },
 });

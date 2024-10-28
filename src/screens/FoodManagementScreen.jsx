@@ -8,28 +8,28 @@ const FoodManagementScreen = ({ navigation }) => {
             name: 'Trà trái cây nhiệt đới',
             description: 'Trà trái cây nhiệt đới là tổng các loại trái cây',
             price: '32.000đ',
-            image: require('../Images/image.png'),
+            image: require('../access/Images/image.png'),
             categoryId: 1
         },
         {
             name: 'Ly trà xoài chanh dây 700ml',
             description: 'Trà trái cây nhiệt đới là tổng các loại trái cây',
             price: '32.000đ',
-            image: require('../Images/image.png'),
+            image: require('../access/Images/image.png'),
             categoryId: 1
         },
         {
             name: 'Sữa đậu xanh + óc chó',
             description: 'Sữa đậu xanh kết hợp với óc chó',
             price: '25.000đ',
-            image: require('../Images/image.png'),
+            image: require('../access/Images/image.png'),
             categoryId: 2
         },
         {
             name: 'Sữa hạt đậu đỏ + hạt sen',
             description: 'Sữa hạt đậu đỏ kết hợp hạt sen',
             price: '25.000đ',
-            image: require('../Images/image.png'),
+            image: require('../access/Images/image.png'),
             categoryId: 2
         }
     ];

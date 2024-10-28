@@ -54,7 +54,7 @@ const OrderDetailScreen = () => {
                 <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
                 <Text>{orderDetails.driver.vehicle}</Text>
                 <View style={styles.driverDetails}>
-                    <Image source={require('../access/Shipper.webp')} style={styles.driverImage} />
+                    <Image source={require('../access/Images/Shipper.webp')} style={styles.driverImage} />
                     <View style={styles.driverInfo}>
                         <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
                         <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
