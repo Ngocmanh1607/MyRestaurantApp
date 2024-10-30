@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { updateRestaurantApi } from '../api/restaurantApi';
 import { useNavigation } from '@react-navigation/native';
+import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 
 const RegisterInf = () => {
     const navigation = useNavigation()
@@ -19,7 +20,7 @@ const RegisterInf = () => {
     });
 
     const [userId, setUserId] = useState(null);
-    //Lấy thông tin ú
+    //Lấy thông tin userID
     useEffect(() => {
         const fetchUserId = async () => {
             const storedUserId = await AsyncStorage.getItem('userId');
@@ -27,7 +28,7 @@ const RegisterInf = () => {
         };
 
         fetchUserId();
-    }, []);  // Fetch userId once when the component mounts
+    }, []);
 
     const [workingHours, setWorkingHours] = useState([
         { day: 'Thứ 2', open: '08:00', close: '22:00' },
@@ -39,44 +40,29 @@ const RegisterInf = () => {
         { day: 'Chủ nhật', open: '09:00', close: '23:00' },
     ]);
 
-    const selectImage = () => {
-        launchImageLibrary({ mediaType: 'photo' }, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const selectedImage = response.assets[0];
-                setRestaurant({ ...restaurant, image: selectedImage.uri });
-            }
-        });
-    };
-
-    const uploadImage = async () => {
+    const handelSelectImage = async () => {
         try {
-            if (restaurant.image && userId) {
-                const url = await uploadRestaurantImage(userId, restaurant.image);
-                Snackbar.show({
-                    text: 'Ảnh nhà hàng đã được cập nhật!',
-                    duration: Snackbar.LENGTH_SHORT,
-                });
-                return url;
-            } else {
-                Snackbar.show({
-                    text: 'Không có ảnh nào được chọn hoặc thiếu userId',
-                    duration: Snackbar.LENGTH_SHORT,
-                });
-                return null;
+            const uri = await selectImage();
+            setRestaurant({ ...restaurant, image: uri })
+        }
+        catch (error) {
+            console.error('Lỗi chọn ảnh:', error);
+        }
+    };
+    const handelUploadImage = async () => {
+        try {
+            const UrlImage = await uploadImage(userId, restaurant.image)
+            if (UrlImage) { // Kiểm tra nếu có kết quả URL
+                return UrlImage
             }
         } catch (error) {
-            console.error('Upload image failed: ', error);
+
         }
     };
 
     const toggleEditMode = async () => {
         const workingHoursString = JSON.stringify(workingHours);
-        const imageUrl = await uploadImage();
-
+        const imageUrl = await handelUploadImage();
         if (imageUrl) {
             const updatedRestaurant = {
                 ...restaurant,
@@ -85,12 +71,12 @@ const RegisterInf = () => {
             };
             try {
                 const response = await updateRestaurantApi(updatedRestaurant);
-                if (response.success) {
+                if (response) {
                     Snackbar.show({
                         text: 'Thông tin nhà hàng đã được cập nhật!',
                         duration: Snackbar.LENGTH_SHORT,
                     });
-                    navigation.navigate('Trangchủ')
+                    navigation.navigate('Trang chủ')
                 } else {
                     Snackbar.show({
                         text: 'Cập nhật thất bại, vui lòng thử lại.',
@@ -118,7 +104,7 @@ const RegisterInf = () => {
         <View style={styles.container}>
             <ScrollView>
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
+                    <TouchableOpacity onPress={handelSelectImage} style={styles.imagePicker}>
                         {restaurant.image ? (
                             <Image source={{ uri: restaurant.image }} style={styles.image} />
                         ) : (

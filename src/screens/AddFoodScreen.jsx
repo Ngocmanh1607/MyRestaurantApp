@@ -1,158 +1,175 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar'
+import CheckBox from '@react-native-community/checkbox';
+import { uploadFoodImage } from '../utils/firebaseUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createFoodInApi } from '../api/foodApi';
+import { getCategories } from '../api/restaurantApi';
 const AddFoodScreen = () => {
-    const [foodName, setFoodName] = useState('');
-    const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [customGroup, setCustomGroup] = useState('');
-    const [basePrice, setBasePrice] = useState('');
-    const [discountedPrice, setDiscountedPrice] = useState('');
-    const [foodImage, setFoodImage] = useState(null);
+    const [foodData, setFoodData] = useState({
+        name: '',
+        descriptions: '',
+        categories: [],
+        price: '',
+        image: null,
+        options: [{ topping_name: '', price: '' }],
+    });
 
-    // Options state: An array where each object holds name and price of the option
-    const [options, setOptions] = useState([{ name: '', price: '' }]);
-
-    // Function to handle image selection
-    const selectImage = () => {
+    const [userId, setUserId] = useState('')
+    const [allCategories, setAllCategories] = useState([])
+    const handleSelectImage = () => {
         launchImageLibrary({ mediaType: 'photo' }, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
                 console.log('ImagePicker Error: ', response.error);
             } else {
-                const selectedImage = response.assets[0];
-                setFoodImage(selectedImage.uri); // Set image URI to state
+                setFoodData({ ...foodData, image: response.assets[0].uri });
             }
         });
     };
-
-    // Function to handle adding new option
-    const addOption = () => {
-        setOptions([...options, { name: '', price: '' }]);
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            setUserId(storedUserId);
+        };
+        const fetchCategories = async () => {
+            try {
+                const categories = await getCategories();
+                setAllCategories(categories)
+            } catch (error) {
+                console.error("Lỗi khi lấy danh mục:", error);
+                setAllCategories([]);
+            }
+        };
+        fetchUserId();
+        fetchCategories();
+    }, []);
+    const uploadFirebase = async (name, imageUrl) => {
+        const foodImage = await uploadFoodImage(userId, name, imageUrl);
+        handleChange("image", foodImage)
+    }
+    const handleChange = (field, value) => {
+        setFoodData({ ...foodData, [field]: value });
     };
-    const handleSave = () => {
+
+    const toggleCategory = (categoryId) => {
+        setFoodData((prevData) => {
+            const updatedCategories = prevData.categories.includes(categoryId)
+                ? prevData.categories.filter((id) => id !== categoryId)
+                : [...prevData.categories, categoryId];
+            return { ...prevData, categories: updatedCategories };
+        });
+    };
+
+    const addOption = () => {
+        setFoodData({ ...foodData, options: [...foodData.options, { name: '', price: '' }] });
+    };
+
+    const handleSave = async () => {
         if (validateInputs()) {
+            await uploadFirebase(foodData.name, foodData.image);
+            await createFoodInApi(foodData);
+
             Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
-            // Reset các state về giá trị mặc định
-            setFoodImage(null);
-            setFoodName('');
-            setBasePrice('');
-            setCategory('');
-            setDescription('');
-            setDiscountedPrice('');
-            setOptions([{ name: '', price: '' }])
+
+            console.log(foodData)
+            setFoodData({
+                name: '',
+                descriptions: '',
+                categories: [],
+                price: '',
+                image: null,
+                options: [{ name: '', price: '' }],
+            });
         }
     };
+
     const validateInputs = () => {
-        if (!foodImage) {
+        if (!foodData.image) {
             Snackbar.show({ text: 'Vui lòng thêm ảnh món ăn.', duration: Snackbar.LENGTH_SHORT });
             return false;
         }
-        if (!foodName.trim()) {
+        if (!foodData.name.trim()) {
             Snackbar.show({ text: 'Vui lòng nhập tên món ăn.', duration: Snackbar.LENGTH_SHORT });
             return false;
         }
-        if (!basePrice.trim() || isNaN(basePrice)) {
+        if (!foodData.price.trim() || isNaN(foodData.price)) {
             Snackbar.show({ text: 'Vui lòng nhập giá hợp lệ.', duration: Snackbar.LENGTH_SHORT });
             return false;
         }
-        if (!discountedPrice.trim() || isNaN(discountedPrice)) {
-            Snackbar.show({ text: 'Vui lòng nhập giá hợp lệ.', duration: Snackbar.LENGTH_SHORT });
-            return false;
-        }
-        if (!category.trim()) {
-            Snackbar.show({ text: 'Vui lòng nhập nhóm món ăn.', duration: Snackbar.LENGTH_SHORT });
-            return false;
-        }
-        if (!description.trim()) {
+        if (!foodData.descriptions.trim()) {
             Snackbar.show({ text: 'Vui lòng nhập mô tả món ăn.', duration: Snackbar.LENGTH_SHORT });
+            return false;
+        }
+        if (foodData.categories.length === 0) {
+            Snackbar.show({ text: 'Vui lòng chọn ít nhất một danh mục.', duration: Snackbar.LENGTH_SHORT });
             return false;
         }
         return true;
     };
-    // Function to handle changing option values
+
     const handleOptionChange = (index, field, value) => {
-        const newOptions = options.map((option, i) =>
+        const newOptions = foodData.options.map((option, i) =>
             i === index ? { ...option, [field]: value } : option
         );
-        setOptions(newOptions);
+        setFoodData({ ...foodData, options: newOptions });
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            {/* Food Image */}
-            <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
-                {foodImage ? (
-                    <Image source={{ uri: foodImage }} style={styles.image} />
+            <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+                {foodData.image ? (
+                    <Image source={{ uri: foodData.image }} style={styles.image} />
                 ) : (
                     <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
                 )}
             </TouchableOpacity>
 
-            {/* Food Name */}
             <TextInput
                 style={styles.input}
                 placeholder="Tên món *"
-                value={foodName}
-                onChangeText={setFoodName}
+                value={foodData.name}
+                onChangeText={(value) => handleChange('name', value)}
             />
 
-            {/* Food Description */}
             <TextInput
                 style={styles.textArea}
-                placeholder="Mô tả món ăn"
-                value={description}
-                onChangeText={setDescription}
+                placeholder="Mô tả món ăn *"
+                value={foodData.descriptions}
+                onChangeText={(value) => handleChange('descriptions', value)}
                 multiline
             />
 
-            {/* Category Picker */}
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={category}
-                    onValueChange={(value) => setCategory(value)}
-                >
-                    <Picker.Item label="Chọn danh mục *" value={null} />
-                    <Picker.Item label="Món ăn" value="mon-an" />
-                    <Picker.Item label="Đồ uống" value="do-uong" />
-                </Picker>
-            </View>
-
-            {/* Create Category Button */}
-            <TouchableOpacity style={styles.createCategoryButton}>
-                <Text style={styles.createCategoryButtonText}>+ Tạo danh mục</Text>
-            </TouchableOpacity>
-
-            {/* Base Price */}
             <TextInput
                 style={styles.input}
                 placeholder="Giá gốc *"
-                value={basePrice}
-                onChangeText={setBasePrice}
+                value={foodData.price}
+                onChangeText={(value) => handleChange('price', value)}
                 keyboardType="numeric"
             />
 
-            {/* Discounted Price */}
-            <TextInput
-                style={styles.input}
-                placeholder="Giá khuyến mãi *"
-                value={discountedPrice}
-                onChangeText={setDiscountedPrice}
-                keyboardType="numeric"
-            />
+            <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
+            {allCategories.map(category => (
+                <View key={category.id} style={styles.checkboxContainer}>
+                    <CheckBox
+                        value={foodData.categories.includes(category.id)}
+                        onValueChange={() => toggleCategory(category.id)}
+                    />
+                    <Text>{category.name}</Text>
+                </View>
+            ))}
 
-            {/* Options */}
             <Text style={styles.sectionTitle}>Các lựa chọn khác</Text>
-            {options.map((option, index) => (
+            {foodData.options.map((option, index) => (
                 <View key={index} style={styles.optionContainer}>
                     <TextInput
                         style={styles.optionName}
                         placeholder="Tên lựa chọn"
-                        value={option.name}
-                        onChangeText={(value) => handleOptionChange(index, 'name', value)}
+                        value={option.topping_name}
+                        onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
                     />
                     <TextInput
                         style={styles.optionPrice}
@@ -164,12 +181,10 @@ const AddFoodScreen = () => {
                 </View>
             ))}
 
-            {/* Add Option Button */}
             <TouchableOpacity onPress={addOption} style={styles.addButton}>
                 <Text style={styles.addButtonText}>+ Thêm lựa chọn</Text>
             </TouchableOpacity>
 
-            {/* Submit Button */}
             <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
                 <Text style={styles.submitButtonText}>Lưu</Text>
             </TouchableOpacity>
@@ -198,6 +213,12 @@ const styles = StyleSheet.create({
         height: 100,
         backgroundColor: '#fff',
         marginBottom: 10,
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
     },
     createCategoryButton: {
         backgroundColor: 'transparent',
@@ -228,6 +249,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     imagePicker: {
+
         width: 120,
         height: 120,
         backgroundColor: '#ddd',

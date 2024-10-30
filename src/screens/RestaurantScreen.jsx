@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator } from 'react-native';
 import Snackbar from 'react-native-snackbar';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getInformationRes, updateRestaurantApi } from '../api/restaurantApi';
+import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 
 
 const RestaurantProfileScreen = () => {
@@ -20,6 +20,11 @@ const RestaurantProfileScreen = () => {
     );
     const [loading, setLoading] = useState(false)
     const [isEditing, setIsEditing] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    const [imageChange, setImageChange] = useState(false);
+    const [orginalImage, setOriginalImage] = useState('');
+    //Lấy thông tin nhà hàng
     useEffect(() => {
         const fetchRestaurantInfo = async () => {
             try {
@@ -36,11 +41,13 @@ const RestaurantProfileScreen = () => {
                 };
 
                 setRestaurant(cleanedData);
+                setOriginalImage(cleanedData.image);
             } catch (error) {
                 Snackbar.show({
                     text: 'Lỗi khi tải thông tin nhà hàng',
                     duration: Snackbar.LENGTH_SHORT
                 })
+                console.log(error)
             }
             finally {
                 setLoading(false)
@@ -48,7 +55,6 @@ const RestaurantProfileScreen = () => {
         }
         fetchRestaurantInfo();
     }, []);
-    const [userId, setUserId] = useState(null);
     //Lấy thông tin userId
     useEffect(() => {
         const fetchUserId = async () => {
@@ -58,81 +64,90 @@ const RestaurantProfileScreen = () => {
 
         fetchUserId();
     }, []);
-
-    // Function to handle image selection
-    const selectImage = () => {
+    const handelSelectImage = async () => {
         if (isEditing) {
-            launchImageLibrary({ mediaType: 'photo' }, (response) => {
-                if (response.didCancel) {
-                    Snackbar.show({
-                        text: 'Bạn đã hủy chọn ảnh',
-                        duration: Snackbar.LENGTH_SHORT
-                    });
-                } else if (response.error) {
-                    Snackbar.show({
-                        text: 'Lỗi chọn ảnh',
-                        duration: Snackbar.LENGTH_SHORT
-                    });
-                } else {
-                    const selectedImage = response.assets[0].uri;
-                    setRestaurant({ ...restaurant, image: selectedImage })
-                }
-            });
+            try {
+                const uri = await selectImage();
+                setRestaurant({ ...restaurant, image: uri });
+                setImageChange(true);
+            }
+            catch (error) {
+                console.error('Lỗi chọn ảnh:', error);
+            }
         }
     };
     // Function để upload ảnh lên Firebase và lưu URL xuống Firestore
-    const uploadImage = async () => {
-
+    const handelUploadImage = async () => {
         try {
-            const userId = await AsyncStorage.getItem('userId'); // Lấy userId từ AsyncStorage
-            if (userId && restaurant.image) {
-                const url = await uploadRestaurantImage(userId, restaurant.image); // Upload ảnh và lấy URL
-                Snackbar.show({
-                    text: 'Ảnh nhà hàng đã được cập nhật!',
-                    duration: Snackbar.LENGTH_SHORT,
-                });
-                console.log('Image uploaded: ', url);
-                setRestaurant({ ...restaurant, image: url })
-            } else {
-                Snackbar.show({
-                    text: 'Không có ảnh nào được chọn ',
-                    duration: Snackbar.LENGTH_SHORT,
-                });
+            const UrlImage = await uploadImage(userId, restaurant.image)
+            if (UrlImage) {
+                setRestaurant(prev => ({ ...prev, image: UrlImage }));
+                return UrlImage
             }
         } catch (error) {
-            console.error('Upload image failed: ', error);
+            Snackbar.show({
+                text: 'Không thể tải ảnh lên, vui lòng thử lại.',
+                duration: Snackbar.LENGTH_SHORT,
+            });
         }
     };
-    // Function để chuyển đổi giữa chế độ chỉnh sửa và lưu
+    const updateRestaurantInfo = async (imageUrl = null) => {
+        try {
+            let updatedOpeningHours = restaurant.opening_hours;
+            if (typeof restaurant.opening_hours === 'object') {
+                updatedOpeningHours = JSON.stringify(restaurant.opening_hours);
+            }
+
+            const updatedData = {
+                ...restaurant,
+                image: imageUrl || restaurant.image,
+                opening_hours: updatedOpeningHours
+            };
+
+            const response = await updateRestaurantApi(updatedData);
+            if (response) {
+                Snackbar.show({
+                    text: 'Thông tin nhà hàng đã được cập nhật!',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+                setImageChange(false);
+                setOriginalImage(updatedData.image);
+            }
+            return true;
+        } catch (error) {
+            console.error('Lỗi cập nhật thông tin:', error);
+            Snackbar.show({
+                text: 'Có lỗi xảy ra khi cập nhật thông tin.',
+                duration: Snackbar.LENGTH_SHORT,
+            });
+            return false;
+        }
+    };
     const toggleEditMode = async () => {
         if (isEditing) {
+            setLoading(true)
             try {
-                setLoading(true)
-                uploadImage()
-                const response = await updateRestaurantApi(restaurant);
-                if (response.success) {
-                    Snackbar.show({
-                        text: 'Thông tin nhà hàng đã được cập nhật!',
-                        duration: Snackbar.LENGTH_SHORT,
-                    });
+                let success;
+                if (imageChange) {
+                    const newImageUrl = await handelUploadImage();
+                    success = await updateRestaurantInfo(newImageUrl);
                 } else {
-                    Snackbar.show({
-                        text: 'Cập nhật thất bại, vui lòng thử lại.',
-                        duration: Snackbar.LENGTH_SHORT,
-                    });
+                    success = await updateRestaurantInfo();
+                }
+                if (!success) {
+                    setRestaurant(prev => ({ ...prev, image: orginalImage }));
                 }
             } catch (error) {
-                console.error('API update failed: ', error);
+                console.error('Lỗi:', error);
                 Snackbar.show({
                     text: 'Có lỗi xảy ra, vui lòng thử lại.',
                     duration: Snackbar.LENGTH_SHORT,
                 });
-            }
-            finally {
-                setLoading(false)
+            } finally {
+                setLoading(false);
             }
         }
-        setIsEditing(!isEditing); // Chuyển đổi chế độ chỉnh sửa
+        setIsEditing(!isEditing);
     };
     // // Hàm cập nhật giờ mở và đóng cửa
     const updateWorkingHours = (day, field, value) => {
@@ -141,7 +156,6 @@ const RestaurantProfileScreen = () => {
         );
         setRestaurant({ ...restaurant, opening_hours: updatedHours });
     };
-
     return (
         <View style={styles.container}>
             {loading ? (<View style={styles.loadingContainer}>
@@ -152,7 +166,7 @@ const RestaurantProfileScreen = () => {
                         {/* Hồ sơ nhà hàng */}
                         <View style={styles.profileSection}>
                             {/* Food Image */}
-                            <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
+                            <TouchableOpacity onPress={handelSelectImage} style={styles.imagePicker}>
                                 {restaurant.image ? (
                                     <Image source={{ uri: restaurant.image }} style={styles.image} />
                                 ) : (

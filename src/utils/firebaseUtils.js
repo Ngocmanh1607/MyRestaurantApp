@@ -25,12 +25,12 @@ const uploadRestaurantImage = async (userId, imageUri) => {
 };
 
 // Hàm upload ảnh món ăn lên Firebase Storage và lấy URL
-const uploadFoodImage = async (restaurantId, foodId, imageUri) => {
+const uploadFoodImage = async (restaurantId, foodName, imageUri) => {
     try {
         const response = await fetch(imageUri); // Lấy ảnh từ URI
         const blob = await response.blob(); // Chuyển đổi thành blob
 
-        const storageRef = ref(storage, `restaurants/${restaurantId}/food-images/${foodId}.jpg`);
+        const storageRef = ref(storage, `restaurants/${restaurantId}/food-images/${foodName}.jpg`);
         // Upload ảnh
         await uploadBytes(storageRef, blob);
 
