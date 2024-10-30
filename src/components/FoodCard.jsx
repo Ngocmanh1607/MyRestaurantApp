@@ -8,16 +8,16 @@ import { useNavigation } from '@react-navigation/native';
 const FoodCard = ({ food }) => {
     const navigation = useNavigation()
     const [isEnabled, setIsEnabled] = useState(true);
-
+    console.log(food.image)
     const handleToggle = () => {
         setIsEnabled(previousState => !previousState);
     };
     return (
         <TouchableOpacity style={[styles.foodItem, { opacity: isEnabled ? 1 : 0.5 }]} onPress={() => { navigation.navigate('Chỉnh sửa món ăn', { food }) }}>
-            <Image style={styles.foodImage} source={food.image} />
+            <Image style={styles.foodImage} source={{ uri: food.image }} />
             <View style={styles.foodDetails}>
                 <Text style={styles.foodName}>{food.name}</Text>
-                <Text style={styles.foodDes}>{food.description}</Text>
+                <Text style={styles.foodDes}>{food.descriptions}</Text>
                 <Text style={styles.foodPrice}>{food.price}</Text>
             </View>
             <ToggleSwitch isEnabled={isEnabled} onToggle={handleToggle} />

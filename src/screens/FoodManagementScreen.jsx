@@ -1,53 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import FoodCard from '../components/FoodCard';
+import { getFoodRes } from '../api/restaurantApi';
 
 const FoodManagementScreen = ({ navigation }) => {
-    const foodItems = [
-        {
-            name: 'Trà trái cây nhiệt đới',
-            description: 'Trà trái cây nhiệt đới là tổng các loại trái cây',
-            price: '32.000đ',
-            image: require('../access/Images/image.png'),
-            categoryId: 1
-        },
-        {
-            name: 'Ly trà xoài chanh dây 700ml',
-            description: 'Trà trái cây nhiệt đới là tổng các loại trái cây',
-            price: '32.000đ',
-            image: require('../access/Images/image.png'),
-            categoryId: 1
-        },
-        {
-            name: 'Sữa đậu xanh + óc chó',
-            description: 'Sữa đậu xanh kết hợp với óc chó',
-            price: '25.000đ',
-            image: require('../access/Images/image.png'),
-            categoryId: 2
-        },
-        {
-            name: 'Sữa hạt đậu đỏ + hạt sen',
-            description: 'Sữa hạt đậu đỏ kết hợp hạt sen',
-            price: '25.000đ',
-            image: require('../access/Images/image.png'),
-            categoryId: 2
+    const [foodItems, setFoodItems] = useState([])
+    useEffect(() => {
+        const fetchFoodRes = async () => {
+            try {
+                const data = await getFoodRes()
+                console.log(data)
+                const setData = data.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    image: item.image,
+                    descriptions: item.descriptions,
+                    price: item.price,
+                }))
+                setFoodItems(setData)
+            } catch (error) {
+                console.error("Error fetching food items:", error);
+            }
         }
-    ];
-
-    // Hàm để lọc món ăn theo category
-    const filterByCategory = (categoryId) => {
-        return foodItems.filter(food => food.categoryId === categoryId);
-    };
-
+        fetchFoodRes()
+    }, [])
     return (
         <ScrollView style={styles.container}>
 
-            {/* Category 1: Trà Trái Cây */}
             <View style={styles.mainContainer}>
-                <Text style={styles.categoryTitle}>Trà Trái Cây</Text>
-                {filterByCategory(1).map((food, index) => (
+                {foodItems.map((food) => (
                     <FoodCard
-                        key={index}
+                        key={food.id}
                         food={food}
                         onAdd={() => console.log(`Add ${food.name}`)}
                     />
@@ -55,7 +38,7 @@ const FoodManagementScreen = ({ navigation }) => {
             </View>
 
             {/* Category 2: Sữa Hạt */}
-            <View style={styles.mainContainer}>
+            {/* <View style={styles.mainContainer}>
                 <Text style={styles.categoryTitle}>Sữa Hạt</Text>
                 {filterByCategory(2).map((food, index) => (
                     <FoodCard
@@ -64,7 +47,7 @@ const FoodManagementScreen = ({ navigation }) => {
                         onAdd={() => console.log(`Add ${food.name}`)}
                     />
                 ))}
-            </View>
+            </View> */}
         </ScrollView>
     );
 };
