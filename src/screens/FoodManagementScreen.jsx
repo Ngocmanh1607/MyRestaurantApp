@@ -36,18 +36,6 @@ const FoodManagementScreen = ({ navigation }) => {
                     />
                 ))}
             </View>
-
-            {/* Category 2: Sữa Hạt */}
-            {/* <View style={styles.mainContainer}>
-                <Text style={styles.categoryTitle}>Sữa Hạt</Text>
-                {filterByCategory(2).map((food, index) => (
-                    <FoodCard
-                        key={index}
-                        food={food}
-                        onAdd={() => console.log(`Add ${food.name}`)}
-                    />
-                ))}
-            </View> */}
         </ScrollView>
     );
 };

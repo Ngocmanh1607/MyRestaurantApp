@@ -38,7 +38,7 @@ const createFoodInApi = async (newFood) => {
         });
     return response.data;
 };
-
+const getToppingFood = async
 const updateFoodInApi = async (id, updatedFood) => {
     const response = await apiClient.put(`/foods/${id}`, updatedFood);
     return response.data;

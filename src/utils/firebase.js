@@ -1,7 +1,7 @@
-// firebaseConfig.js
+
 import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage"; // Import Firebase Storage
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDdWB4HKPZ04zBrXSHCOOWHSgOe2a2w8oQ",
@@ -13,10 +13,8 @@ const firebaseConfig = {
     measurementId: "G-SN2VRY14TM"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Storage and Firestore
 const storage = getStorage(app);
 const firestore = getFirestore(app);
 

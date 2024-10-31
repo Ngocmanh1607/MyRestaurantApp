@@ -8,98 +8,44 @@ import Snackbar from 'react-native-snackbar'
 
 const EditFoodScreen = ({ route }) => {
     const { food } = route.params
-    const [imageUri, setImageUri] = useState(null);
-    const [image, setImage] = useState(food.image);
-    const [name, setName] = useState(food.name);
-    const [price, setPrice] = useState(food.price);
-    const [discountPrice, setDiscountPrice] = useState(food.discountPrice);
-    const [category, setCategory] = useState(food.categoryId);
-    const [description, setDescription] = useState(food.description);
-
-    // Danh sách các topping
+    const [foodData, setFoodData] = useState({
+        name: food.name,
+        descriptions: food.descriptions,
+        categories: [],
+        price: food.price,
+        image: food.image,
+        options: [{ topping_name: '', price: '' }],
+    });
+    console.log(foodData)
     const [toppings, setToppings] = useState([
-        { id: 1, name: 'Topping 1', price: 5000, discountPrice: 0, selected: true },
-        { id: 2, name: 'Topping 2', price: 7000, discountPrice: 0, selected: false },
-        { id: 3, name: 'Topping 3', price: 8000, discountPrice: 0, selected: true },
     ]);
-    // State để lưu danh sách topping mới do người dùng thêm
     const [newToppings, setNewToppings] = useState([]);
 
-    // Tạo ref cho từng ô input
     const newToppingRefs = useRef([]);
 
-    // State kiểm soát chế độ chỉnh sửa
     const [isEditing, setIsEditing] = useState(false);
 
-    // Hàm chọn ảnh (ví dụ với thư viện image-picker)
+
+    useEffect(() => {
+
+    }, [])
     const chooseImage = () => {
-        const options = {
-            mediaType: 'photo', // chỉ chọn ảnh
-        };
-        const showError = (message) => {
-            Snackbar.show({
-                text: message,
-                duration: Snackbar.LENGTH_SHORT,
-            });
-        };
 
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                showError('Bạn đã huỷ chọn ảnh');
-            } else if (response.errorCode) {
-                showError('Đã xảy ra lỗi: ' + response.errorMessage);
-            } else {
-                const uri = response.assets[0].uri;
-                setImageUri(uri);
-            }
-        });
     };
-
-    // Hàm thêm một ô mới để nhập topping
+    const handleChange = (field, value) => {
+        setFoodData({ ...foodData, [field]: value })
+    }
     const addNewTopping = () => {
         const newTopping = { id: newToppings.length + 1, name: '', price: '', selected: true };
         setNewToppings([...newToppings, newTopping]);
     };
-
-    // useEffect để focus vào input sau khi thêm topping
-    useEffect(() => {
-        if (newToppingRefs.current.length > 0) {
-            newToppingRefs.current[newToppingRefs.current.length - 1].focus();
-        }
-    }, [newToppings]);
-
-    // Hàm cập nhật giá trị topping mới khi người dùng nhập
-    const updateNewTopping = (id, field, value) => {
-        const updatedNewToppings = newToppings.map(topping =>
-            topping.id === id ? { ...topping, [field]: value } : topping
-        );
-        setNewToppings(updatedNewToppings);
-    };
-
-    // Hàm cập nhật topping đã tồn tại
-    const updateTopping = (id, field, value) => {
-        const updatedToppings = toppings.map(topping =>
-            topping.id === id ? { ...topping, [field]: value } : topping
-        );
-        setToppings(updatedToppings);
-    };
-
-    // Hàm kích hoạt chế độ chỉnh sửa
     const toggleEditMode = () => {
         setIsEditing(!isEditing);
     };
 
-    // Hàm toggle chọn topping
-    const toggleTopping = (id) => {
-        const updatedToppings = toppings.map((topping) =>
-            topping.id === id ? { ...topping, selected: !topping.selected } : topping
-        );
-        setToppings(updatedToppings);
-    };
-
     return (
         <KeyboardAvoidingView style={styles.container}>
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
                     <ScrollView style={styles.mainContainer}>
                         {/* Ảnh món ăn */}
@@ -112,85 +58,34 @@ const EditFoodScreen = ({ route }) => {
                             >
                                 <Image
                                     style={styles.foodImage}
-                                    source={imageUri ? { uri: imageUri } : food.image}
+                                    source={{ uri: foodData.image }}
                                 />
                             </TouchableOpacity>
                         </View>
                         {/* Tên món */}
                         <View style={styles.infContainer}>
                             <Text style={styles.textLeft}>Tên món</Text>
-                            <TextInput style={[styles.textRight, styles.smallInput]} value={name} onChangeText={setName} editable={isEditing} />
+                            <TextInput style={[styles.textRight, styles.smallInput]} value={foodData.name}
+                                onChangeText={(value) => handleChange('name', value)} editable={isEditing} />
                         </View>
                         {/* Giá món ăn */}
                         <View style={styles.infContainer}>
                             <Text style={styles.textLeft}>Giá</Text>
-                            <TextInput style={[styles.textRight, styles.smallInput]} value={price} onChangeText={setPrice} editable={isEditing} keyboardType='numeric' />
-                        </View>
-                        {/* Giá món ăn */}
-                        <View style={styles.infContainer}>
-                            <Text style={styles.textLeft}>Giá giảm</Text>
-                            <TextInput style={[styles.textRight, styles.smallInput]} value={discountPrice} onChangeText={setDiscountPrice} editable={isEditing} keyboardType='numeric' />
-                        </View>
-                        {/* Category */}
-                        <View style={styles.infContainer}>
-                            <Text style={styles.textLeft}>Nhóm</Text>
-                            <TextInput style={[styles.textRight, styles.smallInput]} value={category} onChangeText={setCategory} editable={isEditing} />
+                            <TextInput style={[styles.textRight, styles.smallInput]} value={foodData.price.toString()} onChangeText={(value) => handleChange('price', value)} editable={isEditing} keyboardType='numeric' />
                         </View>
                         {/* Mô tả */}
                         <View style={styles.infContainer}>
                             <Text style={styles.textLeft}>Mô tả</Text>
-                            <TextInput style={[styles.textRight, styles.descriptionInput]} value={description} onChangeText={setDescription} editable={isEditing} multiline={true} />
+                            <TextInput style={[styles.textRight, styles.descriptionInput]} value={foodData.descriptions} onChangeText={(value) => handleChange('descriptions', value)} editable={isEditing} multiline={true} />
+                        </View>
+                        {/* Category */}
+                        <View style={styles.infContainer}>
+                            <Text style={styles.textLeft}>Nhóm</Text>
+                            <TextInput style={[styles.textRight, styles.smallInput]} value={foodData.categories} onChangeText={(value) => handleChange('categories', value)} editable={isEditing} />
                         </View>
 
                         {/* Topping */}
-                        <View style={styles.infContainer}>
-                            <Text style={styles.textLeft}>Options</Text>
-                        </View>
-                        {toppings.map((topping) => (
-                            <View key={topping.id} style={styles.toppingContainer}>
-                                <CheckBox
-                                    disabled={!isEditing}
-                                    value={topping.selected}
-                                    onValueChange={() => toggleTopping(topping.id)}
-                                />
-                                <TextInput style={styles.toppingName} value={topping.name}
-                                    onChangeText={(value) => updateTopping(topping.id, 'name', value)}
-                                    editable={isEditing} />
-                                <TextInput style={styles.toppingPrice} value={topping.price.toString()}
-                                    onChangeText={(value) => updateTopping(topping.id, 'price', value)}
-                                    editable={isEditing}
-                                    keyboardType="numeric" />
-                                <Text>đ</Text>
-                            </View>
-                        ))}
 
-                        {/* Thêm topping mới */}
-                        {newToppings.map((topping, index) => (
-                            <View key={topping.id} style={styles.toppingContainer}>
-                                <CheckBox
-                                    disabled={!isEditing}
-                                    value={topping.selected}
-                                    onValueChange={() => toggleTopping(topping.id)}
-                                />
-                                <TextInput
-                                    style={styles.toppingName}
-                                    placeholder="Tên topping"
-                                    value={topping.name}
-                                    ref={(input) => newToppingRefs.current[index] = input}  // Gán ref cho TextInput
-                                    editable={isEditing}
-                                    onChangeText={(value) => updateNewTopping(topping.id, 'name', value)}
-                                />
-                                <TextInput
-                                    style={styles.toppingPrice}
-                                    placeholder="Giá topping"
-                                    value={topping.price}
-                                    onChangeText={(value) => updateNewTopping(topping.id, 'price', value)}
-                                    editable={isEditing}
-                                    keyboardType="numeric"
-                                />
-                                <Text>đ</Text>
-                            </View>
-                        ))}
                         {/* Add Option Button */}
                         <TouchableOpacity onPress={() => { isEditing ? addNewTopping() : null }} style={styles.addButton}>
                             <Text style={[styles.addButtonText, { color: isEditing ? '#007bff' : '#666' }]}>+ Thêm lựa chọn</Text>
@@ -198,13 +93,12 @@ const EditFoodScreen = ({ route }) => {
                     </ScrollView>
                 </TouchableWithoutFeedback>
 
-                {/* Nút chỉnh sửa ở dưới cùng */}
                 <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
                     <Text style={styles.editButtonText}>
                         {isEditing ? 'Lưu' : 'Chỉnh sửa'}
                     </Text>
                 </TouchableOpacity>
-            </SafeAreaView>
+            </View>
         </KeyboardAvoidingView>
     )
 }
@@ -226,7 +120,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#F0F0F0',
         justifyContent: 'space-between',
         paddingHorizontal: 10,
-        paddingTop: 5,
+        padding: 10,
+        margin: 10
     },
     foodImage: {
         width: 120,
@@ -274,7 +169,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     editButton: {
-        margin: 10,
+        margin: 20,
         borderRadius: 10,
         padding: 10,
         backgroundColor: '#FF0000',
