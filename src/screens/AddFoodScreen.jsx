@@ -176,6 +176,7 @@ const AddFoodScreen = () => {
                             <CheckBox
                                 value={foodData.categories.includes(category.id)}
                                 onValueChange={() => toggleCategory(category.id)}
+                                style={styles.checkbox}
                             />
                             <Text>{category.name}</Text>
                         </View>
@@ -326,6 +327,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    checkbox: {
+        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
+        marginRight: 10,
+    }
 });
 
 export default AddFoodScreen;

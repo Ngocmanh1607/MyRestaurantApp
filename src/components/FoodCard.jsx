@@ -10,14 +10,12 @@ import Snackbar from 'react-native-snackbar';
 const FoodCard = ({ food }) => {
     const navigation = useNavigation()
     const [isEnabled, setIsEnabled] = useState(true);
-    console.log(food.image)
     const handleToggle = () => {
         setIsEnabled(previousState => !previousState);
     };
     const updateStatus = async (foodId) => {
         if (isEnabled) {
             const response = await publicProductApi(foodId)
-            console.log(response)
             if (response == true) {
                 Snackbar.show({ text: 'Tắt sản phẩm thành công', duration: Snackbar.LENGTH_SHORT });
                 handleToggle()

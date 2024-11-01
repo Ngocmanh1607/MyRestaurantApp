@@ -2,10 +2,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 
-const fetchFoodFromApi = async () => {
-    const response = await apiClient.get('/foods');
-    return response.data;
-};
 const createFoodInApi = async (newFood) => {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
@@ -72,13 +68,13 @@ const updateFoodInApi = async (foodData) => {
         descriptions: foodData.descriptions,
         price: foodData.price
     }
-    const toppingData = foodData.options.map(option => ({
+    const toppingData = foodData.toppings.map(option => ({
         topping_name: option.topping_name,
         price: option.price,
     }));
-    const response = await apiClient.put('/products',
+    const response = await apiClient.put(`/products/${foodData.id}`,
         {
-            categoriData: foodData.categories,
+            categoriId: foodData.categories,
             toppingData: toppingData,
             productData: productData
         },
@@ -145,4 +141,4 @@ const unPublicProductApi = async (foodId) => {
         return false
     }
 }
-export { fetchFoodFromApi, createFoodInApi, updateFoodInApi, getToppingFood, getCategoryFood, publicProductApi, unPublicProductApi }
+export { createFoodInApi, updateFoodInApi, getToppingFood, getCategoryFood, publicProductApi, unPublicProductApi }
