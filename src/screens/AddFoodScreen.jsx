@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar'
 import CheckBox from '@react-native-community/checkbox';
@@ -16,7 +16,7 @@ const AddFoodScreen = () => {
         image: null,
         options: [{ topping_name: '', price: '' }],
     });
-
+    const [isLoading, setIsLoading] = useState(false)
     const [userId, setUserId] = useState('')
     const [allCategories, setAllCategories] = useState([])
     const handleSelectImage = () => {
@@ -48,8 +48,14 @@ const AddFoodScreen = () => {
         fetchCategories();
     }, []);
     const uploadFirebase = async (name, imageUrl) => {
-        const foodImage = await uploadFoodImage(userId, name, imageUrl);
-        handleChange("image", foodImage)
+        try {
+            const foodImage = await uploadFoodImage(userId, name, imageUrl);
+            return foodImage;
+        } catch (error) {
+            console.error("Lỗi khi tải ảnh lên Firebase:", error);
+            Snackbar.show({ text: 'Lỗi khi tải ảnh lên. Vui lòng thử lại.', duration: Snackbar.LENGTH_SHORT });
+            return null;
+        }
     }
     const handleChange = (field, value) => {
         setFoodData({ ...foodData, [field]: value });
@@ -70,20 +76,27 @@ const AddFoodScreen = () => {
 
     const handleSave = async () => {
         if (validateInputs()) {
-            await uploadFirebase(foodData.name, foodData.image);
-            await createFoodInApi(foodData);
+            setIsLoading(true)
+            const uploadedImageUrl = await uploadFirebase(foodData.name, foodData.image);
+            if (uploadedImageUrl) {
+                const updatedFoodData = { ...foodData, image: uploadedImageUrl };
+                await createFoodInApi(updatedFoodData);
 
-            Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
+                Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
+                console.log(updatedFoodData);
 
-            console.log(foodData)
-            setFoodData({
-                name: '',
-                descriptions: '',
-                categories: [],
-                price: '',
-                image: null,
-                options: [{ name: '', price: '' }],
-            });
+                setFoodData({
+                    name: '',
+                    descriptions: '',
+                    categories: [],
+                    price: '',
+                    image: null,
+                    options: [{ topping_name: '', price: '' }],
+                });
+            } else {
+                Snackbar.show({ text: 'Không thể lưu món ăn do lỗi tải ảnh.', duration: Snackbar.LENGTH_SHORT });
+            }
+            setIsLoading(false)
         }
     };
 
@@ -119,79 +132,86 @@ const AddFoodScreen = () => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
-                {foodData.image ? (
-                    <Image source={{ uri: foodData.image }} style={styles.image} />
-                ) : (
-                    <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
-                )}
-            </TouchableOpacity>
-
-            <TextInput
-                style={styles.input}
-                placeholder="Tên món *"
-                value={foodData.name}
-                onChangeText={(value) => handleChange('name', value)}
-            />
-
-            <TextInput
-                style={styles.textArea}
-                placeholder="Mô tả món ăn *"
-                value={foodData.descriptions}
-                onChangeText={(value) => handleChange('descriptions', value)}
-                multiline
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="Giá gốc *"
-                value={foodData.price}
-                onChangeText={(value) => handleChange('price', value)}
-                keyboardType="numeric"
-            />
-
-            <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
-            {allCategories.map(category => (
-                <View key={category.id} style={styles.checkboxContainer}>
-                    <CheckBox
-                        value={foodData.categories.includes(category.id)}
-                        onValueChange={() => toggleCategory(category.id)}
-                    />
-                    <Text>{category.name}</Text>
+        <View style={{ flex: 1 }}>
+            {isLoading ? (
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color="#FF0000" />
                 </View>
-            ))}
+            ) : (
+                <ScrollView contentContainerStyle={styles.container}>
+                    <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+                        {foodData.image ? (
+                            <Image source={{ uri: foodData.image }} style={styles.image} />
+                        ) : (
+                            <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
+                        )}
+                    </TouchableOpacity>
 
-            <Text style={styles.sectionTitle}>Các lựa chọn khác</Text>
-            {foodData.options.map((option, index) => (
-                <View key={index} style={styles.optionContainer}>
                     <TextInput
-                        style={styles.optionName}
-                        placeholder="Tên lựa chọn"
-                        value={option.topping_name}
-                        onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
+                        style={styles.input}
+                        placeholder="Tên món *"
+                        value={foodData.name}
+                        onChangeText={(value) => handleChange('name', value)}
                     />
+
                     <TextInput
-                        style={styles.optionPrice}
-                        placeholder="Giá"
-                        value={option.price}
-                        onChangeText={(value) => handleOptionChange(index, 'price', value)}
+                        style={styles.textArea}
+                        placeholder="Mô tả món ăn *"
+                        value={foodData.descriptions}
+                        onChangeText={(value) => handleChange('descriptions', value)}
+                        multiline
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Giá gốc *"
+                        value={foodData.price}
+                        onChangeText={(value) => handleChange('price', value)}
                         keyboardType="numeric"
                     />
-                </View>
-            ))}
 
-            <TouchableOpacity onPress={addOption} style={styles.addButton}>
-                <Text style={styles.addButtonText}>+ Thêm lựa chọn</Text>
-            </TouchableOpacity>
+                    <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
+                    {allCategories.map(category => (
+                        <View key={category.id} style={styles.checkboxContainer}>
+                            <CheckBox
+                                value={foodData.categories.includes(category.id)}
+                                onValueChange={() => toggleCategory(category.id)}
+                            />
+                            <Text>{category.name}</Text>
+                        </View>
+                    ))}
 
-            <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
-                <Text style={styles.submitButtonText}>Lưu</Text>
-            </TouchableOpacity>
-        </ScrollView>
+                    <Text style={styles.sectionTitle}>Các lựa chọn khác</Text>
+                    {foodData.options.map((option, index) => (
+                        <View key={index} style={styles.optionContainer}>
+                            <TextInput
+                                style={styles.optionName}
+                                placeholder="Tên lựa chọn"
+                                value={option.topping_name}
+                                onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
+                            />
+                            <TextInput
+                                style={styles.optionPrice}
+                                placeholder="Giá"
+                                value={option.price}
+                                onChangeText={(value) => handleOptionChange(index, 'price', value)}
+                                keyboardType="numeric"
+                            />
+                        </View>
+                    ))}
+
+                    <TouchableOpacity onPress={addOption} style={styles.addButton}>
+                        <Text style={styles.addButtonText}>+ Thêm lựa chọn</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
+                        <Text style={styles.submitButtonText}>Lưu</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            )}
+        </View>
     );
-};
-
+}
 const styles = StyleSheet.create({
     container: {
         padding: 20,

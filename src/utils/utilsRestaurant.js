@@ -19,7 +19,7 @@ const selectImage = () => {
                 reject(new Error('Lỗi chọn ảnh'));
             } else {
                 const selectedImage = response.assets[0].uri;
-                resolve(selectedImage); // Trả về `uri` của ảnh đã chọn
+                resolve(selectedImage)
             }
         });
     });

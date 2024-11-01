@@ -43,11 +43,11 @@ const FoodManagementScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fafafa',
+        // backgroundColor: '#fafafa',
     },
     mainContainer: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        // backgroundColor: '#FFFFFF',
         paddingHorizontal: 15,
         marginVertical: 10
     },
