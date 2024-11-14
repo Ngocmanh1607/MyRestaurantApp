@@ -5,9 +5,11 @@ import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getInformationRes, updateRestaurantApi } from '../api/restaurantApi';
 import { selectImage, uploadImage } from '../utils/utilsRestaurant';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 const RestaurantProfileScreen = () => {
+    const navigation = useNavigation();
     const [restaurant, setRestaurant] = useState(
         {
             name: '',
@@ -24,6 +26,8 @@ const RestaurantProfileScreen = () => {
 
     const [imageChange, setImageChange] = useState(false);
     const [orginalImage, setOriginalImage] = useState('');
+    const route = useRoute();
+    const location = route.params?.location;
     //Lấy thông tin nhà hàng
     useEffect(() => {
         const fetchRestaurantInfo = async () => {
@@ -64,6 +68,12 @@ const RestaurantProfileScreen = () => {
 
         fetchUserId();
     }, []);
+    useEffect(() => {
+        if (location) {
+            setRestaurant({ ...restaurant, address: location.address })
+        }
+    }, [location]);
+    console.log(location)
     const handelSelectImage = async () => {
         if (isEditing) {
             try {
@@ -104,7 +114,7 @@ const RestaurantProfileScreen = () => {
                 opening_hours: updatedOpeningHours
             };
 
-            const response = await updateRestaurantApi(updatedData);
+            const response = await updateRestaurantApi(updatedData, location);
             if (response) {
                 Snackbar.show({
                     text: 'Thông tin nhà hàng đã được cập nhật!',
@@ -156,6 +166,11 @@ const RestaurantProfileScreen = () => {
         );
         setRestaurant({ ...restaurant, opening_hours: updatedHours });
     };
+    const handleUpdateAddress = () => {
+        navigation.navigate('Địa chỉ', {
+            targetScreen: 'Hồ Sơ'
+        });
+    }
     return (
         <View style={styles.container}>
             {loading ? (<View style={styles.loadingContainer}>
@@ -186,12 +201,13 @@ const RestaurantProfileScreen = () => {
                             {/* Food address */}
                             <View style={styles.profileInfo}>
                                 <Text style={styles.label}>Địa chỉ:</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={restaurant.address}
-                                    editable={isEditing}
-                                    onChangeText={(text) => setRestaurant({ ...restaurant, address: text })}
-                                />
+                                <TouchableOpacity style={styles.addressContainer} onPress={() => {
+                                    if (isEditing)
+                                        handleUpdateAddress()
+                                }}>
+                                    <Text style={styles.input}>
+                                        {restaurant.address}</Text>
+                                </TouchableOpacity>
                             </View>
                             {/* Food Phone */}
                             <View style={styles.profileInfo}>
@@ -349,4 +365,8 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 8,
     },
+    addressContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    }
 });

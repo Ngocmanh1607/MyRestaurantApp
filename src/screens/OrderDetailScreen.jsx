@@ -2,7 +2,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'rea
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useNavigation } from '@react-navigation/native';
-const OrderDetailScreen = () => {
+const OrderDetailScreen = ({ route }) => {
+    const { item } = route.params;
+    const items = item.listCartItem
+    console.log('item', items)
     const navigation = useNavigation()
     // Mock data for the order details
     const orderDetails = {
@@ -63,15 +66,17 @@ const OrderDetailScreen = () => {
             </View>
 
             {/* Ordered Items */}
-            {orderDetails.items.map((item, index) => (
+            {items.map((item, index) => (
                 <View key={index} style={styles.orderItemContainer}>
                     <View style={styles.orderItemDetails}>
-                        {/* <Image source={require('../Images/pizza1.jpg')} style={styles.orderItemImage} /> */}
+                        <Image source={{ uri: item.image }} style={styles.orderItemImage} />
                         <View style={styles.orderItemText}>
                             <Text style={styles.orderItemName}>{item.name}</Text>
-                            {item.options.map((option, optIndex) => (
-                                <Text key={optIndex} style={styles.orderItemOption}>{option}</Text>
-                            ))}
+                            {
+                                item.toppings.length > 0 && item.toppings.map((id, topping_name) => (
+                                    <Text key={id} style={styles.orderItemOption}>{topping_name}</Text>
+                                ))
+                            }
                         </View>
                     </View>
                     <View style={styles.orderInfPay}>
@@ -83,8 +88,8 @@ const OrderDetailScreen = () => {
 
             {/* Payment Information */}
             <View style={styles.paymentInfoContainer}>
-                {/* <Text style={styles.paymentMethod}>Trả qua {orderDetails.paymentMethod}</Text>
-                <Text style={styles.orderTotal}>{orderDetails.total}</Text> */}
+                <Text style={styles.paymentMethod}>Trả qua {orderDetails.paymentMethod}</Text>
+                <Text style={styles.orderTotal}>{orderDetails.total}</Text>
                 <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Chi tiết thanh toán</Text>
                 {/* Tạm tính */}
                 <View style={[styles.paymentContainer, { marginTop: 10 }]}>
@@ -197,9 +202,9 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     orderTotal: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 5,
+        fontSize: 16,
+        fontWeight: '500',
+        marginTop: 10,
     },
     orderIdContainer: {
         backgroundColor: '#fff',

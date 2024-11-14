@@ -5,10 +5,12 @@ import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { updateRestaurantApi } from '../api/restaurantApi';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 
 const RegisterInf = () => {
+    const route = useRoute();
+    const location = route.params?.location;
     const navigation = useNavigation()
     const [restaurant, setRestaurant] = useState({
         name: '',
@@ -18,7 +20,11 @@ const RegisterInf = () => {
         phone_number: '',
         description: '',
     });
-
+    useEffect(() => {
+        if (location) {
+            setRestaurant({ ...restaurant, address: location.address })
+        }
+    }, [location]);
     const [userId, setUserId] = useState(null);
     //Lấy thông tin userID
     useEffect(() => {
@@ -99,7 +105,11 @@ const RegisterInf = () => {
         );
         setWorkingHours(updatedHours);
     };
-
+    const handleUpdateAddress = () => {
+        navigation.navigate('Địa chỉ', {
+            targetScreen: 'Đăng kí thông tin'
+        });
+    }
     return (
         <View style={styles.container}>
             <ScrollView>
@@ -120,13 +130,13 @@ const RegisterInf = () => {
                         />
                     </View>
 
+                    {/* Food address */}
                     <View style={styles.profileInfo}>
                         <Text style={styles.label}>Địa chỉ:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={restaurant.address}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, address: text })}
-                        />
+                        <TouchableOpacity style={styles.addressContainer} onPress={() => handleUpdateAddress()}>
+                            <Text style={styles.input}>
+                                {restaurant.address}</Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.profileInfo}>
@@ -263,5 +273,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         borderRadius: 8,
-    },
+    }, addressContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    }
 });

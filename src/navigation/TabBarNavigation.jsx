@@ -7,7 +7,6 @@ import OrderManagementScreen from '../screens/OrderManagementScreen';
 import AddFoodScreen from '../screens/AddFoodScreen';
 import RestaurantProfileScreen from '../screens/RestaurantScreen';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 

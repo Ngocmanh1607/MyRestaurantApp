@@ -8,6 +8,7 @@ import AuthScreen from '../screens/AuthScreen';
 import RegisterInf from '../screens/RegisterInf';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import MapScreen from '../screens/MapScreen';
 
 const Stack = createStackNavigator();
 
@@ -67,6 +68,11 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Chỉnh sửa món ăn"
                 component={EditFoodScreen}
+                options={{ headerShown: true }}
+            />
+            <Stack.Screen
+                name="Địa chỉ"
+                component={MapScreen}
                 options={{ headerShown: true }}
             />
             <Stack.Screen

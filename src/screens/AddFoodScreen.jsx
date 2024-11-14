@@ -113,14 +113,14 @@ const AddFoodScreen = () => {
             Snackbar.show({ text: 'Vui lòng nhập giá hợp lệ.', duration: Snackbar.LENGTH_SHORT });
             return false;
         }
-        if (!foodData.descriptions.trim()) {
-            Snackbar.show({ text: 'Vui lòng nhập mô tả món ăn.', duration: Snackbar.LENGTH_SHORT });
-            return false;
-        }
-        if (foodData.categories.length === 0) {
-            Snackbar.show({ text: 'Vui lòng chọn ít nhất một danh mục.', duration: Snackbar.LENGTH_SHORT });
-            return false;
-        }
+        // if (!foodData.descriptions.trim()) {
+        //     Snackbar.show({ text: 'Vui lòng nhập mô tả món ăn.', duration: Snackbar.LENGTH_SHORT });
+        //     return false;
+        // }
+        // if (foodData.categories.length === 0) {
+        //     Snackbar.show({ text: 'Vui lòng chọn ít nhất một danh mục.', duration: Snackbar.LENGTH_SHORT });
+        //     return false;
+        // }
         return true;
     };
 

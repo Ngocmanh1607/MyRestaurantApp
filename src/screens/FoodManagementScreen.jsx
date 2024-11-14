@@ -29,6 +29,7 @@ const FoodManagementScreen = ({ navigation }) => {
             fetchFoodRes();
         }, [])
     );
+    console.log('data : ', foodItems)
     const filterFoodItems = foodItems.filter(food => food.name.toLowerCase().includes(searchQuery.toLowerCase()))
     return (
         <ScrollView style={styles.mainContainer}>

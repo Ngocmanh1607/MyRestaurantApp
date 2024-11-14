@@ -1,26 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, Modal, ActivityIndicator } from 'react-native';
 import { FlatList, Switch } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const ordersNew = [
-    { id: '1', name: 'Tung Thien', items: 5, address: 'Viettel Complex Building, 285 Cách Mạng Tháng Tám, P.12, Q.10, TP. HCM', time: '0:59' },
-    { id: '2', name: 'Thu Hoang', items: 1, address: 'Viettel Complex Building, 285 Cách Mạng Tháng Tám, P.12, Q.10, TP. HCM', time: '0:59' },
-];
-
-const ordersInProgress = [
-    { id: '3', name: 'Khanh Dinh', items: 3, address: 'Viettel Complex Building, 285 Cách Mạng Tháng Tám, P.12, Q.10, TP. HCM', time: '0:45' },
-];
-
-const ordersCompleted = [
-    { id: '4', name: 'Lam Anh', items: 3, address: 'Viettel Complex Building, 285 Cách Mạng Tháng Tám, P.12, Q.10, TP. HCM', time: '0:00' },
-];
+import { changeOrderStatus, findDriver, getOrderRes } from '../api/restaurantApi';
+import { formatTime } from '../utils/utilsRestaurant';
+import { useDispatch } from 'react-redux';
 
 const OrderManagementScreen = () => {
-    const navigation = useNavigation()
-    const [accept, setAccept] = useState()
-    const [selectedTab, setSelectedTab] = useState('new'); // Tab đang được chọn
+    const [isloading, setIsLoading] = useState(false);
+    const [ordersNew, setOrdersNew] = useState([]);
+    const [ordersInProgress, setOrderInProgress] = useState([]);
+    const [ordersCompleted, setOrderCompleted] = useState([]);
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const [accept, setAccept] = useState();
+    const [selectedTab, setSelectedTab] = useState('new');
 
     //hàm chọn tab
     const selectTab = (tab) => {
@@ -38,6 +33,51 @@ const OrderManagementScreen = () => {
             default:
                 return ordersNew;
         }
+    }
+    useEffect(() => {
+        const fetchOrder = async () => {
+            const response = await getOrderRes();
+            // / Phân loại các đơn hàng dựa trên trạng thái
+            const newOrders = response.filter(order => order.order_status === null);
+            const inProgressOrders = response.filter(order => order.order_status === "ORDER_RECEIVED");
+            const completedOrders = response.filter(order => order.order_status === "ORDER_COMPLETED");
+
+            // Cập nhật state với danh sách đơn hàng tương ứng
+            setOrdersNew(newOrders);
+            setOrderInProgress(inProgressOrders);
+            setOrderCompleted(completedOrders);
+            // dispatch(setOrdersNew(response));
+        }
+        fetchOrder();
+    }, [])
+    const handleAcceptOrder = (id, status) => {
+        setIsLoading(true)
+        const fetchChangeStatus = async () => {
+            try {
+                await changeOrderStatus(id, status);
+                const response = await findDriver(id);
+                console.log(response)
+                setOrdersNew((prevOrders) => prevOrders.filter((order) => order.id !== id));
+                setOrderInProgress((prevOrders) =>
+                    status === 'ORDER_RECEIVED'
+                        ? [...prevOrders, { ...prevOrders.find(order => order.id === id), order_status: status }]
+                        : prevOrders
+                );
+                setOrderCompleted((prevOrders) =>
+                    status === 'ORDER_COMPLETED'
+                        ? [...prevOrders, { ...prevOrders.find(order => order.id === id), order_status: status }]
+                        : prevOrders
+                );
+
+            } catch (error) {
+                console.error("Failed to update order status:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchChangeStatus();
+        setIsLoading(false);
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -69,18 +109,47 @@ const OrderManagementScreen = () => {
             <FlatList data={getOrderData()}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.orderItem} onPress={() => navigation.navigate('Chi tiết đơn hàng')}>
+                    <TouchableOpacity style={styles.orderItem} onPress={() => navigation.navigate('Chi tiết đơn hàng', { item: item })}>
                         <View style={styles.orderInfo}>
-                            <Text style={styles.orderId}>Đơn hàng số {item.id}</Text>
-                            <Text style={styles.orderName}>{item.name}</Text>
-                            <Text style={styles.orderItems}>{item.items} món</Text>
-                            <Text style={styles.orderAddress}>{item.address}</Text>
+                            <Text style={styles.orderId}>Đơn hàng số {item.id}-{formatTime(item.createdAt)}</Text>
+                            <Text style={styles.orderName}>{item.receiver_name}</Text>
+                            <Text style={styles.orderItems}>{item.listCartItem.length} món</Text>
+                            <Text style={styles.orderAddress}>{item.address_receiver}</Text>
                         </View>
-                        <View style={styles.orderTimeContainer}>
-                            <Text style={styles.orderTime}>{item.time}</Text>
-                        </View>
+
+                        {item.order_status == null && (
+                            <View style={styles.orderBtnContainer}>
+                                <TouchableOpacity style={styles.confirmOrder} onPress={() => handleAcceptOrder(item.id, 'ORDER_RECEIVED')}>
+                                    <Text style={styles.textOrderPro}>Nhận đơn</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.cancelOrder} onPress={() => handleAcceptOrder(item.id, 'ORDER_CANCELED')}>
+                                    <Text>Huỷ đơn</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {
+                            item.order_status == "ORDER_RECEIVED" && (
+                                <TouchableOpacity>
+                                    <Text style={styles.textComplete}>Hoàn thành</Text>
+                                </TouchableOpacity>
+                            )
+                        }
                     </TouchableOpacity>
                 )} />
+            {/* Hiển thị loading overlay */}
+            {isloading && (
+                <Modal
+                    transparent={true}
+                    animationType="fade"
+                    visible={isloading}
+                    onRequestClose={() => { }}
+                >
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="#00ff00" />
+                        <Text style={styles.loadingText}>Đang tải...</Text>
+                    </View>
+                </Modal>
+            )}
         </SafeAreaView>
     );
 };
@@ -165,16 +234,35 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#A0A0A0',
     },
-    orderTimeContainer: {
+    orderBtnContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 10,
     },
-    orderTime: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#FF0000',
+    confirmOrder: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#00FF33',
+        padding: 8,
+        borderRadius: 10,
+        marginBottom: 10
     },
+    cancelOrder: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        backgroundColor: '#FF3333',
+        padding: 8,
+        borderRadius: 10,
+        marginBottom: 5
+    },
+    textOrderPro: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    textComplete: {
+        fontWeight: '500',
+        color: '#00FF00'
+    }
 });
 
 export default OrderManagementScreen;

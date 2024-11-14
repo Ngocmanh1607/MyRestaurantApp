@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
-
+const apiKey = 'd3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de';
 const signupApi = async (email, password) => {
     const response = await apiClient.post(
         "/user/signup",
@@ -10,7 +10,7 @@ const signupApi = async (email, password) => {
         },
         {
             headers: {
-                "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de"
+                "x-api-key": apiKey
             }
         }
     );
@@ -51,7 +51,7 @@ const loginApi = async (email, password) => {
             },
             {
                 headers: {
-                    "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                    "x-api-key": apiKey,
                 }
             }
         );
@@ -86,7 +86,7 @@ const loginApi = async (email, password) => {
     }
 };
 
-const updateRestaurantApi = async (restaurant) => {
+const updateRestaurantApi = async (restaurant, location) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
@@ -97,11 +97,12 @@ const updateRestaurantApi = async (restaurant) => {
         const response = await apiClient.put(
             '/restaurant',
             {
-                restaurant
+                restaurant,
+                location
             },
             {
                 headers: {
-                    "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                    "x-api-key": apiKey,
                     "authorization": accessToken,
                     'x-client-id': userId,
                 }
@@ -133,7 +134,7 @@ const getInformationRes = async () => {
             '/restaurant/detail',
             {
                 headers: {
-                    "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                    "x-api-key": apiKey,
                     "authorization": accessToken,
                     'x-client-id': userId,
                 }
@@ -157,7 +158,7 @@ const getCategories = async () => {
         const response = await apiClient.get('/categories',
             {
                 headers: {
-                    "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                    "x-api-key": apiKey,
                 }
             })
         console.log(response.data.metadata)
@@ -178,7 +179,7 @@ const getFoodRes = async () => {
             '/products/restaurantId',
             {
                 headers: {
-                    "x-api-key": "d3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de",
+                    "x-api-key": apiKey,
                     "authorization": accessToken,
                     'x-client-id': userId,
                 }
@@ -197,4 +198,88 @@ const getFoodRes = async () => {
         throw error;
     }
 }
-export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes };
+const getOrderRes = async () => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.get(
+            '/restaurant/order',
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
+
+        const { metadata } = response.data;
+        console.log(metadata)
+        return metadata;
+    } catch (error) {
+        console.error("Get order restaurant failed:", error);
+        throw error;
+    }
+}
+const changeOrderStatus = async (orderId, status) => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.post(
+            '/restaurant/order/status',
+            {
+                orderId: orderId,
+                status: status,
+            },
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
+
+        const { metadata } = response.data;
+        console.log(metadata)
+        return metadata;
+    } catch (error) {
+        console.error("Get order restaurant failed:", error);
+        throw error;
+    }
+}
+const findDriver = async (orderId) => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.get(
+            `restaurant/${orderId}/driver`,
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
+
+        const { metadata } = response.data;
+        console.log(metadata)
+        return metadata;
+    } catch (error) {
+        console.error("Get order restaurant failed:", error);
+        throw error;
+    }
+}
+
+export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, getOrderRes, changeOrderStatus, findDriver };
