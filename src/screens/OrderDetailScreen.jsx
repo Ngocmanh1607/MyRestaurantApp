@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 const OrderDetailScreen = ({ route }) => {
     const { item } = route.params;
     const items = item.listCartItem
-    console.log('item', items)
+    console.log('Topping', items)
     const navigation = useNavigation()
     // Mock data for the order details
     const orderDetails = {

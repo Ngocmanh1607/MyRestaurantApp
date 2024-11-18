@@ -54,7 +54,7 @@ const SignupScreen = () => {
             setLoading(true);
             try {
                 const response = await signupApi(email, password); // Gọi API đăng ký
-                // console.log('Signup success:', response);
+                console.log('Signup success:', response);
                 navigation.navigate('Đăng kí thông tin');
             } catch (error) {
                 console.error('Signup failed:', error);

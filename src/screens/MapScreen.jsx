@@ -10,7 +10,6 @@ import { useRoute } from '@react-navigation/native';
 import { setDefaultLocation } from '../store/defaultLocationSlice';
 const MapScreen = () => {
     const navigation = useNavigation();
-    const [location, setLocation] = useState();
     const [search, setSearch] = useState('');
     const [results, setResults] = useState([]);
     const route = useRoute();

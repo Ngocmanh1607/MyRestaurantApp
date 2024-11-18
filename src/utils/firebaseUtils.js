@@ -1,20 +1,18 @@
-
-import { storage } from './firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import storage from '@react-native-firebase/storage';
 
 const uploadRestaurantImage = async (userId, imageUri) => {
     try {
-        const response = await fetch(imageUri); // Lấy ảnh từ URI
-        const blob = await response.blob(); // Chuyển đổi thành blob
+        const response = await fetch(imageUri); // Fetch the image from URI
+        const blob = await response.blob(); // Convert it to a blob
 
-        // Tạo tham chiếu đến nơi lưu trữ ảnh
-        const storageRef = ref(storage, `restaurants/${userId}/restaurant_image.jpg`);
+        // Create a reference to where the image will be stored
+        const storageRef = storage().ref(`restaurants/${userId}/restaurant_image.jpg`);
 
-        // Upload ảnh
-        await uploadBytes(storageRef, blob);
+        // Upload the image
+        await storageRef.put(blob);
 
-        // Lấy URL của ảnh sau khi upload
-        const downloadURL = await getDownloadURL(storageRef);
+        // Get the download URL after upload
+        const downloadURL = await storageRef.getDownloadURL();
 
         console.log('Image URL:', downloadURL);
         return downloadURL;
@@ -26,23 +24,24 @@ const uploadRestaurantImage = async (userId, imageUri) => {
 
 const uploadFoodImage = async (restaurantId, foodName, imageUri) => {
     try {
-        const response = await fetch(imageUri); // Lấy ảnh từ URI
-        const blob = await response.blob(); // Chuyển đổi thành blob
+        const response = await fetch(imageUri); // Fetch the image from URI
+        const blob = await response.blob(); // Convert it to a blob
 
-        const storageRef = ref(storage, `restaurants/${restaurantId}/food-images/${foodName}.jpg`);
-        // Upload ảnh
-        await uploadBytes(storageRef, blob);
+        // Create a reference to where the food image will be stored
+        const storageRef = storage().ref(`restaurants/${restaurantId}/food-images/${foodName}.jpg`);
 
-        // Lấy URL của ảnh sau khi upload
-        const downloadURL = await getDownloadURL(storageRef);
+        // Upload the image
+        await storageRef.put(blob);
+
+        // Get the download URL after upload
+        const downloadURL = await storageRef.getDownloadURL();
 
         console.log('Image URL:', downloadURL);
         return downloadURL;
     } catch (error) {
-        console.log('Lỗi upload ảnh món ăn:', error);
+        console.error('Error uploading food image:', error);
         throw error;
     }
 };
 
-
-export { uploadRestaurantImage, uploadFoodImage }
+export { uploadRestaurantImage, uploadFoodImage };

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
-const apiKey = 'd3e004aa8a4f5f2f2f0df447c397ba8024c27407563ca7809e50520f01f670b7206d42b17b6b01afc124a0f3d1d93fc9e033df72f67aba2f89da961104cb06de';
+const apiKey = '123';
 const signupApi = async (email, password) => {
     const response = await apiClient.post(
         "/user/signup",
@@ -86,7 +86,7 @@ const loginApi = async (email, password) => {
     }
 };
 
-const updateRestaurantApi = async (restaurant, location) => {
+const updateRestaurantApi = async (restaurant) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
@@ -98,7 +98,6 @@ const updateRestaurantApi = async (restaurant, location) => {
             '/restaurant',
             {
                 restaurant,
-                location
             },
             {
                 headers: {
@@ -129,7 +128,6 @@ const getInformationRes = async () => {
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
-        //console.log(restaurant)
         const response = await apiClient.get(
             '/restaurant/detail',
             {
@@ -140,13 +138,12 @@ const getInformationRes = async () => {
                 }
             }
         );
-
         const { message, metadata } = response.data;
+        await AsyncStorage.setItem('restaurantId', metadata.id.toString());
         if (!message) {
             console.error('Error message:', message);
             return;
         }
-
         return metadata;
     } catch (error) {
         console.error("Get infomation restaurant failed:", error);
@@ -272,6 +269,30 @@ const findDriver = async (orderId) => {
                 }
             }
         );
+        const { metadata } = response.data;
+        return metadata;
+    } catch (error) {
+        console.error("Get order restaurant failed:", error);
+        throw error;
+    }
+}
+const rejectOrder = async (orderId, reason) => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.get(
+            `/restaurant/reject/${orderId}/${reason}`,
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
 
         const { metadata } = response.data;
         console.log(metadata)
@@ -282,4 +303,4 @@ const findDriver = async (orderId) => {
     }
 }
 
-export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, getOrderRes, changeOrderStatus, findDriver };
+export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, getOrderRes, changeOrderStatus, findDriver, rejectOrder };

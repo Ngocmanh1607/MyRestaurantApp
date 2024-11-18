@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,7 +11,8 @@ import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 const RegisterInf = () => {
     const route = useRoute();
     const location = route.params?.location;
-    const navigation = useNavigation()
+    const navigation = useNavigation();
+    const [isLoading, setIsLoading] = useState(false);
     const [restaurant, setRestaurant] = useState({
         name: '',
         image: '',
@@ -19,10 +20,12 @@ const RegisterInf = () => {
         opening_hours: '',
         phone_number: '',
         description: '',
+        address_x: '',
+        address_y: '',
     });
     useEffect(() => {
         if (location) {
-            setRestaurant({ ...restaurant, address: location.address })
+            setRestaurant({ ...restaurant, address: location.address, address_x: location.latitude, address_y: location.longitude })
         }
     }, [location]);
     const [userId, setUserId] = useState(null);
@@ -47,22 +50,13 @@ const RegisterInf = () => {
     ]);
 
     const handelSelectImage = async () => {
-        try {
-            const uri = await selectImage();
-            setRestaurant({ ...restaurant, image: uri })
-        }
-        catch (error) {
-            console.error('Lỗi chọn ảnh:', error);
-        }
+        const uri = await selectImage();
+        setRestaurant({ ...restaurant, image: uri })
     };
     const handelUploadImage = async () => {
-        try {
-            const UrlImage = await uploadImage(userId, restaurant.image)
-            if (UrlImage) { // Kiểm tra nếu có kết quả URL
-                return UrlImage
-            }
-        } catch (error) {
-
+        const UrlImage = await uploadImage(userId, restaurant.image)
+        if (UrlImage) { // Kiểm tra nếu có kết quả URL
+            return UrlImage
         }
     };
 
@@ -112,78 +106,86 @@ const RegisterInf = () => {
     }
     return (
         <View style={styles.container}>
-            <ScrollView>
-                <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={handelSelectImage} style={styles.imagePicker}>
-                        {restaurant.image ? (
-                            <Image source={{ uri: restaurant.image }} style={styles.image} />
-                        ) : (
-                            <Text style={styles.imagePlaceholderText}>Chọn ảnh nhà hàng</Text>
-                        )}
-                    </TouchableOpacity>
-                    <View style={styles.profileInfo}>
-                        <Text style={styles.label}>Tên nhà hàng:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={restaurant.name}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, name: text })}
-                        />
-                    </View>
+            {isLoading ?
+                (<View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#FF0000" />
+                </View>) : (
+                    <>
+                        <ScrollView>
+                            <View style={styles.profileSection}>
+                                <TouchableOpacity onPress={handelSelectImage} style={styles.imagePicker}>
+                                    {restaurant.image ? (
+                                        <Image source={{ uri: restaurant.image }} style={styles.image} />
+                                    ) : (
+                                        <Text style={styles.imagePlaceholderText}>Chọn ảnh nhà hàng</Text>
+                                    )}
+                                </TouchableOpacity>
+                                <View style={styles.profileInfo}>
+                                    <Text style={styles.label}>Tên nhà hàng:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={restaurant.name}
+                                        onChangeText={(text) => setRestaurant({ ...restaurant, name: text })}
+                                    />
+                                </View>
 
-                    {/* Food address */}
-                    <View style={styles.profileInfo}>
-                        <Text style={styles.label}>Địa chỉ:</Text>
-                        <TouchableOpacity style={styles.addressContainer} onPress={() => handleUpdateAddress()}>
-                            <Text style={styles.input}>
-                                {restaurant.address}</Text>
-                        </TouchableOpacity>
-                    </View>
+                                {/* Food address */}
+                                <View style={styles.profileInfo}>
+                                    <Text style={styles.label}>Địa chỉ:</Text>
+                                    <TouchableOpacity style={styles.addressContainer} onPress={() => handleUpdateAddress()}>
+                                        <Text style={styles.input}>
+                                            {restaurant.address}</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                    <View style={styles.profileInfo}>
-                        <Text style={styles.label}>Số điện thoại:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={restaurant.phone_number}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, phone_number: text })}
-                        />
-                    </View>
+                                <View style={styles.profileInfo}>
+                                    <Text style={styles.label}>Số điện thoại:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={restaurant.phone_number}
+                                        onChangeText={(text) => setRestaurant({ ...restaurant, phone_number: text })}
+                                    />
+                                </View>
 
-                    <View style={styles.profileInfo}>
-                        <Text style={styles.label}>Mô tả:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={restaurant.description}
-                            onChangeText={(text) => setRestaurant({ ...restaurant, description: text })}
-                            multiline
-                        />
-                    </View>
+                                <View style={styles.profileInfo}>
+                                    <Text style={styles.label}>Mô tả:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={restaurant.description}
+                                        onChangeText={(text) => setRestaurant({ ...restaurant, description: text })}
+                                        multiline
+                                    />
+                                </View>
 
-                    <View style={styles.workingHoursSection}>
-                        <Text style={styles.sectionTitle}>Giờ hoạt động</Text>
-                        {workingHours.map((item) => (
-                            <View key={item.day} style={styles.workingHoursRow}>
-                                <Text style={styles.workingHoursDay}>{item.day}:</Text>
-                                <TextInput
-                                    style={styles.workingHoursInput}
-                                    value={item.open}
-                                    onChangeText={(value) => updateWorkingHours(item.day, 'open', value)}
-                                    keyboardType="numeric"
-                                />
-                                <Text style={styles.workingHoursText}> - </Text>
-                                <TextInput
-                                    style={styles.workingHoursInput}
-                                    value={item.close}
-                                    onChangeText={(value) => updateWorkingHours(item.day, 'close', value)}
-                                    keyboardType="numeric"
-                                />
+                                <View style={styles.workingHoursSection}>
+                                    <Text style={styles.sectionTitle}>Giờ hoạt động</Text>
+                                    {workingHours.map((item) => (
+                                        <View key={item.day} style={styles.workingHoursRow}>
+                                            <Text style={styles.workingHoursDay}>{item.day}:</Text>
+                                            <TextInput
+                                                style={styles.workingHoursInput}
+                                                value={item.open}
+                                                onChangeText={(value) => updateWorkingHours(item.day, 'open', value)}
+                                                keyboardType="numeric"
+                                            />
+                                            <Text style={styles.workingHoursText}> - </Text>
+                                            <TextInput
+                                                style={styles.workingHoursInput}
+                                                value={item.close}
+                                                onChangeText={(value) => updateWorkingHours(item.day, 'close', value)}
+                                                keyboardType="numeric"
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
                             </View>
-                        ))}
-                    </View>
-                </View>
-            </ScrollView>
-            <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
-                <Text style={styles.editButtonText}>Lưu</Text>
-            </TouchableOpacity>
+                        </ScrollView>
+                        <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+                            <Text style={styles.editButtonText}>Lưu</Text>
+                        </TouchableOpacity>
+                    </>
+                )
+            }
         </View>
     );
 };
@@ -276,5 +278,9 @@ const styles = StyleSheet.create({
     }, addressContainer: {
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+    }, loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });

@@ -18,6 +18,8 @@ const RestaurantProfileScreen = () => {
             opening_hours: [],
             phone_number: '',
             description: '',
+            address_x: '',
+            address_y: '',
         }
     );
     const [loading, setLoading] = useState(false)
@@ -70,7 +72,7 @@ const RestaurantProfileScreen = () => {
     }, []);
     useEffect(() => {
         if (location) {
-            setRestaurant({ ...restaurant, address: location.address })
+            setRestaurant({ ...restaurant, address: location.address, address_x: location.latitude, address_y: location.longitude })
         }
     }, [location]);
     console.log(location)
