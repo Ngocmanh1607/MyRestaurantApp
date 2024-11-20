@@ -1,44 +1,47 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
+import fetchFcmToken from "../utils/fcmToken";
 const apiKey = '123';
 const signupApi = async (email, password) => {
-    const response = await apiClient.post(
-        "/user/signup",
-        {
-            email: email,
-            password: password
-        },
-        {
-            headers: {
-                "x-api-key": apiKey
+    try {
+        const fcmToken = await fetchFcmToken();
+        const response = await apiClient.post(
+            "/user/signup",
+            { email, password, fcmToken, role: "seller" },
+            {
+                headers: {
+                    "x-api-key": apiKey
+                }
             }
+        );
+
+        const { message, metadata } = response.data;
+        if (!message) {
+            console.error('Error message:', message);
+            return;
         }
-    );
 
-    const { message, metadata } = response.data;
-    if (!message) {
-        console.error('Error message:', message);
-        return;
+        const { accessToken, refreshToken } = metadata.tokens;
+        const { email: userEmail, id: userId } = metadata.user;
+
+        console.log('Data stored successfully:', {
+            accessToken,
+            refreshToken,
+            userEmail,
+            userId
+        });
+
+        await AsyncStorage.multiSet([
+            ['accessToken', accessToken],
+            ['refreshToken', refreshToken],
+            ['userEmail', userEmail],
+            ['userId', userId.toString()]
+        ]);
+
+        return response.data.metadata;
+    } catch (error) {
+
     }
-
-    const { accessToken, refreshToken } = metadata.tokens;
-    const { email: userEmail, id: userId } = metadata.user;
-
-    console.log('Data stored successfully:', {
-        accessToken,
-        refreshToken,
-        userEmail,
-        userId
-    });
-
-    await AsyncStorage.multiSet([
-        ['accessToken', accessToken],
-        ['refreshToken', refreshToken],
-        ['userEmail', userEmail],
-        ['userId', userId.toString()]
-    ]);
-
-    return response.data.metadata;
 };
 
 const loginApi = async (email, password) => {

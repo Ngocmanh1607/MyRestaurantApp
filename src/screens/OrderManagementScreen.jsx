@@ -40,15 +40,21 @@ const OrderManagementScreen = () => {
         setSelectedTab(tab);
     }
     useEffect(() => {
-        const fetchOrders = (orders) => {
-            const newOrders = orders.filter(order => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID');
-            const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'ORDER_RECEIVED' || order.order_status === 'DELIVERING');
-            const completedOrders = orders.filter(order => order.order_status === 'ORDER_CONFIRMED' || order.order_status === 'ORDER_CANCELED');
+        const fetchResId = async () => {
+            await getInformationRes();
+        }
+        fetchResId();
+    }, [])
+    const fetchOrders = (orders) => {
+        const newOrders = orders.filter(order => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID');
+        const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'ORDER_RECEIVED' || order.order_status === 'DELIVERING');
+        const completedOrders = orders.filter(order => order.order_status === 'ORDER_CONFIRMED' || order.order_status === 'ORDER_CANCELED');
 
-            setOrdersNew(newOrders);
-            setOrderInProgress(inProgressOrders);
-            setOrderCompleted(completedOrders);
-        };
+        setOrdersNew(newOrders);
+        setOrderInProgress(inProgressOrders);
+        setOrderCompleted(completedOrders);
+    };
+    useEffect(() => {
         const fetchInfRes = async () => {
             await getInformationRes();
         };
@@ -58,6 +64,7 @@ const OrderManagementScreen = () => {
         let socket;
         const initializeSocket = async () => {
             const storedRestaurantId = await AsyncStorage.getItem('restaurantId');
+            console.log(storedRestaurantId)
             if (!storedRestaurantId) {
                 console.error("Không tìm thấy restaurantId trong AsyncStorage");
                 return;
@@ -131,6 +138,7 @@ const OrderManagementScreen = () => {
             setIsLoading(false);
         }
     };
+    console.log(ordersNew)
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>

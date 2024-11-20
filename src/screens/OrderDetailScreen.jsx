@@ -2,10 +2,11 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'rea
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useNavigation } from '@react-navigation/native';
+import formatPrice from '../utils/formatPrice';
 const OrderDetailScreen = ({ route }) => {
     const { item } = route.params;
     const items = item.listCartItem
-    console.log('Topping', items)
+    console.log('Topping', item)
     const navigation = useNavigation()
     // Mock data for the order details
     const orderDetails = {
@@ -49,8 +50,8 @@ const OrderDetailScreen = ({ route }) => {
         <ScrollView style={styles.container}>
             {/* Order ID */}
             <View style={styles.orderIdContainer}>
-                <Text style={styles.orderId}>Mã đơn: {orderDetails.orderId}</Text>
-                <Text style={styles.orderTime}>{orderDetails.orderTime}</Text>
+                <Text style={styles.orderId}>Mã đơn: {item.id}</Text>
+                <Text style={styles.orderTime}>{item.order_date}</Text>
             </View>
             {/* Driver Information */}
             <View style={styles.driverInfoContainer}>
@@ -73,38 +74,47 @@ const OrderDetailScreen = ({ route }) => {
                         <View style={styles.orderItemText}>
                             <Text style={styles.orderItemName}>{item.name}</Text>
                             {
-                                item.toppings.length > 0 && item.toppings.map((id, topping_name) => (
-                                    <Text key={id} style={styles.orderItemOption}>{topping_name}</Text>
+                                item.toppings && item.toppings.length > 0 &&
+                                item.toppings.map((topping, toppingIndex) => (
+                                    <Text key={toppingIndex} style={styles.orderItemOption}>
+                                        {topping.topping_name}
+                                    </Text>
                                 ))
                             }
                         </View>
                     </View>
                     <View style={styles.orderInfPay}>
                         <Text style={styles.orderInfPayText}>Số lượng: {item.quantity}</Text>
-                        <Text style={styles.orderInfPayText}>{item.quantity * item.price} đ</Text>
+                        <Text style={styles.orderInfPayText}>{formatPrice(item.quantity * item.price)}</Text>
                     </View>
                 </View>
             ))}
-
+            {/* Note */}
+            {
+                item.note && (
+                    <View style={styles.noteContainer}>
+                        <Text>Ghi chú: {item.note}</Text>
+                    </View>)
+            }
             {/* Payment Information */}
             <View style={styles.paymentInfoContainer}>
-                <Text style={styles.paymentMethod}>Trả qua {orderDetails.paymentMethod}</Text>
-                <Text style={styles.orderTotal}>{orderDetails.total}</Text>
-                <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Chi tiết thanh toán</Text>
+                <Text style={styles.paymentMethod}>Trả qua {item.order_pay}</Text>
+                <Text style={styles.orderTotal}>{formatPrice(item.price)}</Text>
+                {/* <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Chi tiết thanh toán</Text> */}
                 {/* Tạm tính */}
-                <View style={[styles.paymentContainer, { marginTop: 10 }]}>
+                {/* <View style={[styles.paymentContainer, { marginTop: 10 }]}>
                     <Text style={styles.paymentText}>Tạm tính</Text>
-                    <Text style={styles.paymentText}>210000 đ</Text>
-                </View>
+                    <Text style={styles.paymentText}></Text>
+                </View> */}
                 {/* Giảm giá */}
-                <View style={styles.paymentContainer}>
+                {/* <View style={styles.paymentContainer}>
                     <Text style={styles.paymentText}>Giảm giá</Text>
                     <Text style={styles.paymentText}>21000 đ</Text>
-                </View>
+                </View> */}
                 {/* Tổng thu */}
                 <View style={styles.paymentSumContainer}>
                     <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Tổng tính</Text>
-                    <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>189000 đ</Text>
+                    <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>{formatPrice(item.price)}</Text>
                 </View>
             </View>
 
@@ -194,6 +204,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#333'
+    },
+    noteContainer: {
+        flex: 1,
+        backgroundColor: '#fff',
+        marginBottom: 10,
+        padding: 15
     },
     paymentInfoContainer: {
         backgroundColor: '#fff',

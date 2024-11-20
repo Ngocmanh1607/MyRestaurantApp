@@ -54,6 +54,7 @@ const RegisterInf = () => {
         setRestaurant({ ...restaurant, image: uri })
     };
     const handelUploadImage = async () => {
+        console.log(userId);
         const UrlImage = await uploadImage(userId, restaurant.image)
         if (UrlImage) { // Kiểm tra nếu có kết quả URL
             return UrlImage
