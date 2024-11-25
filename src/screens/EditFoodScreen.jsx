@@ -8,7 +8,7 @@ import { uploadFoodImage } from '../utils/firebaseUtils'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { selectImage } from '../utils/utilsRestaurant'
 import { getCategories } from '../api/restaurantApi'
-
+import formatPrice from '../utils/formatPrice'
 const EditFoodScreen = ({ route, navigation }) => {
     const { food } = route.params;
     const [foodData, setFoodData] = useState({
@@ -267,7 +267,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                                 <Text style={styles.textLeft}>Giá *</Text>
                                 <TextInput
                                     style={[styles.textRight, styles.smallInput]}
-                                    value={foodData.price.toString()}
+                                    value={formatPrice(foodData.price)}
                                     onChangeText={(value) => handleChange('price', value)}
                                     editable={isEditing}
                                     keyboardType='numeric'
@@ -316,7 +316,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                                         />
                                         <TextInput
                                             style={styles.toppingPrice}
-                                            value={topping.price.toString()}
+                                            value={formatPrice(topping.price)}
                                             placeholder="Price"
                                             editable={isEditing}
                                             onChangeText={(value) => handleToppingChange(index, 'price', value)}

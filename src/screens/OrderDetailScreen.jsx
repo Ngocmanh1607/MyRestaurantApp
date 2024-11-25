@@ -1,13 +1,11 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useNavigation } from '@react-navigation/native';
 import formatPrice from '../utils/formatPrice';
 const OrderDetailScreen = ({ route }) => {
     const { item } = route.params;
     const items = item.listCartItem
-    console.log('Topping', item)
-    const navigation = useNavigation()
+    console.log('item', item)
     // Mock data for the order details
     const orderDetails = {
         driver: {
@@ -54,17 +52,20 @@ const OrderDetailScreen = ({ route }) => {
                 <Text style={styles.orderTime}>{item.order_date}</Text>
             </View>
             {/* Driver Information */}
-            <View style={styles.driverInfoContainer}>
-                <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
-                <Text>{orderDetails.driver.vehicle}</Text>
-                <View style={styles.driverDetails}>
-                    <Image source={require('../access/Images/Shipper.webp')} style={styles.driverImage} />
-                    <View style={styles.driverInfo}>
-                        <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
-                        <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
+            {
+                item.driver_id &&
+                <View style={styles.driverInfoContainer}>
+                    <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
+                    <Text>{orderDetails.driver.vehicle}</Text>
+                    <View style={styles.driverDetails}>
+                        <Image source={require('../access/Images/Shipper.webp')} style={styles.driverImage} />
+                        <View style={styles.driverInfo}>
+                            <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
+                            <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
+            }
 
             {/* Ordered Items */}
             {items.map((item, index) => (

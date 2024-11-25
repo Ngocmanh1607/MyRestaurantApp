@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Switch, Modal, Acti
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { changeOrderStatus, findDriver, getInformationRes, getOrderRes, rejectOrder } from '../api/restaurantApi';
 import { formatTime } from '../utils/utilsRestaurant';
-import { useDispatch } from 'react-redux';
+
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native-gesture-handler';
@@ -21,8 +21,13 @@ const OrderManagementScreen = () => {
 
     const [isReasonModalVisible, setIsReasonModalVisible] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
-    const [reason, setReason] = useState('');
-
+    const reasonsList = [
+        "Khách hàng không phản hồi",
+        "Hết hàng",
+        "Sai thông tin đơn hàng",
+        "Khách hàng từ chối nhận hàng",
+        "Khác"
+    ];
     let restaurantId;
     const getOrderData = () => {
         switch (selectedTab) {
@@ -121,16 +126,10 @@ const OrderManagementScreen = () => {
         setIsReasonModalVisible(true);
     };
 
-    const submitCancelOrder = async () => {
-        if (reason.trim() === '') {
-            Alert.alert('Lỗi', 'Vui lòng nhập lý do từ chối!');
-            return;
-        }
-        setIsReasonModalVisible(false);
-        setReason('');
+    const submitCancelOrder = async (id) => {
         setIsLoading(true);
         try {
-            await changeOrderStatus(selectedOrderId, 'ORDER_CANCELED', reason); // Gửi trạng thái hủy với lý do
+            await changeOrderStatus(selectedOrderId, 'ORDER_CANCELED', id);
             Alert.alert('Thành công', 'Đơn hàng đã bị hủy!');
         } catch (error) {
             Alert.alert('Lỗi', 'Không thể hủy đơn hàng!');
@@ -169,12 +168,23 @@ const OrderManagementScreen = () => {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Nhập lý do từ chối</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Nhập lý do..."
-                            value={reason}
-                            onChangeText={setReason}
+                        <Text style={styles.modalTitle}>Chọn lý do từ chối</Text>
+                        <FlatList
+                            data={reasonsList}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity
+                                    style={styles.reasonOption}
+                                    onPress={() => {
+                                        submitCancelOrder(index);
+                                        console.log(index);
+                                        setIsReasonModalVisible(false);
+                                        setIsLoading(false);
+                                    }}
+                                >
+                                    <Text style={styles.reasonText}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
                         />
                         <View style={styles.buttonGroup}>
                             <TouchableOpacity
@@ -183,12 +193,12 @@ const OrderManagementScreen = () => {
                             >
                                 <Text style={styles.buttonText}>Hủy</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 style={styles.modalButtonSubmit}
                                 onPress={submitCancelOrder}
                             >
                                 <Text style={styles.buttonText}>Xác nhận</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                     </View>
                 </View>
@@ -213,19 +223,19 @@ const OrderManagementScreen = () => {
 
                                 {item.order_status === "ORDER_CANCELED" && (
                                     <View style={styles.orderBtnContainer}>
-                                        <Text style={styles.textOrderPro}>Đơn bị hủy</Text>
+                                        <Text style={[styles.textOrderPro, { color: '#FF0000' }]}>Đơn bị hủy</Text>
                                     </View>
                                 )}
 
                                 {item.order_status === "DELIVERING" && (
                                     <View style={styles.orderBtnContainer}>
-                                        <Text style={styles.textOrderPro}>Đang giao hàng</Text>
+                                        <Text style={styles.textOrderPro}>Shipper đang lấy đơn</Text>
                                     </View>
                                 )}
 
                                 {item.order_status === "ORDER_CONFIRMED" && (
                                     <View style={styles.orderBtnContainer}>
-                                        <Text style={[styles.textOrderPro, { color: "#33FF33" }]}>Đã giao xong</Text>
+                                        <Text style={[styles.textOrderPro, { color: "#28a745" }]}>Đã giao xong</Text>
                                     </View>
                                 )}
                             </View>
@@ -320,7 +330,7 @@ const styles = StyleSheet.create({
     confirmOrder: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#33CC00',
+        backgroundColor: '#28a745',
         padding: 8,
         borderRadius: 10,
         marginBottom: 10
@@ -400,7 +410,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
     },
-
+    reasonOption: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    reasonText: {
+        fontSize: 16,
+        color: '#333',
+    },
 });
 
 export default OrderManagementScreen;

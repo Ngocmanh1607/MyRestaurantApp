@@ -12,7 +12,9 @@ const createFoodInApi = async (newFood) => {
     const productData = {
         name: newFood.name,
         image: newFood.image,
-        descriptions: newFood.descriptions, price: newFood.price
+        descriptions: newFood.descriptions,
+        price: newFood.price,
+
     }
     const toppingData = newFood.options.map(option => ({
         topping_name: option.topping_name,
@@ -107,7 +109,7 @@ const publicProductApi = async (foodId) => {
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
-        const response = await apiClient.post(`/products/public/${foodId}`,
+        const response = await apiClient.put(`/products/show/${foodId}`,
             {},
             {
                 headers: {
@@ -134,7 +136,7 @@ const unPublicProductApi = async (foodId) => {
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
-        const response = await apiClient.post(`/products/unpublic/${foodId}`,
+        const response = await apiClient.put(`/products/show/${foodId}`,
             {},
             {
                 headers: {

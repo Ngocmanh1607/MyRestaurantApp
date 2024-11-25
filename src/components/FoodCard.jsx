@@ -6,7 +6,7 @@ import ToggleSwitch from './ToggleSwitch';
 import { useNavigation } from '@react-navigation/native';
 import { publicProductApi, unPublicProductApi } from '../api/foodApi';
 import Snackbar from 'react-native-snackbar';
-
+import formatPrice from '../utils/formatPrice';
 const FoodCard = ({ food }) => {
     const navigation = useNavigation()
     const [isEnabled, setIsEnabled] = useState(true);
@@ -42,7 +42,7 @@ const FoodCard = ({ food }) => {
             <View style={styles.foodDetails}>
                 <Text style={styles.foodName}>{food.name}</Text>
                 <Text style={styles.foodDes}>{food.descriptions}</Text>
-                <Text style={styles.foodPrice}>{food.price}</Text>
+                <Text style={styles.foodPrice}>{formatPrice(food.price)}</Text>
             </View>
             <ToggleSwitch isEnabled={isEnabled} onToggle={() => { updateStatus(food.id) }} />
         </TouchableOpacity>
