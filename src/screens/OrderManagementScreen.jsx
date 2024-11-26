@@ -4,10 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Switch, Modal, Acti
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { changeOrderStatus, findDriver, getInformationRes, getOrderRes, rejectOrder } from '../api/restaurantApi';
 import { formatTime } from '../utils/utilsRestaurant';
-
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput } from 'react-native-gesture-handler';
 
 const OrderManagementScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -115,26 +113,50 @@ const OrderManagementScreen = () => {
     const handleAcceptOrder = (id) => {
         setIsLoading(true);
         const updateOrderStatus = async () => {
-            await findDriver(id);
-            setIsLoading(false);
+            try {
+                await findDriver(id);
+                const acceptedOrder = ordersNew.find(order => order.id === id);
+                if (acceptedOrder) {
+                    acceptedOrder.order_status = 'PREPARING_ORDER';
+                    setOrdersNew(ordersNew.filter(order => order.id !== id));
+                    setOrderInProgress([...ordersInProgress, acceptedOrder]);
+                }
+            } catch (error) {
+                Alert.alert("Lỗi", "Không thể chấp nhận đơn hàng!");
+            } finally {
+                setIsLoading(false);
+            }
         };
-
         updateOrderStatus();
     };
+
     const handleCancelOrder = (id) => {
         setSelectedOrderId(id);
         setIsReasonModalVisible(true);
     };
-
-    const submitCancelOrder = async (id) => {
+    const submitCancelOrder = async () => {
         setIsLoading(true);
         try {
-            await changeOrderStatus(selectedOrderId, 'ORDER_CANCELED', id);
+            await changeOrderStatus(selectedOrderId, 'ORDER_CANCELED');
+            // Tìm đơn hàng bị hủy
+            const canceledOrder =
+                ordersNew.find(order => order.id === selectedOrderId) ||
+                ordersInProgress.find(order => order.id === selectedOrderId);
+            if (canceledOrder) {
+                // Cập nhật trạng thái đơn hàng
+                canceledOrder.order_status = 'ORDER_CANCELED';
+                // Xóa đơn hàng khỏi danh sách hiện tại
+                setOrdersNew(ordersNew.filter(order => order.id !== selectedOrderId));
+                setOrderInProgress(ordersInProgress.filter(order => order.id !== selectedOrderId));
+                // Thêm đơn hàng vào danh sách đã xong
+                setOrderCompleted([...ordersCompleted, canceledOrder]);
+            }
             Alert.alert('Thành công', 'Đơn hàng đã bị hủy!');
         } catch (error) {
             Alert.alert('Lỗi', 'Không thể hủy đơn hàng!');
         } finally {
             setIsLoading(false);
+            setIsReasonModalVisible(false);
         }
     };
     console.log(ordersNew)
