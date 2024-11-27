@@ -45,7 +45,7 @@ function TabBarNavigation({ handleLogout }) {
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} options={{ headerShown: false }} />
+            <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} />
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
             <Tab.Screen name="Thêm Món" component={AddFoodScreen} />
             <Tab.Screen name="Hồ Sơ" component={RestaurantProfileScreen}

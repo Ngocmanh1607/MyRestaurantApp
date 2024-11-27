@@ -195,15 +195,15 @@ const EditFoodScreen = ({ route, navigation }) => {
     const toggleEditMode = () => {
         if (isEditing) {
             Alert.alert(
-                'Save Changes',
-                'Are you sure you want to save these changes?',
+                'Lưu thay đổi',
+                'Bạn có chắc lưu thay đổi không ?',
                 [
                     {
-                        text: 'Cancel',
+                        text: 'Huỷ',
                         style: 'cancel',
                     },
                     {
-                        text: 'Save',
+                        text: 'Lưu',
                         onPress: updateFoodData
                     },
                 ]
@@ -289,7 +289,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                             </View>
 
                             {/* Categories Section */}
-                            <Text style={[styles.sectionTitle, { marginLeft: 15 }]}>Categories *</Text>
+                            <Text style={[styles.sectionTitle, { marginLeft: 15, fontSize: 15, marginTop: 10 }]}>Categories *</Text>
                             {allCategories.map(category => (
                                 <View key={category.id} style={styles.checkboxContainer}>
                                     <CheckBox
@@ -304,7 +304,7 @@ const EditFoodScreen = ({ route, navigation }) => {
 
                             {/* Toppings Section */}
                             <View style={styles.toppingsSection}>
-                                <Text style={styles.sectionTitle}>Toppings</Text>
+                                <Text style={{ marginLeft: 15, fontSize: 15, marginTop: 10 }}>Toppings</Text>
                                 {toppings.map((topping, index) => (
                                     <View key={topping.id} style={styles.toppingContainer}>
                                         <TextInput

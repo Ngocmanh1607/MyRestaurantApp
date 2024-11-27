@@ -161,14 +161,14 @@ const OrderManagementScreen = () => {
     };
     console.log(ordersNew)
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+        <View style={styles.container}>
+            {/* <View style={styles.header}>
                 <Text style={styles.title}>Đơn hàng</Text>
                 <View style={styles.switchContainer}>
                     <Text style={styles.switchText}>Nhận đơn</Text>
                     <Switch value={accept} onValueChange={setAccept} />
                 </View>
-            </View>
+            </View> */}
 
             <View style={styles.tabContainer}>
                 <TouchableOpacity onPress={() => selectTab('new')}>
@@ -294,7 +294,7 @@ const OrderManagementScreen = () => {
                     </View>
                 </Modal>
             )}
-        </SafeAreaView>
+        </View>
     );
 };
 

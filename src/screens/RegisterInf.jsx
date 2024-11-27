@@ -32,11 +32,12 @@ const RegisterInf = () => {
     //Lấy thông tin userID
     useEffect(() => {
         const fetchUserId = async () => {
+            setIsLoading(true);
             const storedUserId = await AsyncStorage.getItem('userId');
             setUserId(storedUserId);  // Now the userId is available to use
         };
-
         fetchUserId();
+        setIsLoading(false);
     }, []);
 
     const [workingHours, setWorkingHours] = useState([
@@ -71,6 +72,7 @@ const RegisterInf = () => {
                 opening_hours: workingHoursString,
             };
             try {
+                setIsLoading(true);
                 const response = await updateRestaurantApi(updatedRestaurant);
                 if (response) {
                     Snackbar.show({
@@ -84,6 +86,7 @@ const RegisterInf = () => {
                         duration: Snackbar.LENGTH_SHORT,
                     });
                 }
+                setIsLoading(false);
             } catch (error) {
                 console.error('API update failed: ', error);
                 Snackbar.show({
