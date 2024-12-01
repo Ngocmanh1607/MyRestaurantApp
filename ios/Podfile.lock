@@ -1673,6 +1673,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNPermissions (5.2.1):
+    - React-Core
   - RNReanimated (3.15.3):
     - DoubleConversion
     - glog
@@ -1865,6 +1867,7 @@ DEPENDENCIES:
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSnackbar (from `../node_modules/react-native-snackbar`)
@@ -2037,6 +2040,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2138,6 +2143,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: 4f0f5d4706dd2c93020352d82f861b69b348c629
   RNFBStorage: 70e7baf8c7cac77d7fa1c383e6b5210308221922
   RNGestureHandler: f81137aeaf7a060c491d0a43af0f5ef6a8867250
+  RNPermissions: bd4e8932db57d658a7fd0395bc0ea8a344e28405
   RNReanimated: 588d6037ed5b6aed59f0a1d08f163efce125d0cb
   RNScreens: de55b9d7de8a017d1588dcb70415492d0b0597c2
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
@@ -2148,4 +2154,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 0e47f000d136d1a2fd6498e0774ff6bce7fbcb58
 
-COCOAPODS: 1.16.1
+COCOAPODS: 1.16.2

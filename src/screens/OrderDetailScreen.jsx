@@ -120,9 +120,9 @@ const OrderDetailScreen = ({ route }) => {
             </View>
 
             {/* Complete Button */}
-            <TouchableOpacity style={styles.completeButton}>
+            {/* <TouchableOpacity style={styles.completeButton}>
                 <Text style={styles.completeButtonText}>Hoàn thành</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </ScrollView>
     );
 };

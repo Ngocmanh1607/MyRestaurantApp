@@ -143,6 +143,7 @@ const getInformationRes = async () => {
         );
         const { message, metadata } = response.data;
         await AsyncStorage.setItem('restaurantId', metadata.id.toString());
+        console.log(metadata.id)
         if (!message) {
             console.error('Error message:', message);
             return;

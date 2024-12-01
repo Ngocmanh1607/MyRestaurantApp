@@ -26,7 +26,7 @@ const OrderManagementScreen = () => {
         "Khách hàng từ chối nhận hàng",
         "Khác"
     ];
-    let restaurantId;
+    const [restaurantId, setRestaurantId] = useState();
     const getOrderData = () => {
         switch (selectedTab) {
             case 'new':
@@ -66,16 +66,14 @@ const OrderManagementScreen = () => {
 
         let socket;
         const initializeSocket = async () => {
-            const storedRestaurantId = await AsyncStorage.getItem('restaurantId');
-            console.log(storedRestaurantId)
-            if (!storedRestaurantId) {
-                console.error("Không tìm thấy restaurantId trong AsyncStorage");
+            const restaurant_id = await AsyncStorage.getItem('restaurantId');
+            setRestaurantId(restaurant_id);
+            if (!restaurantId) {
                 return;
             }
-            restaurantId = storedRestaurantId;
             console.log("Restaurant ID:", restaurantId);
 
-            socket = io('http://localhost:3000');
+            socket = io('https://lh30mlhb-3000.asse.devtunnels.ms');
 
             socket.on('connect', () => {
                 console.log("Socket connected:", socket.id);
@@ -89,7 +87,7 @@ const OrderManagementScreen = () => {
 
             socket.on('orderReceivedByRestaurant', (data) => {
                 console.log("New Order Received:", data);
-                fetchOrders(data);
+                fetchOrders(data.orders);
             });
 
             socket.on('error', (error) => {
@@ -108,7 +106,7 @@ const OrderManagementScreen = () => {
                 socket.disconnect();
             }
         };
-    }, []);
+    }, [restaurantId, ordersNew]);
 
     const handleAcceptOrder = (id) => {
         setIsLoading(true);
@@ -162,14 +160,6 @@ const OrderManagementScreen = () => {
     console.log(ordersNew)
     return (
         <View style={styles.container}>
-            {/* <View style={styles.header}>
-                <Text style={styles.title}>Đơn hàng</Text>
-                <View style={styles.switchContainer}>
-                    <Text style={styles.switchText}>Nhận đơn</Text>
-                    <Switch value={accept} onValueChange={setAccept} />
-                </View>
-            </View> */}
-
             <View style={styles.tabContainer}>
                 <TouchableOpacity onPress={() => selectTab('new')}>
                     <Text style={selectedTab === 'new' ? styles.activeTab : styles.inactiveTab}>ĐƠN MỚI</Text>
@@ -254,7 +244,11 @@ const OrderManagementScreen = () => {
                                         <Text style={styles.textOrderPro}>Shipper đang lấy đơn</Text>
                                     </View>
                                 )}
-
+                                {item.order_status === "ORDER_RECEIVED" && (
+                                    <View style={styles.orderBtnContainer}>
+                                        <Text style={[styles.textOrderPro]}>Đã giao cho shipper</Text>
+                                    </View>
+                                )}
                                 {item.order_status === "ORDER_CONFIRMED" && (
                                     <View style={styles.orderBtnContainer}>
                                         <Text style={[styles.textOrderPro, { color: "#28a745" }]}>Đã giao xong</Text>
