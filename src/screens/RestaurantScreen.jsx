@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -75,7 +75,6 @@ const RestaurantProfileScreen = () => {
             setRestaurant({ ...restaurant, address: location.address, address_x: location.latitude, address_y: location.longitude })
         }
     }, [location]);
-    console.log(location)
     const handelSelectImage = async () => {
         if (isEditing) {
             try {
@@ -88,6 +87,7 @@ const RestaurantProfileScreen = () => {
             }
         }
     };
+
     // Function để upload ảnh lên Firebase và lưu URL xuống Firestore
     const handelUploadImage = async () => {
         try {
@@ -135,31 +135,78 @@ const RestaurantProfileScreen = () => {
             return false;
         }
     };
+    const validateRestaurantData = () => {
+        // Kiểm tra tên nhà hàng
+        if (!restaurant.name.trim()) {
+            Snackbar.show({
+                text: 'Tên nhà hàng không được để trống.',
+                duration: Snackbar.LENGTH_SHORT,
+            });
+            return false;
+        }
+
+        // Kiểm tra số điện thoại
+        const phoneRegex = /^[0-9]{10,15}$/;
+        if (!phoneRegex.test(restaurant.phone_number)) {
+            Snackbar.show({
+                text: 'Số điện thoại không hợp lệ (chỉ chứa số, từ 10-15 ký tự).',
+                duration: Snackbar.LENGTH_SHORT,
+            });
+            return false;
+        }
+        // Kiểm tra mô tả
+        if (restaurant.description.length > 500) {
+            Snackbar.show({
+                text: 'Mô tả không được vượt quá 500 ký tự.',
+                duration: Snackbar.LENGTH_SHORT,
+            });
+            return false;
+        }
+        return true;
+    };
     const toggleEditMode = async () => {
         if (isEditing) {
-            setLoading(true)
-            try {
-                let success;
-                if (imageChange) {
-                    const newImageUrl = await handelUploadImage();
-                    success = await updateRestaurantInfo(newImageUrl);
-                } else {
-                    success = await updateRestaurantInfo();
-                }
-                if (!success) {
-                    setRestaurant(prev => ({ ...prev, image: orginalImage }));
-                }
-            } catch (error) {
-                console.error('Lỗi:', error);
-                Snackbar.show({
-                    text: 'Có lỗi xảy ra, vui lòng thử lại.',
-                    duration: Snackbar.LENGTH_SHORT,
-                });
-            } finally {
-                setLoading(false);
+            // Kiểm tra dữ liệu
+            if (!validateRestaurantData()) {
+                return;
             }
+            // Hiển thị thông báo xác nhận
+            Alert.alert(
+                'Xác nhận',
+                'Bạn có chắc chắn muốn lưu thay đổi?',
+                [
+                    { text: 'Hủy', style: 'cancel' },
+                    {
+                        text: 'Lưu',
+                        onPress: async () => {
+                            setLoading(true);
+                            try {
+                                let success;
+                                if (imageChange) {
+                                    const newImageUrl = await handelUploadImage();
+                                    success = await updateRestaurantInfo(newImageUrl);
+                                } else {
+                                    success = await updateRestaurantInfo();
+                                }
+                                if (!success) {
+                                    setRestaurant(prev => ({ ...prev, image: orginalImage }));
+                                }
+                            } catch (error) {
+                                console.error('Lỗi:', error);
+                                Snackbar.show({
+                                    text: 'Có lỗi xảy ra, vui lòng thử lại.',
+                                    duration: Snackbar.LENGTH_SHORT,
+                                });
+                            } finally {
+                                setLoading(false);
+                            }
+                        },
+                    },
+                ]
+            );
+        } else {
+            setIsEditing(!isEditing);
         }
-        setIsEditing(!isEditing);
     };
     // // Hàm cập nhật giờ mở và đóng cửa
     const updateWorkingHours = (day, field, value) => {
