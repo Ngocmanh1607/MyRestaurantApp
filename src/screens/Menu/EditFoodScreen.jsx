@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react'
 import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import CheckBox from '@react-native-community/checkbox'
 import Snackbar from 'react-native-snackbar'
-import { getCategoryFood, getToppingFood, updateFood, updateFoodToppings, updateFoodCategories, updateFoodInApi } from '../api/foodApi'
-import { uploadFoodImage } from '../utils/firebaseUtils'
+import { getCategoryFood, getToppingFood,updateFoodInApi } from '../api/foodApi'
+import { uploadFoodImage } from '../../utils/firebaseUtils'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { selectImage } from '../utils/utilsRestaurant'
-import { getCategories } from '../api/restaurantApi'
-import formatPrice from '../utils/formatPrice'
+import { selectImage } from '../../utils/utilsRestaurant'
+import { getCategories } from '../../api/restaurantApi'
+import formatPrice from '../../utils/formatPrice'
 const EditFoodScreen = ({ route, navigation }) => {
     const { food } = route.params;
     const [foodData, setFoodData] = useState({

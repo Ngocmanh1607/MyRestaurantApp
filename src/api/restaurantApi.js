@@ -44,48 +44,61 @@ const signupApi = async (email, password) => {
     }
 };
 
-const loginApi = async (email, password) => {
+const loginApi = async (email, password, setLoading) => {
     try {
+        setLoading(true);
         const response = await apiClient.post(
             "/user/login",
-            {
-                email: email,
-                password: password
-            },
-            {
-                headers: {
-                    "x-api-key": apiKey,
-                }
-            }
+            { email, password },
+            { headers: { "x-api-key": apiKey } }
         );
 
         const { message, metadata } = response.data;
-        if (!message) {
-            console.error('Error message:', message);
-            return; // Or throw an error
-        }
-
         const { accessToken, refreshToken } = metadata.tokens;
         const { email: userEmail, id: userId } = metadata.user;
 
         await AsyncStorage.multiSet([
-            ['accessToken', accessToken],
-            ['refreshToken', refreshToken],
-            ['userEmail', userEmail],
-            ['userId', userId.toString()]
+            ["accessToken", accessToken],
+            ["refreshToken", refreshToken],
+            ["userEmail", userEmail],
+            ["userId", userId.toString()],
         ]);
 
-        console.log('User logged in successfully:', {
+        console.log("Đăng nhập thành công:", {
             accessToken,
             refreshToken,
             userEmail,
-            userId
+            userId,
         });
 
         return metadata;
     } catch (error) {
-        console.error("Login failed:", error);
-        throw error;
+        setLoading(false);
+        if (error.response) {
+            console.error("Lỗi từ máy chủ:", error.response.data);
+            Toast.show({
+                type: "error",
+                text1: "Đăng nhập thất bại",
+                text2: error.response.data.message || "Có lỗi xảy ra từ máy chủ.",
+            });
+        } else if (error.request) {
+            console.error("Không nhận được phản hồi từ máy chủ:", error.request);
+            Toast.show({
+                type: "error",
+                text1: "Lỗi mạng",
+                text2: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+            });
+        } else {
+            console.error("Lỗi không mong muốn:", error.message);
+            Toast.show({
+                type: "error",
+                text1: "Lỗi không xác định",
+                text2: "Có lỗi xảy ra, vui lòng thử lại.",
+            });
+        }
+    }
+    finally {
+        setLoading(false);
     }
 };
 

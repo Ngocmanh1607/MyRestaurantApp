@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import formatPrice from '../utils/formatPrice';
+import formatPrice from '../../utils/formatPrice';
 const OrderDetailScreen = ({ route }) => {
     const { item } = route.params;
     const items = item.listCartItem
@@ -58,7 +57,7 @@ const OrderDetailScreen = ({ route }) => {
                     <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
                     <Text>{orderDetails.driver.vehicle}</Text>
                     <View style={styles.driverDetails}>
-                        <Image source={require('../access/Images/Shipper.webp')} style={styles.driverImage} />
+                        <Image source={require('../../access/Images/Shipper.webp')} style={styles.driverImage} />
                         <View style={styles.driverInfo}>
                             <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
                             <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>

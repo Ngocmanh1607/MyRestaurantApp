@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator } from 'react-native';
 import Snackbar from 'react-native-snackbar';
-import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { updateRestaurantApi } from '../api/restaurantApi';
+import { updateRestaurantApi } from '../../api/restaurantApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { selectImage, uploadImage } from '../utils/utilsRestaurant';
+import { selectImage, uploadImage } from '../../utils/utilsRestaurant';
 
 const RegisterInf = () => {
     const route = useRoute();

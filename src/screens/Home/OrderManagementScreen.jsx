@@ -1,9 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Switch, Modal, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { changeOrderStatus, findDriver, getInformationRes, getOrderRes, rejectOrder } from '../api/restaurantApi';
-import { formatTime } from '../utils/utilsRestaurant';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Modal, ActivityIndicator, Alert } from 'react-native';
+import { changeOrderStatus, findDriver, getInformationRes} from '../../api/restaurantApi';
+import { formatTime } from '../../utils/utilsRestaurant';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

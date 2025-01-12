@@ -1,12 +1,11 @@
 import React from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FoodManagementScreen from '../screens/FoodManagementScreen';
-import OrderManagementScreen from '../screens/OrderManagementScreen';
-import AddFoodScreen from '../screens/AddFoodScreen';
-import RestaurantProfileScreen from '../screens/RestaurantScreen';
+import AddFoodScreen from '../screens/AddFood/AddFoodScreen';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
+import OrderManagementScreen from '../screens/Home/OrderManagementScreen';
+import FoodManagementScreen from '../screens/Menu/FoodManagementScreen';
+import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 
 const Tab = createBottomTabNavigator();
 

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, StyleSheet, View } from 'react-native';
-import FoodCard from '../components/FoodCard';
-import { getFoodRes } from '../api/restaurantApi';
+import FoodCard from '../../components/FoodCard';
+import { getFoodRes } from '../../api/restaurantApi';
 import { useFocusEffect } from '@react-navigation/native';
 import { TextInput } from 'react-native-gesture-handler';
 
-const FoodManagementScreen = ({ navigation }) => {
+const FoodManagementScreen = () => {
     const [foodItems, setFoodItems] = useState([])
     const [searchQuery, setSearchQuery] = useState('')
     useFocusEffect(

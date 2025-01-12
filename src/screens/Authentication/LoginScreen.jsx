@@ -1,20 +1,19 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, Image, Alert, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import { loginApi } from '../api/restaurantApi';
-import PasswordInput from '../components/PasswordInput';
-
+import { loginApi } from '../../api/restaurantApi';
+import PasswordInput from '../../components/PasswordInput';
+import styles from '../../styles/LoginStyle';
 const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
-
+    const [loading, setLoading] = useState(false );
     const validate = () => {
         let valid = true;
         let errors = {};
-
         // Validate email
         if (!email) {
             valid = false;
@@ -23,7 +22,6 @@ const LoginScreen = () => {
             valid = false;
             errors.email = 'Email address is invalid';
         }
-
         // Validate password
         if (!password) {
             valid = false;
@@ -39,21 +37,19 @@ const LoginScreen = () => {
 
     const handleSubmit = async () => {
         if (validate()) {
-            try {
-                const response = await loginApi(email, password);
-                if (response) {
-                    Alert.alert('Login Successful', `Welcome, ${email}!`);
-                    navigation.navigate('Trang chủ');
-                }
-            } catch (error) {
-                console.log(error)
-                Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
+            const response = await loginApi(email, password,setLoading);
+            if (response) {
+                Alert.alert('Login Successful', `Welcome, ${email}!`);
+                navigation.navigate('Trang chủ');
             }
-        }
+        } 
     };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {loading?<View style={styles.containerLoading} >   
+                <ActivityIndicator size={'large'} color={'#FF0000'}/>
+                </View>:
             <View style={styles.container}>
                 <View>
                     <View style={styles.inputContainer}>
@@ -92,90 +88,14 @@ const LoginScreen = () => {
 
                 <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
-                        <Image source={require("../access/Images/ic_google.png")} style={styles.topImage} />
+                        <Image source={require("../../access/Images/ic_google.png")} style={styles.topImage} />
                         <Text style={styles.textLoginGoogle}>Login with Google</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View>}
+            
         </TouchableWithoutFeedback>
     );
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: 10
-    },
-    inputIcon: {
-        marginLeft: 15,
-        marginRight: 5,
-    },
-    textInput: {
-        flex: 1,
-        color: "#222222"
-    },
-    forgotPassText: {
-        color: "#FF0000",
-        textAlign: 'right',
-        width: '90%',
-        fontSize: 15,
-        marginVertical: 10,
-    },
-    loginButtonContainer: {
-        width: '70%',
-        height: 50,
-        backgroundColor: "#FF0000",
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        marginVertical: 20,
-        borderRadius: 10,
-        elevation: 5
-    },
-    textLogin: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    horizontalLine: {
-        borderBottomColor: '#D3D3D3',
-        borderBottomWidth: 1,
-        width: '40%',
-        alignSelf: 'center'
-    },
-    googleButtonContainer: {
-        flexDirection: 'row',
-        width: '70%',
-        height: 50,
-        backgroundColor: "#fff",
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        marginVertical: 20,
-        borderRadius: 10,
-        elevation: 5,
-    },
-    textLoginGoogle: {
-        color: '#222222',
-        fontSize: 16,
-        fontWeight: '600',
-        marginLeft: 10,
-    },
-    inputContainer: {
-        backgroundColor: '#FFFFFF',
-        flexDirection: 'row',
-        borderRadius: 10,
-        marginHorizontal: 40,
-        marginVertical: 10,
-        elevation: 10,
-        alignItems: 'center',
-        height: 50,
-    },
-    errorText: {
-        marginStart: 50,
-        color: 'red',
-        fontSize: 14
-    },
-});

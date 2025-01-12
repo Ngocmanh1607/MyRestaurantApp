@@ -1,9 +1,9 @@
 import { useWindowDimensions, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import PasswordInput from '../components/PasswordInput';
+import PasswordInput from '../../components/PasswordInput';
 import { useNavigation } from '@react-navigation/native';
-import { signupApi } from '../api/restaurantApi'; // Import API
+import { signupApi } from '../../api/restaurantApi'; // Import API
 
 const SignupScreen = () => {
     const navigation = useNavigation();

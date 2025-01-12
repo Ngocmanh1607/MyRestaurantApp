@@ -1,14 +1,14 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabBarNavigation from './TabBarNavigation';
-import EditFoodScreen from '../screens/EditFoodScreen';
-import OrderDetailScreen from '../screens/OrderDetailScreen';
-import AuthScreen from '../screens/AuthScreen';
-import RegisterInf from '../screens/RegisterInf';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import MapScreen from '../screens/MapScreen';
+import AuthScreen from '../screens/Authentication/AuthScreen';
+import RegisterInf from '../screens/Authentication/RegisterInf';
+import OrderDetailScreen from '../screens/Home/OrderDetailScreen';
+import EditFoodScreen from '../screens/Menu/EditFoodScreen';
+import MapScreen from '../screens/Profile/MapScreen';
 
 const Stack = createStackNavigator();
 

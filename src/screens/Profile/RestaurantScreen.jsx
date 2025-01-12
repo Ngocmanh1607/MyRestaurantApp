@@ -116,7 +116,7 @@ const RestaurantProfileScreen = () => {
                 opening_hours: updatedOpeningHours
             };
 
-            const response = await updateRestaurantApi(updatedData, location);
+            const response = await updateRestaurantApi(updatedData);
             if (response) {
                 Snackbar.show({
                     text: 'Thông tin nhà hàng đã được cập nhật!',
