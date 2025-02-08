@@ -37,10 +37,19 @@ const LoginScreen = () => {
 
     const handleSubmit = async () => {
         if (validate()) {
-            const response = await loginApi(email, password,setLoading);
+            try{
+                setLoading(true);
+            const response = await loginApi(email, password);
             if (response) {
                 Alert.alert('Login Successful', `Welcome, ${email}!`);
                 navigation.navigate('Trang chủ');
+            }}
+            catch(error){
+                Alert.alert('Lỗi',error.message);
+                setErrors({ apiError: error.message });
+            }
+            finally{
+                setLoading(false);
             }
         } 
     };
@@ -85,7 +94,6 @@ const LoginScreen = () => {
                 </View>
 
                 <View style={styles.horizontalLine} />
-
                 <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
                         <Image source={require("../../access/Images/ic_google.png")} style={styles.topImage} />

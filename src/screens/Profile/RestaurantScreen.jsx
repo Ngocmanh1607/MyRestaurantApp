@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import Snackbar from 'react-native-snackbar';
-import { uploadRestaurantImage } from '../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getInformationRes, updateRestaurantApi } from '../api/restaurantApi';
+
 import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { getInformationRes } from '../../api/restaurantApi';
 
 
 const RestaurantProfileScreen = () => {
@@ -116,7 +116,7 @@ const RestaurantProfileScreen = () => {
                 opening_hours: updatedOpeningHours
             };
 
-            const response = await updateRestaurantApi(updatedData);
+            const response = await updateRestaurantInfo(updatedData);
             if (response) {
                 Snackbar.show({
                     text: 'Thông tin nhà hàng đã được cập nhật!',
@@ -279,15 +279,6 @@ const RestaurantProfileScreen = () => {
                                     multiline
                                 />
                             </View>
-                            {/* <View style={styles.profileInfo}>
-                                <Text style={styles.label}>Loại nhà hàng</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={restaurant.type}
-                                    editable={isEditing}
-                                    onChangeText={(text) => setRestaurant({ ...restaurant, type: text })}
-                                />
-                            </View> */}
                             {/* Giờ hoạt động */}
                             <View style={styles.workingHoursSection}>
                                 <Text style={styles.sectionTitle}>Giờ hoạt động</Text>

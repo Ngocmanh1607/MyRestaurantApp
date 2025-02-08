@@ -9,50 +9,42 @@ const signupApi = async (email, password) => {
             "/user/signup",
             { email, password, fcmToken, role: "seller" },
             {
-                headers: {
-                    "x-api-key": apiKey
-                }
-            }
-        );
-
+                headers: { "x-api-key": apiKey, },
+            });
         const { message, metadata } = response.data;
         if (!message) {
-            console.error('Error message:', message);
-            return;
+            throw new Error("Phản hồi không hợp lệ: thiếu trường message.");
         }
-
         const { accessToken, refreshToken } = metadata.tokens;
         const { email: userEmail, id: userId } = metadata.user;
-
-        console.log('Data stored successfully:', {
-            accessToken,
-            refreshToken,
-            userEmail,
-            userId
-        });
-
         await AsyncStorage.multiSet([
-            ['accessToken', accessToken],
-            ['refreshToken', refreshToken],
-            ['userEmail', userEmail],
-            ['userId', userId.toString()]
+            ["accessToken", accessToken],
+            ["refreshToken", refreshToken],
+            ["userEmail", userEmail],
+            ["userId", userId.toString()],
         ]);
-
         return response.data.metadata;
     } catch (error) {
-
+        if (error.response) {
+            console.log(error.response);
+            console.error("Lỗi từ server:", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server.";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối mạng.");
+        } else {
+            console.error("Lỗi không xác định:", error.message);
+            throw new Error("Đã xảy ra lỗi không xác định. Vui lòng thử lại.");
+        }
     }
 };
 
-const loginApi = async (email, password, setLoading) => {
+const loginApi = async (email, password) => {
     try {
-        setLoading(true);
         const response = await apiClient.post(
             "/user/login",
             { email, password },
-            { headers: { "x-api-key": apiKey } }
-        );
-
+            { headers: { "x-api-key": apiKey } });
         const { message, metadata } = response.data;
         const { accessToken, refreshToken } = metadata.tokens;
         const { email: userEmail, id: userId } = metadata.user;
@@ -63,42 +55,17 @@ const loginApi = async (email, password, setLoading) => {
             ["userEmail", userEmail],
             ["userId", userId.toString()],
         ]);
-
-        console.log("Đăng nhập thành công:", {
-            accessToken,
-            refreshToken,
-            userEmail,
-            userId,
-        });
-
         return metadata;
     } catch (error) {
-        setLoading(false);
         if (error.response) {
-            console.error("Lỗi từ máy chủ:", error.response.data);
-            Toast.show({
-                type: "error",
-                text1: "Đăng nhập thất bại",
-                text2: error.response.data.message || "Có lỗi xảy ra từ máy chủ.",
-            });
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
         } else if (error.request) {
-            console.error("Không nhận được phản hồi từ máy chủ:", error.request);
-            Toast.show({
-                type: "error",
-                text1: "Lỗi mạng",
-                text2: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
-            });
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
         } else {
-            console.error("Lỗi không mong muốn:", error.message);
-            Toast.show({
-                type: "error",
-                text1: "Lỗi không xác định",
-                text2: "Có lỗi xảy ra, vui lòng thử lại.",
-            });
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
         }
-    }
-    finally {
-        setLoading(false);
     }
 };
 
