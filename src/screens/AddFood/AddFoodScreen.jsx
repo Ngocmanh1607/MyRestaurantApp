@@ -8,7 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createFoodInApi } from '../../api/foodApi';
 import { getCategories } from '../../api/restaurantApi';
 import styles from '../../access/css/AddFoodStyle';
+import { useNavigation } from '@react-navigation/native';
 const AddFoodScreen = () => {
+    const navigation= useNavigation();
     const [foodData, setFoodData] = useState({
         name: '',
         descriptions: '',
@@ -81,7 +83,7 @@ const AddFoodScreen = () => {
             const uploadedImageUrl = await uploadFirebase(foodData.name, foodData.image);
             if (uploadedImageUrl) {
                 const updatedFoodData = { ...foodData, image: uploadedImageUrl };
-                await createFoodInApi(updatedFoodData);
+                await createFoodInApi(updatedFoodData,navigation);
 
                 Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
                 console.log(updatedFoodData);

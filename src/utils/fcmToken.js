@@ -14,7 +14,6 @@ const fetchFcmToken = async () => {
                     buttonNegative: 'Hủy',
                 }
             );
-
             if (notificationPermission !== PermissionsAndroid.RESULTS.GRANTED) {
                 console.log('Người dùng từ chối quyền thông báo.');
                 // Hiển thị cảnh báo yêu cầu quyền

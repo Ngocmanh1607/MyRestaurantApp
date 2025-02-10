@@ -7,15 +7,13 @@ import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../access/css/OrderManagementStyle';
 const OrderManagementScreen = () => {
+    const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
     const [ordersNew, setOrdersNew] = useState([]);
     const [ordersInProgress, setOrderInProgress] = useState([]);
     const [ordersCompleted, setOrderCompleted] = useState([]);
-    const navigation = useNavigation();
-    const [accept, setAccept] = useState();
     const [selectedTab, setSelectedTab] = useState('new');
     const [errorMessage, setErrorMessage] = useState(null);
-
     const [isReasonModalVisible, setIsReasonModalVisible] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const reasonsList = [
@@ -43,7 +41,7 @@ const OrderManagementScreen = () => {
     }
     useEffect(() => {
         const fetchResId = async () => {
-            await getInformationRes();
+            await getInformationRes(navigation);
         }
         fetchResId();
     }, [])
@@ -58,11 +56,9 @@ const OrderManagementScreen = () => {
     };
     useEffect(() => {
         const fetchInfRes = async () => {
-            await getInformationRes();
+            await getInformationRes(navigation);
         };
-
         fetchInfRes();
-
         let socket;
         const initializeSocket = async () => {
             const restaurant_id = await AsyncStorage.getItem('restaurantId');

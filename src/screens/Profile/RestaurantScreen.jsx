@@ -35,7 +35,7 @@ const RestaurantProfileScreen = () => {
         const fetchRestaurantInfo = async () => {
             try {
                 setLoading(true)
-                const response = await getInformationRes();
+                const response = await getInformationRes(navigation);
                 const cleanedData = {
                     id: response.id || null,
                     name: response.name || 'Tên nhà hàng chưa xác định',

@@ -69,7 +69,7 @@ const RegisterInf = () => {
             };
             try {
                 setIsLoading(true);
-                const response = await updateRestaurantApi(updatedRestaurant);
+                const response = await updateRestaurantApi(updatedRestaurant,navigation);
                 if (response) {
                     Snackbar.show({
                         text: 'Thông tin nhà hàng đã được cập nhật!',

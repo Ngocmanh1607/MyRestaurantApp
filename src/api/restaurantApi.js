@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiClient from "./apiClient";
 import fetchFcmToken from "../utils/fcmToken";
+import { Alert } from "react-native";
 const apiKey = '123';
 const signupApi = async (email, password) => {
     try {
@@ -69,13 +70,15 @@ const loginApi = async (email, password) => {
     }
 };
 
-const updateRestaurantApi = async (restaurant) => {
+const updateRestaurantApi = async (restaurant, navigation) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
         console.log(restaurant)
         if (!userId || !accessToken) {
-            throw new Error("User not logged in");
+            Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            navigation.navigate("Đăng kí thông tin");
+            return;
         }
         const response = await apiClient.put(
             '/restaurant', {
@@ -97,7 +100,13 @@ const updateRestaurantApi = async (restaurant) => {
         return metadata;
     } catch (error) {
         if (error.response) {
-            console.error("Lỗi từ server: ", error.response.data);
+            if (error.response.status === 401) {
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('userId');
+                Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
+            }
             const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
             throw new Error(serverError);
         } else if (error.request) {
@@ -107,13 +116,15 @@ const updateRestaurantApi = async (restaurant) => {
         }
     }
 };
-const getInformationRes = async () => {
+const getInformationRes = async (navigation) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
 
         if (!userId || !accessToken) {
-            throw new Error("User not logged in");
+            Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            navigation.navigate("Đăng kí thông tin");
+            return;
         }
         const response = await apiClient.get(
             '/restaurant/detail',
@@ -135,7 +146,13 @@ const getInformationRes = async () => {
         return metadata;
     } catch (error) {
         if (error.response) {
-            console.error("Lỗi từ server: ", error.response.data);
+            if (error.response.status === 401) {
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('userId');
+                Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
+            }
             const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
             throw new Error(serverError);
         } else if (error.request) {
@@ -167,13 +184,17 @@ const getCategories = async () => {
         }
     }
 }
-const getFoodRes = async () => {
+const getFoodRes = async (navigation) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
 
         if (!userId || !accessToken) {
-            throw new Error("User not logged in");
+            if (!userId || !accessToken) {
+                Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
+            }
         }
         const response = await apiClient.get(
             '/products/restaurantId',
@@ -195,7 +216,13 @@ const getFoodRes = async () => {
         return metadata;
     } catch (error) {
         if (error.response) {
-            console.error("Lỗi từ server: ", error.response.data);
+            if (error.response.status === 401) {
+                await AsyncStorage.removeItem('accessToken');
+                await AsyncStorage.removeItem('userId');
+                Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                navigation.navigate("Đăng kí thông tin");
+                return;
+            }
             const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
             throw new Error(serverError);
         } else if (error.request) {

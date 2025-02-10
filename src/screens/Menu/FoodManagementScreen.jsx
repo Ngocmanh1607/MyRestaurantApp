@@ -2,17 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import FoodCard from '../../components/FoodCard';
 import { getFoodRes } from '../../api/restaurantApi';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { TextInput } from 'react-native-gesture-handler';
 
 const FoodManagementScreen = () => {
+    const navigation = useNavigation();
     const [foodItems, setFoodItems] = useState([])
     const [searchQuery, setSearchQuery] = useState('')
     useFocusEffect(
         useCallback(() => {
             const fetchFoodRes = async () => {
                 try {
-                    const data = await getFoodRes();
+                    const data = await getFoodRes(navigation);
                     const setData = data.map(item => ({
                         id: item.id,
                         name: item.name,
