@@ -50,7 +50,7 @@ const RestaurantProfileScreen = () => {
                 setOriginalImage(cleanedData.image);
             } catch (error) {
                 Snackbar.show({
-                    text: 'Lỗi khi tải thông tin nhà hàng',
+                    text: error,
                     duration: Snackbar.LENGTH_SHORT
                 })
                 console.log(error)

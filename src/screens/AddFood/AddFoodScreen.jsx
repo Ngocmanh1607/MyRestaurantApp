@@ -43,7 +43,7 @@ const AddFoodScreen = () => {
                 const categories = await getCategories();
                 setAllCategories(categories)
             } catch (error) {
-                console.error("Lỗi khi lấy danh mục:", error);
+                Snackbar.show({text:error,duration:Snackbar.LENGTH_SHORT});
                 setAllCategories([]);
             }
         };
@@ -78,16 +78,14 @@ const AddFoodScreen = () => {
     };
 
     const handleSave = async () => {
-        if (validateInputs()) {
+        validateInputs();
+        try {
             setIsLoading(true)
             const uploadedImageUrl = await uploadFirebase(foodData.name, foodData.image);
             if (uploadedImageUrl) {
                 const updatedFoodData = { ...foodData, image: uploadedImageUrl };
                 await createFoodInApi(updatedFoodData,navigation);
-
                 Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
-                console.log(updatedFoodData);
-
                 setFoodData({
                     name: '',
                     descriptions: '',
@@ -96,10 +94,12 @@ const AddFoodScreen = () => {
                     image: null,
                     options: [{ topping_name: '', price: '' }],
                 });
-            } else {
-                Snackbar.show({ text: 'Không thể lưu món ăn do lỗi tải ảnh.', duration: Snackbar.LENGTH_SHORT });
-            }
-            setIsLoading(false)
+        }} catch (error) {
+            Snackbar.show({ text: error, duration: Snackbar.LENGTH_SHORT });
+            setIsLoading(false);
+        }
+        finally{
+            setIsLoading(false);
         }
     };
 

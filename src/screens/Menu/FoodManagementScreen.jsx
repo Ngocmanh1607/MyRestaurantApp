@@ -4,6 +4,7 @@ import FoodCard from '../../components/FoodCard';
 import { getFoodRes } from '../../api/restaurantApi';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { TextInput } from 'react-native-gesture-handler';
+import Snackbar from 'react-native-snackbar';
 
 const FoodManagementScreen = () => {
     const navigation = useNavigation();
@@ -23,7 +24,7 @@ const FoodManagementScreen = () => {
                     }));
                     setFoodItems(setData);
                 } catch (error) {
-                    console.error("Error fetching food items:", error);
+                    Snackbar.show({text:error,duration:Snackbar.LENGTH_SHORT});
                 }
             };
 
