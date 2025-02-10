@@ -17,7 +17,6 @@ const fetchFcmToken = async () => {
 
             if (notificationPermission !== PermissionsAndroid.RESULTS.GRANTED) {
                 console.log('Người dùng từ chối quyền thông báo.');
-
                 // Hiển thị cảnh báo yêu cầu quyền
                 Alert.alert(
                     'Cấp quyền thông báo',
@@ -30,15 +29,12 @@ const fetchFcmToken = async () => {
                         { text: 'Hủy', style: 'cancel' },
                     ]
                 );
-
                 return null;
             }
-
             console.log('Người dùng đã cấp quyền POST_NOTIFICATIONS.');
         } else {
             console.log('Không cần yêu cầu quyền POST_NOTIFICATIONS.');
         }
-
         // Yêu cầu quyền Firebase Messaging
         const authStatus = await messaging().requestPermission();
         const permissionGranted =

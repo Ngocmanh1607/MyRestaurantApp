@@ -46,9 +46,9 @@ const SignupScreen = () => {
 
     const handleSignUp = async () => {
         if (validate()) {
-            setLoading(true);
             try {
-                const response = await signupApi(email, password); // Gọi API đăng ký
+                setLoading(true);
+                await signupApi(email, password);
                 navigation.navigate('Đăng kí thông tin');
             } catch (error) {
                 setErrors({ apiError: error.message });

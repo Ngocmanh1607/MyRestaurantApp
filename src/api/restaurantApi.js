@@ -78,18 +78,15 @@ const updateRestaurantApi = async (restaurant) => {
             throw new Error("User not logged in");
         }
         const response = await apiClient.put(
-            '/restaurant',
-            {
-                restaurant,
+            '/restaurant', {
+            restaurant,
+        }, {
+            headers: {
+                "x-api-key": apiKey,
+                "authorization": accessToken,
+                'x-client-id': userId,
             },
-            {
-                headers: {
-                    "x-api-key": apiKey,
-                    "authorization": accessToken,
-                    'x-client-id': userId,
-                }
-            }
-        );
+        });
 
         const { message, metadata } = response.data;
         if (!message) {
@@ -99,8 +96,15 @@ const updateRestaurantApi = async (restaurant) => {
 
         return metadata;
     } catch (error) {
-        console.error("Update restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 };
 const getInformationRes = async () => {
@@ -130,8 +134,15 @@ const getInformationRes = async () => {
         }
         return metadata;
     } catch (error) {
-        console.error("Get infomation restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const getCategories = async () => {
@@ -145,7 +156,15 @@ const getCategories = async () => {
         console.log(response.data.metadata)
         return response.data.metadata;
     } catch (error) {
-        console.log(error)
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const getFoodRes = async () => {
@@ -175,8 +194,15 @@ const getFoodRes = async () => {
 
         return metadata;
     } catch (error) {
-        console.error("Get food restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const getOrderRes = async () => {
@@ -202,8 +228,15 @@ const getOrderRes = async () => {
         console.log(metadata)
         return metadata;
     } catch (error) {
-        console.error("Get order restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const changeOrderStatus = async (orderId, status) => {
@@ -232,8 +265,15 @@ const changeOrderStatus = async (orderId, status) => {
         console.log(metadata)
         return metadata;
     } catch (error) {
-        console.error("Get order restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const findDriver = async (orderId) => {
@@ -256,8 +296,15 @@ const findDriver = async (orderId) => {
         const { metadata } = response.data;
         return metadata;
     } catch (error) {
-        console.error("Get order restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 const rejectOrder = async (orderId, reason) => {
@@ -282,8 +329,15 @@ const rejectOrder = async (orderId, reason) => {
         console.log(metadata)
         return metadata;
     } catch (error) {
-        console.error("Get order restaurant failed:", error);
-        throw error;
+        if (error.response) {
+            console.error("Lỗi từ server: ", error.response.data);
+            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
+            throw new Error(serverError);
+        } else if (error.request) {
+            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
+        } else {
+            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        }
     }
 }
 
