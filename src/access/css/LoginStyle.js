@@ -11,10 +11,11 @@ const styles = StyleSheet.create({
     },
     textInput: {
         flex: 1,
-        color: "#222222"
+        fontSize: 16,
+        color: "#222",
     },
     forgotPassText: {
-        color: "#FF0000",
+        color: "#F00",
         textAlign: 'right',
         width: '90%',
         fontSize: 15,
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     },
     textLogin: {
         color: 'white',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '600',
     },
     horizontalLine: {
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     textLoginGoogle: {
-        color: '#222222',
+        color: '#222',
         fontSize: 16,
         fontWeight: '600',
         marginLeft: 10,

@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { ScrollView, TextInput } from 'react-native-gesture-handler'
-import CheckBox from '@react-native-community/checkbox'
-import Snackbar from 'react-native-snackbar'
-import { getCategoryFood, getToppingFood,updateFoodInApi } from '../api/foodApi'
-import { uploadFoodImage } from '../../utils/firebaseUtils'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { selectImage } from '../../utils/utilsRestaurant'
-import { getCategories } from '../../api/restaurantApi'
-import formatPrice from '../../utils/formatPrice'
+import {  Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import CheckBox from '@react-native-community/checkbox';
+import Snackbar from 'react-native-snackbar';
+import { getCategoryFood, getToppingFood,updateFoodInApi } from '../api/foodApi';
+import { uploadFoodImage } from '../../utils/firebaseUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { selectImage } from '../../utils/utilsRestaurant';
+import { getCategories } from '../../api/restaurantApi';
+import formatPrice from '../../utils/formatPrice';
+import styles from '../../access/css/EditFoodStyle';
 const EditFoodScreen = ({ route, navigation }) => {
     const { food } = route.params;
     const [foodData, setFoodData] = useState({
@@ -41,7 +42,7 @@ const EditFoodScreen = ({ route, navigation }) => {
             const [categoriesData, toppingData, foodCategories] = await Promise.all([
                 getCategories(),
                 getToppingFood(foodData.id),
-                getCategoryFood(foodData.id)
+                getCategoryFood(foodData.id),
             ]);
 
             setAllCategories(categoriesData);
@@ -57,13 +58,13 @@ const EditFoodScreen = ({ route, navigation }) => {
             setFoodData(prev => ({
                 ...prev,
                 categories: foodCategories,
-                toppings: toppingData
+                toppings: toppingData,
             }));
 
             setOriginalFoodData({
                 ...foodData,
                 categories: foodCategories,
-                toppings: toppingData
+                toppings: toppingData,
             });
         } catch (error) {
             console.error("Lấy dữ liệu lỗi :", error);
@@ -356,91 +357,3 @@ const EditFoodScreen = ({ route, navigation }) => {
 };
 
 export default EditFoodScreen
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'space-between',
-        marginTop: 5,
-    },
-    mainContainer: {
-        backgroundColor: '#FFF'
-    },
-    infContainer: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        justifyContent: 'space-between',
-        paddingHorizontal: 10,
-        padding: 10,
-        margin: 10
-    },
-    foodImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 10,
-    },
-    textLeft: {
-        color: '#A0A0A0',
-        fontSize: 16,
-    },
-    textRight: {
-        fontSize: 16,
-        textAlign: 'right',
-    },
-    smallInput: {
-        borderColor: '#F0F0F0',
-    },
-    descriptionInput: {
-        width: '70%',
-    },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-    },
-    toppingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        margin: 10
-    },
-    toppingName: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        flex: 1,
-        marginRight: 10,
-    },
-    toppingPrice: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        width: 80,
-        textAlign: 'right',
-        marginRight: 5,
-    },
-    addButton: {
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    addButtonText: {
-        fontSize: 16,
-    },
-    editButton: {
-        margin: 20,
-        borderRadius: 10,
-        padding: 10,
-        backgroundColor: '#FF0000',
-        alignItems: 'center',
-    },
-    editButtonText: {
-        color: '#FFF',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    checkbox: {
-        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
-        marginRight: 10,
-    }
-});

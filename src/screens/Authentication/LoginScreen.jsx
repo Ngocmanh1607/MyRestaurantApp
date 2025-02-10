@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { loginApi } from '../../api/restaurantApi';
 import PasswordInput from '../../components/PasswordInput';
-import styles from '../../styles/LoginStyle';
+import styles from '../../access/css/LoginStyle';
 const LoginScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
@@ -17,18 +17,18 @@ const LoginScreen = () => {
         // Validate email
         if (!email) {
             valid = false;
-            errors.email = 'Email is required';
+            errors.email = 'Email là bắt buộc';
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             valid = false;
-            errors.email = 'Email address is invalid';
+            errors.email = 'Không đúng định dạng';
         }
         // Validate password
         if (!password) {
             valid = false;
-            errors.password = 'Password is required';
+            errors.password = 'Mật khẩu là bắt buộc';
         } else if (password.length < 6) {
             valid = false;
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = 'Mật khẩu chứa ít nhất 6 ký tự';
         }
 
         setErrors(errors);
@@ -41,7 +41,6 @@ const LoginScreen = () => {
                 setLoading(true);
             const response = await loginApi(email, password);
             if (response) {
-                Alert.alert('Login Successful', `Welcome, ${email}!`);
                 navigation.navigate('Trang chủ');
             }}
             catch(error){
@@ -56,7 +55,7 @@ const LoginScreen = () => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            {loading?<View style={styles.containerLoading} >   
+            {loading?<View style={styles.containerLoading} >
                 <ActivityIndicator size={'large'} color={'#FF0000'}/>
                 </View>:
             <View style={styles.container}>
@@ -76,12 +75,12 @@ const LoginScreen = () => {
                     <PasswordInput
                         value={password}
                         onChangeText={setPassword}
-                        placeholderText="Password"
+                        placeholderText="Mật khẩu"
                     />
                     {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
                     <TouchableOpacity>
-                        <Text style={styles.forgotPassText}>Forget password?</Text>
+                        <Text style={styles.forgotPassText}>Quên mật khẩu?</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -89,7 +88,7 @@ const LoginScreen = () => {
                     <TouchableOpacity
                         style={styles.loginButtonContainer}
                         onPress={handleSubmit}>
-                        <Text style={styles.textLogin}>Login</Text>
+                        <Text style={styles.textLogin}>Đăng nhập</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -97,7 +96,7 @@ const LoginScreen = () => {
                 <View>
                     <TouchableOpacity style={styles.googleButtonContainer}>
                         <Image source={require("../../access/Images/ic_google.png")} style={styles.topImage} />
-                        <Text style={styles.textLoginGoogle}>Login with Google</Text>
+                        <Text style={styles.textLoginGoogle}>Đăng nhập với Google</Text>
                     </TouchableOpacity>
                 </View>
             </View>}

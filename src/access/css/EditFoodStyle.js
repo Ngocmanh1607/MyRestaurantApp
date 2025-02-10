@@ -1,0 +1,89 @@
+import { StyleSheet } from "react-native";
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        marginTop: 5,
+    },
+    mainContainer: {
+        backgroundColor: '#FFF'
+    },
+    infContainer: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        padding: 10,
+        margin: 10
+    },
+    foodImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 10,
+    },
+    textLeft: {
+        color: '#A0A0A0',
+        fontSize: 16,
+    },
+    textRight: {
+        fontSize: 16,
+        textAlign: 'right',
+    },
+    smallInput: {
+        borderColor: '#F0F0F0',
+    },
+    descriptionInput: {
+        width: '70%',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+    },
+    toppingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        margin: 10
+    },
+    toppingName: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+        flex: 1,
+        marginRight: 10,
+    },
+    toppingPrice: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+        width: 80,
+        textAlign: 'right',
+        marginRight: 5,
+    },
+    addButton: {
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    addButtonText: {
+        fontSize: 16,
+    },
+    editButton: {
+        margin: 20,
+        borderRadius: 10,
+        padding: 10,
+        backgroundColor: '#FF0000',
+        alignItems: 'center',
+    },
+    editButtonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    checkbox: {
+        transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
+        marginRight: 10,
+    }
+});
+export default styles;

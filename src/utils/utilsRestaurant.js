@@ -35,7 +35,7 @@ const uploadImage = async (userId, image) => {
             return url;
         } else {
             Snackbar.show({
-                text: 'Không có ảnh nào được chọn hoặc thiếu userId',
+                text: 'Không có ảnh nào được chọn.Vui lòng chọn ảnh.',
                 duration: Snackbar.LENGTH_SHORT,
             });
         }

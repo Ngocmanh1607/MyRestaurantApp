@@ -7,7 +7,7 @@ import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createFoodInApi } from '../../api/foodApi';
 import { getCategories } from '../../api/restaurantApi';
-import styles from '../../styles/AddFoodStyle';
+import styles from '../../access/css/AddFoodStyle';
 const AddFoodScreen = () => {
     const [foodData, setFoodData] = useState({
         name: '',

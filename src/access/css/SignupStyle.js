@@ -1,9 +1,9 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 10
+        marginTop: 10,
     },
     inputSignContainer: {
         backgroundColor: '#FFFFFF',
@@ -21,12 +21,13 @@ const styles = StyleSheet.create({
     },
     textInput: {
         flex: 1,
-        color: "#222222"
+        fontSize: 16,
+        color: "#222",
     },
     loginButtonContainer: {
         width: '70%',
         height: 50,
-        backgroundColor: "#FF0000",
+        backgroundColor: "#F00",
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
@@ -36,13 +37,13 @@ const styles = StyleSheet.create({
     },
     textLogin: {
         color: 'white',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '600',
     },
     errorText: {
         marginStart: 50,
         color: 'red',
-        fontSize: 14
+        fontSize: 14,
     },
 });
 export default styles;

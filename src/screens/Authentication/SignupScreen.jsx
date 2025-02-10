@@ -4,7 +4,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import PasswordInput from '../../components/PasswordInput';
 import { useNavigation } from '@react-navigation/native';
 import { signupApi } from '../../api/restaurantApi'; // Import API
-import styles from '../../styles/SignupStyle';
+import styles from '../../access/css/SignupStyle';
 
 const SignupScreen = () => {
     const navigation = useNavigation();
@@ -19,25 +19,25 @@ const SignupScreen = () => {
         let errors = {};
         if (!email) {
             valid = false;
-            errors.email = 'Email is required';
+            errors.email = 'Email là bắt buộc';
         } else if (!/\S+@\S+\.\S+/.test(email)) {
             valid = false;
-            errors.email = 'Email address is invalid';
+            errors.email = 'Email đã tồn tại';
         }
         if (!password) {
             valid = false;
-            errors.password = 'Password is required';
+            errors.password = 'Mật khẩu là bắt buộc';
         } else if (password.length < 6) {
             valid = false;
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = 'Mật khẩu chứa ít nhất 6 ký tự';
         }
 
         if (!confirmPassword) {
             valid = false;
-            errors.confirmPassword = 'Confirm Password is required';
+            errors.confirmPassword = 'Xác nhân mật khẩu là bắt buộc';
         } else if (password !== confirmPassword) {
             valid = false;
-            errors.confirmPassword = 'Passwords do not match';
+            errors.confirmPassword = 'Mật khẩu không khớp';
         }
 
         setErrors(errors);
@@ -75,20 +75,20 @@ const SignupScreen = () => {
                 <PasswordInput
                     value={password}
                     onChangeText={setPassword}
-                    placeholderText="Password"
+                    placeholderText="Mật khẩu"
                 />
                 {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                 <PasswordInput
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
-                    placeholderText="Confirm Password"
+                    placeholderText="Xác nhận mật khẩu"
                 />
                 {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
 
                 {errors.apiError && <Text style={styles.errorText}>{errors.apiError}</Text>}
 
                 <TouchableOpacity style={styles.loginButtonContainer} onPress={handleSignUp} disabled={loading}>
-                    <Text style={styles.textLogin}>{loading ? 'Signing Up...' : 'Sign Up'}</Text>
+                    <Text style={styles.textLogin}>{loading ? 'Đang đăng ký ...' : 'Đăng ký'}</Text>
                 </TouchableOpacity>
             </View>
         </TouchableWithoutFeedback>

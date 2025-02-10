@@ -1,19 +1,18 @@
-import { StyleSheet, Text, View, LogBox, useWindowDimensions, Animated, Image } from 'react-native'
+import { Text, View, LogBox, useWindowDimensions, Animated, Image } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
-
+import styles from '../../access/css/AuthStyle';
 const TabScreen = () => {
-    // Tắt cảnh báo liên quan đến key
     LogBox.ignoreLogs([
         'A props object containing a "key" prop is being spread into JSX'
     ]);
     const layout = useWindowDimensions();
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-        { key: 'login', title: 'Login' },
-        { key: 'signup', title: 'Sign Up' },
+        { key: 'login', title: 'Đăng nhập' },
+        { key: 'signup', title: 'Đăng ký' },
     ]);
     const renderScene = SceneMap({
         login: LoginScreen,
@@ -67,44 +66,4 @@ const AuthScreen = () => {
 
     );
 };
-export default AuthScreen
-
-const styles = StyleSheet.create({
-    indicator: {
-        backgroundColor: "#FF0000",
-        width: '30%',
-        marginHorizontal: '10%'
-    },
-    tabBar: {
-        backgroundColor: "#FFFFFF",
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '500',
-
-    },
-    container: {
-        flex: 1,
-        zIndex: 0,
-    },
-    topImageContainer: {
-        height: "35%",
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    topImage: {
-        width: "100%",
-        height: "100%",
-        resizeMode: 'cover', // Đảm bảo hình ảnh phủ kín phần trên
-    },
-    animatedContainer: {
-        flex: 1,
-        left: 0,
-        right: 0,
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-        zIndex: 1,
-    },
-})
+export default AuthScreen;
