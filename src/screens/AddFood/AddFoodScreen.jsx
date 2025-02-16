@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar'
 import CheckBox from '@react-native-community/checkbox';
@@ -19,7 +19,7 @@ const AddFoodScreen = () => {
         image: null,
         options: [{ topping_name: '', price: '' }],
     });
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('')
     const [allCategories, setAllCategories] = useState([])
     const handleSelectImage = () => {
@@ -137,7 +137,7 @@ const AddFoodScreen = () => {
     return (
         <View style={{ flex: 1 }}>
             {isLoading ? (
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flex:1,justifyContent: 'center', alignItems: 'center' }}>
                     <ActivityIndicator size="large" color="#FF0000" />
                 </View>
             ) : (

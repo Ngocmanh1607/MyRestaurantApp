@@ -34,7 +34,7 @@ const RestaurantProfileScreen = () => {
     useEffect(() => {
         const fetchRestaurantInfo = async () => {
             try {
-                setLoading(true)
+                setLoading(true);
                 const response = await getInformationRes(navigation);
                 const cleanedData = {
                     id: response.id || null,
@@ -50,7 +50,7 @@ const RestaurantProfileScreen = () => {
                 setOriginalImage(cleanedData.image);
             } catch (error) {
                 Snackbar.show({
-                    text: error,
+                    text: error.message,
                     duration: Snackbar.LENGTH_SHORT
                 })
                 console.log(error)

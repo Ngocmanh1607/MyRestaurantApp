@@ -64,7 +64,7 @@ const StackNavigator = () => {
                 }}
             />
 
-            <Stack.Screen name="Trang chủ">{() => <TabBarNavigation handleLogout={handleLogout} />}</Stack.Screen>
+            <Stack.Screen name="Trang chủ">{() => <TabBarNavigation />}</Stack.Screen>
             <Stack.Screen
                 name="Chỉnh sửa món ăn"
                 component={EditFoodScreen}
