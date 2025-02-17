@@ -170,7 +170,6 @@ const getCategories = async () => {
                     "x-api-key": apiKey,
                 }
             })
-        console.log(response.data.metadata)
         return response.data.metadata;
     } catch (error) {
         if (error.response) {

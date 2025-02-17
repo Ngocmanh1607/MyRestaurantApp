@@ -1,15 +1,16 @@
-import {  Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
+import {  Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert,ScrollView,TextInput} from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox';
 import Snackbar from 'react-native-snackbar';
-import { getCategoryFood, getToppingFood,updateFoodInApi } from '../api/foodApi';
+import { getCategoryFood, getToppingFood,updateFoodInApi } from '../../api/foodApi';
 import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectImage } from '../../utils/utilsRestaurant';
 import { getCategories } from '../../api/restaurantApi';
 import formatPrice from '../../utils/formatPrice';
 import styles from '../../access/css/EditFoodStyle';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 const EditFoodScreen = ({ route, navigation }) => {
     const { food } = route.params;
     const [foodData, setFoodData] = useState({
@@ -27,9 +28,9 @@ const EditFoodScreen = ({ route, navigation }) => {
     const [currentCategories, setCurrentCategories] = useState([]);
     const [userId, setUserId] = useState('');
     const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [allCategories, setAllCategories] = useState([]);
-
+    console.log(foodData.id)
     // Fetch initial data
     const fetchInitialData = async () => {
         setIsLoading(true);
@@ -37,14 +38,12 @@ const EditFoodScreen = ({ route, navigation }) => {
             const storedUserId = await AsyncStorage.getItem('userId');
             if (!storedUserId) throw new Error('User không tồn tại');
             setUserId(storedUserId);
-
-            // Fetch all data in parallel
             const [categoriesData, toppingData, foodCategories] = await Promise.all([
                 getCategories(),
                 getToppingFood(foodData.id),
                 getCategoryFood(foodData.id),
             ]);
-
+            console.log(categoriesData);
             setAllCategories(categoriesData);
             setToppings(toppingData);
             const currentCats = categoriesData.filter(cat =>
@@ -67,7 +66,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                 toppings: toppingData,
             });
         } catch (error) {
-            console.error("Lấy dữ liệu lỗi :", error);
+            console.error("Lấy dữ liệu lỗi :", error.message);
             showError("Lấy dữ liệu lỗi");
         } finally {
             setIsLoading(false);
@@ -163,14 +162,14 @@ const EditFoodScreen = ({ route, navigation }) => {
             await updateFoodInApi(updateData);
 
             setIsEditing(false);
-            showSuccess('Food updated successfully!');
+            showSuccess('Cập nhật thành công');
             navigation.goBack();
         } catch (error) {
             console.error("Error updating food:", error);
             setFoodData(originalFoodData);
             setSelectedCategories(originalFoodData.categories);
             setToppings(originalFoodData.toppings);
-            showError('Failed to update food. Changes reverted.');
+            showError('Có lỗi khi cập nhật');
         } finally {
             setIsLoading(false);
         }
@@ -219,7 +218,6 @@ const EditFoodScreen = ({ route, navigation }) => {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#FF0000" />
-                <Text style={styles.loadingText}>Loading...</Text>
             </View>
         );
     }
@@ -290,7 +288,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                             </View>
 
                             {/* Categories Section */}
-                            <Text style={[styles.sectionTitle, { marginLeft: 15, fontSize: 15, marginTop: 10 }]}>Categories *</Text>
+                            <Text style={[styles.sectionTitle, { marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight:'500'}]}>Danh mục *</Text>
                             {allCategories.map(category => (
                                 <View key={category.id} style={styles.checkboxContainer}>
                                     <CheckBox
@@ -305,7 +303,7 @@ const EditFoodScreen = ({ route, navigation }) => {
 
                             {/* Toppings Section */}
                             <View style={styles.toppingsSection}>
-                                <Text style={{ marginLeft: 15, fontSize: 15, marginTop: 10 }}>Toppings</Text>
+                                <Text style={{ marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight:'500'}}>Các lựa chọn</Text>
                                 {toppings.map((topping, index) => (
                                     <View key={topping.id} style={styles.toppingContainer}>
                                         <TextInput
@@ -337,19 +335,23 @@ const EditFoodScreen = ({ route, navigation }) => {
                             </View>
                         </ScrollView>
                     </TouchableWithoutFeedback>
-
-                    <TouchableOpacity
-                        style={[
-                            styles.editButton,
-                            isLoading && styles.editButtonDisabled
-                        ]}
-                        onPress={toggleEditMode}
-                        disabled={isLoading}
-                    >
-                        <Text style={styles.editButtonText}>
-                            {isEditing ? 'Lưu' : 'Chỉnh sửa'}
-                        </Text>
-                    </TouchableOpacity>
+                    {isEditing ? (
+                            <View style={styles.buttonContainer}>
+                                <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+                                    <Text style={styles.buttonText}>Lưu</Text>
+                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.cancelButton} onPress={()=>setIsEditing(!isEditing)}>
+                                    <Text style={styles.buttonText}>Huỷ</Text>
+                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                                <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                        )}
                 </View>
             </KeyboardAvoidingView>
         </View>

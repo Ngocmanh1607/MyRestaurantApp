@@ -23,12 +23,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     textLeft: {
-        color: '#A0A0A0',
+        color: '#000',
         fontSize: 16,
+        fontWeight: '500'
     },
     textRight: {
         fontSize: 16,
         textAlign: 'right',
+        color: '#333',
     },
     smallInput: {
         borderColor: '#F0F0F0',
@@ -54,6 +56,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#F0F0F0',
         flex: 1,
         marginRight: 10,
+        fontSize: 16,
+
     },
     toppingPrice: {
         borderBottomWidth: 1,
@@ -61,6 +65,7 @@ const styles = StyleSheet.create({
         width: 80,
         textAlign: 'right',
         marginRight: 5,
+        fontSize: 16,
     },
     addButton: {
         alignItems: 'center',
@@ -68,22 +73,59 @@ const styles = StyleSheet.create({
     },
     addButtonText: {
         fontSize: 16,
-    },
-    editButton: {
-        margin: 20,
-        borderRadius: 10,
-        padding: 10,
-        backgroundColor: '#FF0000',
-        alignItems: 'center',
-    },
-    editButtonText: {
-        color: '#FFF',
-        fontWeight: 'bold',
-        fontSize: 16,
+        color: '#f00'
     },
     checkbox: {
         transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
         marginRight: 10,
-    }
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonContainer: {
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        paddingHorizontal: 20,
+        marginBottom: 20,
+    },
+    editButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginBottom: 20,
+        marginHorizontal: 20,
+    },
+    saveButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#32CD32',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    cancelButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    logoutIcon: {
+        marginLeft: 10,
+    },
 });
 export default styles;
