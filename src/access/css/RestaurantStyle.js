@@ -3,7 +3,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 20,
+        padding: 15,
     },
     loadingContainer: {
         flex: 1,
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     sectionTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
+        fontSize: 18,
+        fontWeight: '600',
         color: '#333',
         marginBottom: 10,
     },
@@ -37,13 +37,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc',
         paddingVertical: 5,
         fontSize: 16,
-    },
-    editButton: {
-        backgroundColor: '#FF0000',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-        alignItems: 'center',
     },
     editButtonText: {
         color: '#fff',
@@ -91,6 +84,57 @@ const styles = StyleSheet.create({
     addressContainer: {
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-    }
+    },
+
+    buttonContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginTop: 10,
+        paddingHorizontal: 20,
+    },
+    editButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    saveButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#32CD32',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    cancelButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    logoutButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#F00',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        width: '45%',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    logoutIcon: {
+        marginLeft: 10,
+    },
 });
 export default styles;

@@ -6,7 +6,7 @@ import styles from '../../access/css/RestaurantStyle';
 import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getInformationRes } from '../../api/restaurantApi';
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const RestaurantProfileScreen = () => {
     const navigation = useNavigation();
@@ -88,7 +88,6 @@ const RestaurantProfileScreen = () => {
         }
     };
 
-    // Function để upload ảnh lên Firebase và lưu URL xuống Firestore
     const handelUploadImage = async () => {
         try {
             const UrlImage = await uploadImage(userId, restaurant.image)
@@ -220,6 +219,27 @@ const RestaurantProfileScreen = () => {
             targetScreen: 'Hồ Sơ'
         });
     }
+
+    const handleLogout = () => {
+        Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất không?', [
+            { text: 'Hủy', style: 'cancel' },
+            {
+                text: 'Đăng xuất',
+                onPress: async () => {
+                    try {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Auth' }],
+                        });
+                    } catch (error) {
+                        console.error("Error logging out:", error);
+                        Alert.alert('Lỗi', 'Không thể đăng xuất. Vui lòng thử lại.');
+                    }
+                },
+            },
+        ]);
+    };
+    const handleCancel = () => setIsEditing(!isEditing);
     return (
         <View style={styles.container}>
             {loading ? (<View style={styles.loadingContainer}>
@@ -305,9 +325,29 @@ const RestaurantProfileScreen = () => {
                             </View>
                         </View>
                     </ScrollView>
-                    <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
-                        <Text style={styles.editButtonText}>{isEditing ? 'Lưu' : 'Chỉnh sửa'}</Text>
-                    </TouchableOpacity>
+                    {isEditing ? (
+                            <View style={styles.buttonContainer}>
+                                <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+                                    <Text style={styles.buttonText}>Lưu</Text>
+                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+                                    <Text style={styles.buttonText}>Huỷ</Text>
+                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <View style={styles.buttonContainer}>
+                                <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                                    <Text style={styles.buttonText}>Đăng xuất</Text>
+                                    <Icon name="sign-out-alt" size={18} color="#fff" style={styles.logoutIcon} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                 </>
             }
         </View>

@@ -1,11 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AddFoodScreen from '../screens/AddFood/AddFoodScreen';
-import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import OrderManagementScreen from '../screens/Home/OrderManagementScreen';
 import FoodManagementScreen from '../screens/Menu/FoodManagementScreen';
 import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
+import StatisticScreen from '../screens/Statistic/StatisticScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,8 +15,8 @@ function TabBarNavigation() {
             iconName = 'fast-food';
         } else if (route.name === 'Đơn Hàng') {
             iconName = 'receipt';
-        } else if (route.name === 'Thêm Món') {
-            iconName = 'add-circle-outline';
+        } else if (route.name === 'Thống kê') {
+            iconName = 'bar-chart-outline';
         } else if (route.name === 'Hồ Sơ') {
             iconName = 'person';
         }
@@ -36,7 +35,7 @@ function TabBarNavigation() {
         >
             <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} />
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
-            <Tab.Screen name="Thêm Món" component={AddFoodScreen} />
+            <Tab.Screen name="Thống kê" component={StatisticScreen} />
             <Tab.Screen name="Hồ Sơ" component={RestaurantProfileScreen}/>
         </Tab.Navigator>
     );

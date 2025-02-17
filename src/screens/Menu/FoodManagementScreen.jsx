@@ -31,16 +31,19 @@ const FoodManagementScreen = () => {
             fetchFoodRes();
         }, [])
     );
-    console.log('data : ', foodItems)
+    const handlePress = ()=>{
+        navigation.navigate('Thêm món ăn');
+    }
     const filterFoodItems = foodItems.filter(food => food.name.toLowerCase().includes(searchQuery.toLowerCase()))
     return (
+        <>
         <ScrollView style={styles.mainContainer}>
-            <TextInput
+            {/* <TextInput
                 style={styles.searchBar}
                 placeholder="Search for a food item..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-            />
+            /> */}
             {filterFoodItems.map((food) => (
                 <FoodCard
                     key={food.id}
@@ -49,6 +52,12 @@ const FoodManagementScreen = () => {
                 />
             ))}
         </ScrollView>
+        <View style={styles.addContainer}>
+        <TouchableOpacity onPress={handlePress}>
+            <Text style={styles.addText}>+</Text>
+        </TouchableOpacity>
+    </View>
+        </>
     );
 };
 
@@ -70,6 +79,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginVertical: 5,
     },
+    addContainer:{
+            width: 50,
+            height: 50,
+            backgroundColor: "#fff",
+            position: 'absolute',
+            zIndex: 1,
+            right: 10,
+            bottom: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
+            elevation: 5,
+    },
+    addText:{
+        fontSize:30,
+        fontWeight:'500',
+        color:'#f00'
+    }
 });
 
 export default FoodManagementScreen;

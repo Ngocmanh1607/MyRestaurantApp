@@ -9,6 +9,7 @@ import RegisterInf from '../screens/Authentication/RegisterInf';
 import OrderDetailScreen from '../screens/Home/OrderDetailScreen';
 import EditFoodScreen from '../screens/Menu/EditFoodScreen';
 import MapScreen from '../screens/Profile/MapScreen';
+import AddFoodScreen from '../screens/Menu/AddFoodScreen';
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,11 @@ const StackNavigator = () => {
                 name="Chỉnh sửa món ăn"
                 component={EditFoodScreen}
                 options={{ headerShown: true }}
+            />
+            <Stack.Screen
+                name="Thêm món ăn"
+                component={AddFoodScreen}
+                options={{ headerShown: true ,headerBackTitle:'Quay lại'}}
             />
             <Stack.Screen
                 name="Địa chỉ"

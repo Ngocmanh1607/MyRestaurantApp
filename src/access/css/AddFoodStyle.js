@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '500',
         marginBottom: 10,
     },
     checkbox: {

@@ -16,12 +16,13 @@ const AddFoodScreen = () => {
         descriptions: '',
         categories: [],
         price: '',
+        number:'',
         image: null,
         options: [{ topping_name: '', price: '' }],
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [userId, setUserId] = useState('')
-    const [allCategories, setAllCategories] = useState([])
+    const [userId, setUserId] = useState('');
+    const [allCategories, setAllCategories] = useState([]);
     const handleSelectImage = () => {
         launchImageLibrary({ mediaType: 'photo' }, (response) => {
             if (response.didCancel) {
@@ -91,6 +92,7 @@ const AddFoodScreen = () => {
                     descriptions: '',
                     categories: [],
                     price: '',
+                    number:'',
                     image: null,
                     options: [{ topping_name: '', price: '' }],
                 });
@@ -171,6 +173,13 @@ const AddFoodScreen = () => {
                         value={foodData.price}
                         onChangeText={(value) => handleChange('price', value)}
                         keyboardType="numeric"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Số lượng *"
+                        value={foodData.number}
+                        onChangeText={(value) => handleChange('number', value)}
+                        keyboardType="number"
                     />
 
                     <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
