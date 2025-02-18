@@ -348,6 +348,11 @@ const RestaurantProfileScreen = () => {
                                 </TouchableOpacity>
                             </View>
                         )}
+                        <TouchableOpacity onPress={()=>{
+                            navigation.navigate('Review')
+                        }}>
+                            <Text>Review</Text>
+                        </TouchableOpacity>
                 </>
             }
         </View>
