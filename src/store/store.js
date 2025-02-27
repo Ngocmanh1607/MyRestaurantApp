@@ -1,9 +1,9 @@
-// src/store/store.js
 import { configureStore } from '@reduxjs/toolkit';
-import orderReducer from './orderSlice';
+import ordersReducer from './orderSlice'; // Import reducer đơn hàng
+
 const store = configureStore({
     reducer: {
-        order: orderReducer,
+        orders: ordersReducer, // Đăng ký reducer vào store
     },
 });
 

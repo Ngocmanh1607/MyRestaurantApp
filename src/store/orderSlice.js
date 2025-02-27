@@ -1,26 +1,34 @@
-// src/store/orderSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const orderSlice = createSlice({
-    name: 'order',
-    initialState: {
-        orders: [],
+const ordersSlice = createSlice({
+    name: 'orders',
+    initialState: { // ✅ Định nghĩa state là object
+        data: [
+            { id: 1, name: "Đơn hàng 1", status: "new" },
+            { id: 2, name: "Đơn hàng 2", status: "inProgress" },
+            { id: 3, name: "Đơn hàng 3", status: "completed" }
+        ]
     },
     reducers: {
         setOrders: (state, action) => {
-            state.orders = action.payload;
-            console.log(state.orders);
+            state.data = action.payload;
         },
         updateOrderStatus: (state, action) => {
             const { id, newStatus } = action.payload;
-            const order = state.orders.find(order => order.id === id);
+            const order = state.data.find(order => order.id === id);
             if (order) {
-                order.order_status = newStatus;
+                order.status = newStatus;
             }
         },
-    },
+        addOrder: (state, action) => {
+            state.data.push(action.payload);
+        },
+        removeOrder: (state, action) => {
+            state.data = state.data.filter(order => order.id !== action.payload);
+        }
+    }
 });
+// Xuất các action để dùng trong component
+export const { updateOrderStatus, addOrder, removeOrder } = ordersSlice.actions;
 
-export const { setOrders, updateOrderStatus } = orderSlice.actions;
-
-export default orderSlice.reducer;
+export default ordersSlice.reducer;

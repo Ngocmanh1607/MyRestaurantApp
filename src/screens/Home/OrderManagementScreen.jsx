@@ -67,8 +67,9 @@ const OrderManagementScreen = () => {
                 return;
             }
             console.log("Restaurant ID:", restaurantId);
-
-            socket = io('https://lh30mlhb-3000.asse.devtunnels.ms');
+// baseURL: 'http://localhost:8080
+            // socket = io('https://lh30mlhb-3000.asse.devtunnels.ms');
+            socket = io('http://localhost:3000');
 
             socket.on('connect', () => {
                 console.log("Socket connected:", socket.id);
@@ -101,7 +102,7 @@ const OrderManagementScreen = () => {
                 socket.disconnect();
             }
         };
-    }, [restaurantId, ordersNew]);
+    }, [restaurantId]);
 
     const handleAcceptOrder = (id) => {
         setIsLoading(true);

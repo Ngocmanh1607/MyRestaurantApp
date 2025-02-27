@@ -5,6 +5,7 @@ import OrderManagementScreen from '../screens/Home/OrderManagementScreen';
 import FoodManagementScreen from '../screens/Menu/FoodManagementScreen';
 import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 import StatisticScreen from '../screens/Statistic/StatisticScreen';
+import Test from '../screens/Home/test';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,7 @@ function TabBarNavigation() {
             })}
         >
             <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} />
+            {/* <Tab.Screen name="Đơn Hàng" component={Test} /> */}
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
             <Tab.Screen name="Thống kê" component={StatisticScreen} />
             <Tab.Screen name="Hồ Sơ" component={RestaurantProfileScreen}/>
