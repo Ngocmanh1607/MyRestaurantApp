@@ -34,8 +34,8 @@ function TabBarNavigation() {
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} />
-            {/* <Tab.Screen name="Đơn Hàng" component={Test} /> */}
+            {/* <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} /> */}
+            <Tab.Screen name="Đơn Hàng" component={Test} />
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
             <Tab.Screen name="Thống kê" component={StatisticScreen} />
             <Tab.Screen name="Hồ Sơ" component={RestaurantProfileScreen}/>

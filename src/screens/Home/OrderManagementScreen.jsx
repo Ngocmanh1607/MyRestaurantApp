@@ -172,8 +172,7 @@ const OrderManagementScreen = () => {
                 transparent={true}
                 visible={isReasonModalVisible}
                 animationType="slide"
-                onRequestClose={() => setIsReasonModalVisible(false)}
-            >
+                onRequestClose={() => setIsReasonModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Chọn lý do từ chối</Text>
