@@ -215,11 +215,11 @@ const getFoodRes = async (navigation) => {
         return metadata;
     } catch (error) {
         if (error.response) {
-            if (error.response.status === 401) {
+            if (error.response.status === 500) {
                 await AsyncStorage.removeItem('accessToken');
                 await AsyncStorage.removeItem('userId');
                 Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                navigation.navigate("Đăng kí thông tin");
+                navigation.navigate("Auth");
                 return;
             }
             const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";

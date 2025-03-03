@@ -14,7 +14,6 @@ const NewOrders = () => {
   const [isReasonModalVisible, setIsReasonModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const orders = useSelector(state => state.orders.data);
-  console.log("order : ",orders);
   const dispatch = useDispatch();
   const newOrders = orders.filter(order => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID');
   useEffect(() => {

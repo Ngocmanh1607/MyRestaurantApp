@@ -14,24 +14,24 @@ const styles = StyleSheet.create({
     },
     orderInfoContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     orderId: {
         fontSize: 16,
-        fontWeight: 'bold'
+        fontWeight: '600',
     },
     orderName: {
         fontSize: 16,
-        fontWeight: 'bold'
+        fontWeight: '600',
     },
     orderItems: { color: '#333' },
     orderAddress: {
         fontSize: 14,
-        color: '#A0A0A0'
+        color: '#A0A0A0',
     },
     orderBtnContainer: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     confirmOrder: {
         justifyContent: 'center',
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         width: 80,
         backgroundColor: '#FF3333',
         padding: 8,
-        borderRadius: 8,
+        borderRadius: 5,
         marginBottom: 5,
     },
     textOrderPro: {
@@ -126,5 +126,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
+    textStatus: {
+        fontSize: 14,
+    }
 });
 export default styles;

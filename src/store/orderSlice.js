@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { or } from '../../../SocketServer/node_modules/sequelize/types/sequelize.d';
 
 const ordersSlice = createSlice({
     name: 'orders',
@@ -10,16 +11,17 @@ const ordersSlice = createSlice({
             state.data = action.payload;
             console.log("data", state.data);
         },
-        updateOrderStatus: (state, action) => {
+        addOrder: (state, action) => {
+            state.data.push(action.payload);
+        },
+        updateStatus: (state, action) => {
             const { id, status } = action.payload;
             const order = state.data.find(order => order.id === id);
-            if (order) {
-                order.status = status;
-            }
+            order.order_status = status;
+            console.log("update ", state.data);
         },
     }
 });
-// Xuất các action để dùng trong component
-export const { updateOrderStatus, setOrders } = ordersSlice.actions;
+export const { updateStatus, setOrders } = ordersSlice.actions;
 
 export default ordersSlice.reducer;
