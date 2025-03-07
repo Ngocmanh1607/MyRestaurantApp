@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar'
 import CheckBox from '@react-native-community/checkbox';
@@ -9,14 +9,15 @@ import { createFoodInApi } from '../../api/foodApi';
 import { getCategories } from '../../api/restaurantApi';
 import styles from '../../access/css/AddFoodStyle';
 import { useNavigation } from '@react-navigation/native';
+import { TextInput } from 'react-native-paper';
 const AddFoodScreen = () => {
-    const navigation= useNavigation();
+    const navigation = useNavigation();
     const [foodData, setFoodData] = useState({
         name: '',
         descriptions: '',
         categories: [],
         price: '',
-        number:'',
+        number: '',
         image: null,
         options: [{ topping_name: '', price: '' }],
     });
@@ -44,7 +45,7 @@ const AddFoodScreen = () => {
                 const categories = await getCategories();
                 setAllCategories(categories)
             } catch (error) {
-                Snackbar.show({text:error,duration:Snackbar.LENGTH_SHORT});
+                Snackbar.show({ text: error, duration: Snackbar.LENGTH_SHORT });
                 setAllCategories([]);
             }
         };
@@ -85,22 +86,23 @@ const AddFoodScreen = () => {
             const uploadedImageUrl = await uploadFirebase(foodData.name, foodData.image);
             if (uploadedImageUrl) {
                 const updatedFoodData = { ...foodData, image: uploadedImageUrl };
-                await createFoodInApi(updatedFoodData,navigation);
+                await createFoodInApi(updatedFoodData, navigation);
                 Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
                 setFoodData({
                     name: '',
                     descriptions: '',
                     categories: [],
                     price: '',
-                    number:'',
+                    number: '',
                     image: null,
                     options: [{ topping_name: '', price: '' }],
                 });
-        }} catch (error) {
+            }
+        } catch (error) {
             Snackbar.show({ text: error, duration: Snackbar.LENGTH_SHORT });
             setIsLoading(false);
         }
-        finally{
+        finally {
             setIsLoading(false);
         }
     };
@@ -139,7 +141,7 @@ const AddFoodScreen = () => {
     return (
         <View style={{ flex: 1 }}>
             {isLoading ? (
-                <View style={{ flex:1,justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <ActivityIndicator size="large" color="#FF0000" />
                 </View>
             ) : (
@@ -153,30 +155,42 @@ const AddFoodScreen = () => {
                     </TouchableOpacity>
 
                     <TextInput
+                        mode='outlined'
+                        label={'Tên món'}
+                        activeOutlineColor='#007bff'
+                        textColor='#333'
                         style={styles.input}
-                        placeholder="Tên món *"
                         value={foodData.name}
                         onChangeText={(value) => handleChange('name', value)}
                     />
 
                     <TextInput
+                        mode='outlined'
+                        label={'Mô tả'}
+                        activeOutlineColor='#007bff'
+                        textColor='#333'
                         style={styles.textArea}
-                        placeholder="Mô tả món ăn *"
                         value={foodData.descriptions}
                         onChangeText={(value) => handleChange('descriptions', value)}
                         multiline
                     />
 
                     <TextInput
+                        mode='outlined'
+                        label={'Giá gốc'}
+                        textColor='#333'
+                        activeOutlineColor='#007bff'
                         style={styles.input}
-                        placeholder="Giá gốc *"
                         value={foodData.price}
                         onChangeText={(value) => handleChange('price', value)}
                         keyboardType="numeric"
                     />
                     <TextInput
+                        mode='outlined'
+                        label={'Số lượng'}
+                        textColor='#333'
+                        activeOutlineColor='#007bff'
                         style={styles.input}
-                        placeholder="Số lượng *"
                         value={foodData.number}
                         onChangeText={(value) => handleChange('number', value)}
                         keyboardType="number"
@@ -198,14 +212,20 @@ const AddFoodScreen = () => {
                     {foodData.options.map((option, index) => (
                         <View key={index} style={styles.optionContainer}>
                             <TextInput
+                                mode='outlined'
+                                label={'Tên lựa chọn'}
+                                textColor='#333'
+                                activeOutlineColor='#007bff'
                                 style={styles.optionName}
-                                placeholder="Tên lựa chọn"
                                 value={option.topping_name}
                                 onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
                             />
                             <TextInput
+                                mode='outlined'
+                                label={'Giá'}
+                                textColor='#333'
+                                activeOutlineColor='#007bff'
                                 style={styles.optionPrice}
-                                placeholder="Giá"
                                 value={option.price}
                                 onChangeText={(value) => handleOptionChange(index, 'price', value)}
                                 keyboardType="numeric"

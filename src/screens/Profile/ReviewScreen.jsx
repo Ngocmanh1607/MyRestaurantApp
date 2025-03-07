@@ -4,7 +4,6 @@ import styles from '../../access/css/ReviewStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import ReviewItem from '../../components/ReviewItem';
-import { SafeAreaView } from 'react-native-safe-area-context';
 const ReviewScreen = () => {
         const sampleReview = [
             { id: 0, user: 'Ngọc Mạnh', date: '17:33 12/02/2025', rating: 5, text: 'Ngon vl' },
