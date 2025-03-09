@@ -332,5 +332,25 @@ const rejectOrder = async (orderId, reason) => {
         }
     }
 }
-
-export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, changeOrderStatus, findDriver, rejectOrder };
+const getReview = async (restaurantId) => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.get(`/review/${restaurantId}/restaurant`,
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
+        return response.data.metadata;
+    } catch (error) {
+        console.error("Lỗi từ server: ", error.response.data);
+    }
+}
+export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, changeOrderStatus, findDriver, rejectOrder, getReview };

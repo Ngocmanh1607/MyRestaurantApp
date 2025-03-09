@@ -11,6 +11,7 @@ import EditFoodScreen from '../screens/Menu/EditFoodScreen';
 import MapScreen from '../screens/Profile/MapScreen';
 import AddFoodScreen from '../screens/Menu/AddFoodScreen';
 import ReviewScreen from '../screens/Profile/ReviewScreen';
+import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 
 const Stack = createStackNavigator();
 
@@ -70,27 +71,30 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Chỉnh sửa món ăn"
                 component={EditFoodScreen}
-                options={{ headerShown: true,headerBackTitle:'Quay lại' }}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
             />
             <Stack.Screen
                 name="Thêm món ăn"
                 component={AddFoodScreen}
-                options={{ headerShown: true ,headerBackTitle:'Quay lại'}}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
             />
             <Stack.Screen
                 name="Địa chỉ"
                 component={MapScreen}
-                options={{ headerShown: true,headerBackTitle:'Quay lại' }}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
             />
             <Stack.Screen
                 name="Chi tiết đơn hàng"
                 component={OrderDetailScreen}
-                options={{ headerShown: true,headerBackTitle:'Quay lại' }}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
             />
             <Stack.Screen
                 name="Review"
                 component={ReviewScreen}
-                options={{ headerShown: true ,headerTitle:'Đánh giá',headerBackTitle:'Quay lại'}}
+                options={{ headerShown: true, headerTitle: 'Đánh giá', headerBackTitle: 'Quay lại' }}
+            />
+            <Stack.Screen name='Profile' component={RestaurantProfileScreen}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
             />
         </Stack.Navigator>
     );

@@ -47,5 +47,14 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         fontSize: 14,
     },
+    noReviewsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noReviewsText: {
+        fontSize: 16,
+        color: '#777',
+    }
 })
 export default styles;

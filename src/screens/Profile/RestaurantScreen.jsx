@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../access/css/RestaurantStyle';
@@ -219,26 +219,6 @@ const RestaurantProfileScreen = () => {
             targetScreen: 'Hồ Sơ'
         });
     }
-
-    const handleLogout = () => {
-        Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất không?', [
-            { text: 'Hủy', style: 'cancel' },
-            {
-                text: 'Đăng xuất',
-                onPress: async () => {
-                    try {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Auth' }],
-                        });
-                    } catch (error) {
-                        console.error("Error logging out:", error);
-                        Alert.alert('Lỗi', 'Không thể đăng xuất. Vui lòng thử lại.');
-                    }
-                },
-            },
-        ]);
-    };
     const handleCancel = () => setIsEditing(!isEditing);
     return (
         <View style={styles.container}>
@@ -326,33 +306,24 @@ const RestaurantProfileScreen = () => {
                         </View>
                     </ScrollView>
                     {isEditing ? (
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
-                                    <Text style={styles.buttonText}>Lưu</Text>
-                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                                    <Text style={styles.buttonText}>Huỷ</Text>
-                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
-                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
-                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                                    <Text style={styles.buttonText}>Đăng xuất</Text>
-                                    <Icon name="sign-out-alt" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        <TouchableOpacity onPress={()=>{
-                            navigation.navigate('Review')
-                        }}>
-                            <Text>Review</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+                                <Text style={styles.buttonText}>Lưu</Text>
+                                <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+                                <Text style={styles.buttonText}>Huỷ</Text>
+                                <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+                                <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                                <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </>
             }
         </View>

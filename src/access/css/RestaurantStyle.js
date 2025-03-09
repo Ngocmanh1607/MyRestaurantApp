@@ -98,8 +98,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#F00',
         paddingVertical: 12,
         borderRadius: 8,
-        width: '45%',
+        width: '100%',
         alignItems: 'center',
+        marginBottom: 10,
     },
     saveButton: {
         flexDirection: 'row',

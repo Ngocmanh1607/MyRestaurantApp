@@ -6,6 +6,7 @@ import FoodManagementScreen from '../screens/Menu/FoodManagementScreen';
 import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 import StatisticScreen from '../screens/Statistic/StatisticScreen';
 import Test from '../screens/Home/test';
+import AccountScreen from '../screens/Profile/AccountScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,7 @@ function TabBarNavigation() {
             iconName = 'receipt';
         } else if (route.name === 'Thống kê') {
             iconName = 'bar-chart-outline';
-        } else if (route.name === 'Hồ Sơ') {
+        } else if (route.name === 'Tài khoản') {
             iconName = 'person';
         }
         return <Ionicons name={iconName} size={24} color={color} />;
@@ -38,7 +39,7 @@ function TabBarNavigation() {
             <Tab.Screen name="Đơn Hàng" component={Test} />
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
             <Tab.Screen name="Thống kê" component={StatisticScreen} />
-            <Tab.Screen name="Hồ Sơ" component={RestaurantProfileScreen}/>
+            <Tab.Screen name="Tài khoản" component={AccountScreen} />
         </Tab.Navigator>
     );
 }
