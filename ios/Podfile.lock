@@ -1369,7 +1369,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (4.11.0):
+  - react-native-safe-area-context (4.14.1):
     - React-Core
   - React-nativeconfig (0.75.3)
   - React-NativeModulesApple (0.75.3):
@@ -2108,7 +2108,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 0f4e470a476acbca2b9cc4930949824f99511265
   react-native-image-picker: 90e570e3ca0d4bf618da7c24a89dba848acee6b4
   react-native-pager-view: b466d0c2a37d506d20a5041b8a5eba79fa175420
-  react-native-safe-area-context: ca0ebcd9798c5a45863c608c961d4f3f984b6ed2
+  react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
   React-nativeconfig: cd572c97f64676dcc2a1c88fc644b693b98408bf
   React-NativeModulesApple: b7051116c6e3ee9110597bb2ea48f295a0eec908
   React-perflogger: 3bbb82f18e9ac29a1a6931568e99d6305ef4403b

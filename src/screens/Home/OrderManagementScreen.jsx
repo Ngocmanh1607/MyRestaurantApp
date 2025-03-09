@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Modal, ActivityIndicator, Alert } from 'react-native';
-import { changeOrderStatus, findDriver, getInformationRes} from '../../api/restaurantApi';
+import { changeOrderStatus, findDriver, getInformationRes } from '../../api/restaurantApi';
 import { formatTime } from '../../utils/utilsRestaurant';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,7 +67,7 @@ const OrderManagementScreen = () => {
                 return;
             }
             console.log("Restaurant ID:", restaurantId);
-// baseURL: 'http://localhost:8080
+            // baseURL: 'http://localhost:8080
             // socket = io('https://lh30mlhb-3000.asse.devtunnels.ms');
             socket = io('http://localhost:3000');
 

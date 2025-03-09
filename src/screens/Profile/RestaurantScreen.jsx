@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert, TextInput } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../access/css/RestaurantStyle';
@@ -7,7 +7,6 @@ import { selectImage, uploadImage } from '../utils/utilsRestaurant';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getInformationRes } from '../../api/restaurantApi';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-
 const RestaurantProfileScreen = () => {
     const navigation = useNavigation();
     const [restaurant, setRestaurant] = useState(

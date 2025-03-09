@@ -49,15 +49,22 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     imagePicker: {
-
         width: 120,
         height: 120,
-        backgroundColor: '#ddd',
-        borderRadius: 8,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
         alignSelf: 'center',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderStyle: 'dashed',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
     },
     imagePlaceholderText: {
         color: '#888',
@@ -65,21 +72,25 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
-        borderRadius: 8,
+        borderRadius: 10,
+        resizeMode: 'cover',
     },
     optionContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: 10,
+        justifyContent: 'space-between',
     },
     optionName: {
         flex: 3,
         backgroundColor: '#fff',
         marginRight: 10,
+        borderRadius: 8,
     },
     optionPrice: {
         flex: 1,
         backgroundColor: '#fff',
+        borderRadius: 8,
     },
     addButton: {
         alignItems: 'center',
