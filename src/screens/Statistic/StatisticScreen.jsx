@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LineChart, BarChart } from 'react-native-chart-kit';
+import StatisticCard from '../../components/StatisticCard';
+import formatPrice from '../../utils/formatPrice';
 
 const StatisticScreen = () => {
-    const [selectedPeriod, setSelectedPeriod] = useState('week'); // week, month, year
-
-    // Data mẫu - Thay thế bằng data thực từ API
+    const [selectedPeriod, setSelectedPeriod] = useState('week');
     const statistics = {
         totalOrders: 150,
         completedOrders: 142,
@@ -28,9 +28,6 @@ const StatisticScreen = () => {
         },
     };
 
-    const formatMoney = (amount) => {
-        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' đ';
-    };
 
     const renderChart = () => {
         const chartConfig = {
@@ -63,17 +60,6 @@ const StatisticScreen = () => {
         );
     };
 
-    const StatisticCard = ({ title, value, icon, color }) => (
-        <View style={styles.cardContainer}>
-            <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
-                <Icon name={icon} size={24} color={color} />
-            </View>
-            <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{title}</Text>
-                <Text style={styles.cardValue}>{value}</Text>
-            </View>
-        </View>
-    );
 
     const PeriodSelector = () => (
         <View style={styles.periodContainer}>
@@ -134,11 +120,10 @@ const StatisticScreen = () => {
                 <View style={styles.header}>
                     <PeriodSelector />
                 </View>
-
                 <View style={styles.statsGrid}>
                     <StatisticCard
                         title="Tổng thu nhập"
-                        value={formatMoney(statistics.totalEarnings)}
+                        value={formatPrice(statistics.totalEarnings)}
                         icon="account-balance-wallet"
                         color="#5196F4"
                     />
@@ -193,13 +178,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
     },
     header: {
-        padding: 20,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 20,
+        marginTop: 10,
+        marginHorizontal: 10,
     },
     periodContainer: {
         flexDirection: 'row',
@@ -228,41 +208,9 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         padding: 10,
     },
-    cardContainer: {
-        width: '50%',
-        padding: 10,
-    },
-    cardContent: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 15,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    iconContainer: {
-        position: 'absolute',
-        top: 20,
-        right: 25,
-        zIndex: 1,
-        padding: 8,
-        borderRadius: 8,
-    },
-    cardTitle: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 8,
-    },
-    cardValue: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-    },
     chartContainer: {
         backgroundColor: '#fff',
-        margin: 20,
+        margin: 10,
         padding: 15,
         borderRadius: 10,
         elevation: 2,
@@ -283,7 +231,7 @@ const styles = StyleSheet.create({
     },
     orderStatsContainer: {
         backgroundColor: '#fff',
-        margin: 20,
+        margin: 10,
         padding: 20,
         borderRadius: 10,
         elevation: 2,
