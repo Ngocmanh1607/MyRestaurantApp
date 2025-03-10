@@ -1,4 +1,4 @@
-import { Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import PasswordInput from '../../components/PasswordInput';
@@ -51,7 +51,7 @@ const SignupScreen = () => {
                 await signupApi(email, password);
                 navigation.navigate('Đăng kí thông tin');
             } catch (error) {
-                setErrors({ apiError: error.message });
+                Alert.alert('Lỗi', error.message);
             } finally {
                 setLoading(false);
             }

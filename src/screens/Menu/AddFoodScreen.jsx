@@ -204,7 +204,7 @@ const AddFoodScreen = () => {
                                 onValueChange={() => toggleCategory(category.id)}
                                 style={styles.checkbox}
                             />
-                            <Text>{category.name}</Text>
+                            <Text style={{ color: '#333' }}>{category.name}</Text>
                         </View>
                     ))}
 

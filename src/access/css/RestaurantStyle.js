@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         fontSize: 16,
         backgroundColor: '#f8f9fa',
+        color: '#333',
     },
     editButtonText: {
         color: '#fff',
@@ -84,6 +85,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         backgroundColor: '#f8f9fa',
+        color: '#333',
     },
     workingHoursText: {
         fontSize: 16,

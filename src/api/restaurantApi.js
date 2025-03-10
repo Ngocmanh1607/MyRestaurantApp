@@ -5,17 +5,15 @@ import { Alert } from "react-native";
 const apiKey = '123';
 const signupApi = async (email, password) => {
     try {
-        const fcmToken = await fetchFcmToken();
+        // const fcmToken = await fetchFcmToken();
+
         const response = await apiClient.post(
             "/user/signup",
-            { email, password, fcmToken, role: "seller" },
+            { email, password, fcmToken: '123', role: "seller" },
             {
                 headers: { "x-api-key": apiKey, },
             });
-        const { message, metadata } = response.data;
-        if (!message) {
-            throw new Error("Phản hồi không hợp lệ: thiếu trường message.");
-        }
+        const { metadata } = response.data;
         const { accessToken, refreshToken } = metadata.tokens;
         const { email: userEmail, id: userId } = metadata.user;
         await AsyncStorage.multiSet([

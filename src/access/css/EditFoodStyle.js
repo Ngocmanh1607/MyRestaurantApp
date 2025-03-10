@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         borderRadius: 10,
+        resizeMode: 'cover'
     },
     textLeft: {
         color: '#000',
@@ -34,22 +35,43 @@ const styles = StyleSheet.create({
     },
     smallInput: {
         borderColor: '#F0F0F0',
+        padding: 8,
+        borderRadius: 5
     },
     descriptionInput: {
         width: '70%',
+        minHeight: 80,
+        textAlignVertical: 'top',
+        padding: 8
     },
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 15,
-        paddingVertical: 5,
+        paddingVertical: 8,
+        marginVertical: 2
+    },
+    categoryText: {
+        color: '#333',
+        fontSize: 16,
+        fontWeight: '300'
     },
     toppingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 10,
-        paddingVertical: 5,
-        margin: 10
+        paddingVertical: 8,
+        margin: 10,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2
     },
     toppingName: {
         borderBottomWidth: 1,
@@ -57,7 +79,8 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 10,
         fontSize: 16,
-
+        padding: 5,
+        color: '#333'
     },
     toppingPrice: {
         borderBottomWidth: 1,
@@ -66,14 +89,18 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         marginRight: 5,
         fontSize: 16,
+        padding: 5,
+        color: '#333'
     },
     addButton: {
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: 15,
+        padding: 10
     },
     addButtonText: {
         fontSize: 16,
-        color: '#f00'
+        color: '#f00',
+        fontWeight: '500'
     },
     checkbox: {
         transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
@@ -82,14 +109,18 @@ const styles = StyleSheet.create({
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#fff'
     },
     buttonContainer: {
         backgroundColor: '#fff',
         justifyContent: 'space-between',
         flexDirection: 'row',
         paddingHorizontal: 20,
+        paddingVertical: 15,
         marginBottom: 20,
+        borderTopWidth: 1,
+        borderTopColor: '#F0F0F0'
     },
     editButton: {
         flexDirection: 'row',
@@ -100,6 +131,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
         marginHorizontal: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
     saveButton: {
         flexDirection: 'row',
@@ -109,6 +148,14 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         width: '45%',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
     cancelButton: {
         flexDirection: 'row',
@@ -118,6 +165,14 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         width: '45%',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
     buttonText: {
         color: '#fff',

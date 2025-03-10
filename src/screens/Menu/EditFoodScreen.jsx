@@ -1,8 +1,8 @@
-import {  Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert,ScrollView,TextInput} from 'react-native';
+import { Text, View, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ActivityIndicator, Alert, ScrollView, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import Snackbar from 'react-native-snackbar';
-import { getCategoryFood, getToppingFood,updateFoodInApi } from '../../api/foodApi';
+import { getCategoryFood, getToppingFood, updateFoodInApi } from '../../api/foodApi';
 import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectImage } from '../../utils/utilsRestaurant';
@@ -288,11 +288,12 @@ const EditFoodScreen = ({ route, navigation }) => {
                             </View>
 
                             {/* Categories Section */}
-                            <Text style={[styles.sectionTitle, { marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight:'500'}]}>Danh mục *</Text>
+                            <Text style={[styles.sectionTitle, { marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight: '500', color: '#333' }]}>Danh mục *</Text>
                             {allCategories.map(category => (
                                 <View key={category.id} style={styles.checkboxContainer}>
                                     <CheckBox
                                         style={styles.checkbox}
+                                        color='#333'
                                         disabled={!isEditing}
                                         value={foodData.categories.some(cate => cate.id === category.id)}
                                         onValueChange={() => toggleCategory(category.id)}
@@ -303,7 +304,7 @@ const EditFoodScreen = ({ route, navigation }) => {
 
                             {/* Toppings Section */}
                             <View style={styles.toppingsSection}>
-                                <Text style={{ marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight:'500'}}>Các lựa chọn</Text>
+                                <Text style={{ marginLeft: 15, fontSize: 16, marginTop: 10, fontWeight: '500' }}>Các lựa chọn</Text>
                                 {toppings.map((topping, index) => (
                                     <View key={topping.id} style={styles.toppingContainer}>
                                         <TextInput
@@ -336,22 +337,22 @@ const EditFoodScreen = ({ route, navigation }) => {
                         </ScrollView>
                     </TouchableWithoutFeedback>
                     {isEditing ? (
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
-                                    <Text style={styles.buttonText}>Lưu</Text>
-                                    <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.cancelButton} onPress={()=>setIsEditing(!isEditing)}>
-                                    <Text style={styles.buttonText}>Huỷ</Text>
-                                    <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                                <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
-                                    <Text style={styles.buttonText}>Chỉnh sửa</Text>
-                                    <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
-                                </TouchableOpacity>
-                        )}
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+                                <Text style={styles.buttonText}>Lưu</Text>
+                                <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => setIsEditing(!isEditing)}>
+                                <Text style={styles.buttonText}>Huỷ</Text>
+                                <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+                            <Text style={styles.buttonText}>Chỉnh sửa</Text>
+                            <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                        </TouchableOpacity>
+                    )}
                 </View>
             </KeyboardAvoidingView>
         </View>
