@@ -10,47 +10,60 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 8,
         marginBottom: 15,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     licensePlate: {
         fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333'
+        fontWeight: '700',
+        color: '#2c3e50'
     },
     driverDetails: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: 12,
     },
     driverImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 45,
+        height: 45,
+        borderRadius: 25,
+        borderWidth: 2,
+        borderColor: '#e8e8e8'
     },
     driverInfo: {
-        marginLeft: 10,
+        marginLeft: 12,
     },
     driverName: {
         fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333'
+        fontWeight: '600',
+        color: '#2c3e50'
     },
     driverRating: {
-        color: '#888',
+        color: '#7f8c8d',
+        fontSize: 14
     },
     orderItemContainer: {
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
         marginBottom: 15,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     orderItemDetails: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     orderItemImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 5,
+        width: 70,
+        height: 70,
+        borderRadius: 10,
         marginRight: 10,
     },
     orderItemText: {
@@ -58,40 +71,57 @@ const styles = StyleSheet.create({
     },
     orderItemName: {
         fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333'
+        fontWeight: '600',
+        color: '#2c3e50',
+        marginBottom: 4
     },
     orderItemOption: {
-        color: '#888',
+        color: '#7f8c8d',
         fontSize: 14,
+        marginTop: 2
     },
     orderInfPay: {
         flexDirection: 'row',
-        marginTop: 10,
+        marginTop: 12,
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        paddingTop: 8,
+        borderTopWidth: 0.5,
+        borderTopColor: '#e8e8e8'
     },
     orderInfPayText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333'
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#2c3e50'
     },
     noteContainer: {
         flex: 1,
         backgroundColor: '#fff',
-        marginBottom: 10,
-        padding: 15
+        marginBottom: 12,
+        padding: 15,
+        borderRadius: 8,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     paymentInfoContainer: {
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 8,
         marginBottom: 15,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     orderTotal: {
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: '600',
         marginTop: 10,
+        color: '#2c3e50'
     },
     orderIdContainer: {
         backgroundColor: '#fff',
@@ -100,43 +130,61 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     orderId: {
-        fontSize: 14,
-        fontWeight: 'bold',
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#2c3e50'
     },
     orderTime: {
         fontSize: 14,
-        color: '#888',
+        color: '#7f8c8d',
     },
     paymentContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginTop: 8
     },
     paymentSumContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         borderTopWidth: 1,
-        borderTopColor: '#666',
-        marginTop: 10,
-        paddingTop: 10
+        borderTopColor: '#e8e8e8',
+        marginTop: 12,
+        paddingTop: 12
     },
     completeButton: {
-        backgroundColor: '#FF0000',
+        backgroundColor: '#e74c3c',
         paddingVertical: 15,
         borderRadius: 8,
         alignItems: 'center',
+        marginTop: 10,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     completeButtonText: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
         color: '#fff',
     },
     paymentText: {
-        fontSize: 16,
-        color: '#333'
+        fontSize: 15,
+        color: '#2c3e50'
     },
+    paymentMethod: {
+        fontSize: 15,
+        color: '#2c3e50',
+        fontWeight: '500'
+    }
 });
 export default styles;

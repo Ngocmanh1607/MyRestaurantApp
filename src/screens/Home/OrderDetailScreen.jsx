@@ -1,7 +1,8 @@
-import {  Text, View, Image, ScrollView } from 'react-native';
+import { Text, View, Image, ScrollView } from 'react-native';
 import React from 'react';
 import styles from '../../access/css/OrderDetailStyle';
 import formatPrice from '../../utils/formatPrice';
+import formatTime from '../../utils/formatTime';
 const OrderDetailScreen = ({ route }) => {
     const { item } = route.params;
     const items = item.listCartItem
@@ -49,7 +50,7 @@ const OrderDetailScreen = ({ route }) => {
             {/* Order ID */}
             <View style={styles.orderIdContainer}>
                 <Text style={styles.orderId}>Mã đơn: {item.id}</Text>
-                <Text style={styles.orderTime}>{item.order_date}</Text>
+                <Text style={styles.orderTime}>{formatTime(item.order_date)}</Text>
             </View>
             {/* Driver Information */}
             {

@@ -40,12 +40,6 @@ const FoodManagementScreen = () => {
     return (
         <>
             <ScrollView style={styles.mainContainer}>
-                {/* <TextInput
-                style={styles.searchBar}
-                placeholder="Search for a food item..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-            /> */}
                 {filterFoodItems.length > 0 ? (
                     filterFoodItems.map((food) => (
                         <FoodCard key={food.id} food={food} onPress={() => console.log(`Add ${food.name}`)} />
