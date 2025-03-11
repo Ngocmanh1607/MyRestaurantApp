@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { findDriver } from '../../api/restaurantApi';
+import { findDriver } from '../api/restaurantApi';
 import styles from '../access/css/CardOrderStyle';
 import formatTime from '../utils/formatTime';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,7 @@ import { updateStatus } from '../store/orderSlice';
 const CardOrder = ({ item }) => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
+    const [isLoading, setIsLoading] = useState(false);
     const [isReasonModalVisible, setIsReasonModalVisible] = useState(false);
     const reasonsList = [
         "Khách hàng không phản hồi",
@@ -25,12 +26,14 @@ const CardOrder = ({ item }) => {
     const handleAcceptOrder = (id) => {
         const updateOrderStatus = async () => {
             try {
-                // await findDriver(id);
+                setIsLoading(true);
+                await findDriver(id);
                 dispatch(updateStatus({ id, status: 'PREPARING_ORDER' }));
             } catch (error) {
+                console.log(error.message);
                 Alert.alert("Lỗi", "Không thể chấp nhận đơn hàng!");
             } finally {
-                // setIsLoading(false);
+                setIsLoading(false);
             }
         };
         updateOrderStatus();
@@ -85,7 +88,7 @@ const CardOrder = ({ item }) => {
                     <Text style={styles.orderTime}>{formatTime(item.createdAt)}</Text>
                     <Text style={styles.orderName}>{item.receiver_name}</Text>
                     <Text style={styles.orderItems}>{item.listCartItem.length} món</Text>
-                    <Text style={styles.orderAddress}>{item.address_receiver}</Text>
+                    <Text style={styles.orderAddress} numberOfLines={2} ellipsizeMode="tail">{item.address_receiver}</Text>
                 </View>
                 {item.order_status === "PAID" && (
                     <View style={styles.orderBtnContainer}>

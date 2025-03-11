@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     orderBtnContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        minWidth: 90
+        width: 100,
     },
     confirmOrder: {
         justifyContent: 'center',
@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 6,
-        marginBottom: 5
+        marginBottom: 5,
+        width: 95,
     },
     textOrderPro: {
         fontSize: 14,
