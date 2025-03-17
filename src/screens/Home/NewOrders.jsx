@@ -29,8 +29,7 @@ const NewOrders = () => {
         return;
       }
       console.log("Restaurant ID:", restaurantId);
-      // baseURL: 'http://localhost:8080
-      // socket = io('https://lh30mlhb-3000.asse.devtunnels.ms');
+      // socket = io('https://1b10dbz1-3000.asse.devtunnels.ms');
       socket = io('http://localhost:3000');
 
       socket.on('connect', () => {
@@ -45,7 +44,7 @@ const NewOrders = () => {
 
       socket.on('orderReceivedByRestaurant', (data) => {
         console.log("New Order Received:", data);
-        fetchOrders(data.orders);
+        console.log(data.orders);
       });
 
       socket.on('error', (error) => {
@@ -68,18 +67,18 @@ const NewOrders = () => {
   return (
     <View>
       <FlatList
-      style={styles.flatList}
+        style={styles.flatList}
         data={newOrders}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <CardOrder item={item}/>
+          <CardOrder item={item} />
         )}
       />
     </View>
   );
 };
 const styles = StyleSheet.create({
-  flatList:{
+  flatList: {
     marginHorizontal: 10,
 
   },

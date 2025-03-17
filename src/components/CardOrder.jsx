@@ -86,7 +86,7 @@ const CardOrder = ({ item }) => {
                         )}
                     </View>
                     <Text style={styles.orderTime}>{formatTime(item.createdAt)}</Text>
-                    <Text style={styles.orderName}>{item.receiver_name}</Text>
+                    <Text style={styles.orderName}>Người đặt: {item.receiver_name}</Text>
                     <Text style={styles.orderItems}>{item.listCartItem.length} món</Text>
                     <Text style={styles.orderAddress} numberOfLines={2} ellipsizeMode="tail">{item.address_receiver}</Text>
                 </View>
