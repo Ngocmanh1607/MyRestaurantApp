@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, Alert, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateOrderStatus } from '../../store/orderSlice';
 import { getInformationRes } from '../../api/restaurantApi';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { io } from 'socket.io-client';
-import { setOrders } from '../../store/orderSlice';
+import { setOrders, addOrder } from '../../store/orderSlice';
 import CardOrder from '../../components/CardOrder';
 const NewOrders = () => {
   const navigation = useNavigation();
   const [restaurantId, setRestaurantId] = useState();
-  const [isReasonModalVisible, setIsReasonModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
   const orders = useSelector(state => state.orders.data);
   const dispatch = useDispatch();
   const newOrders = orders.filter(order => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID');
@@ -38,13 +36,11 @@ const NewOrders = () => {
       });
 
       socket.on('ordersListOfRestaurant', (orders) => {
-        console.log("Orders List Received:", orders);
         dispatch(setOrders(orders));
       });
 
       socket.on('orderReceivedByRestaurant', (data) => {
-        console.log("New Order Received:", data);
-        console.log(data.orders);
+        dispatch(addOrder(data.orders));
       });
 
       socket.on('error', (error) => {

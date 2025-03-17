@@ -1,6 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { or } from '../../../SocketServer/node_modules/sequelize/types/sequelize.d';
-
 const ordersSlice = createSlice({
     name: 'orders',
     initialState: {
@@ -22,6 +20,6 @@ const ordersSlice = createSlice({
         },
     }
 });
-export const { updateStatus, setOrders } = ordersSlice.actions;
+export const { updateStatus, setOrders, addOrder } = ordersSlice.actions;
 
 export default ordersSlice.reducer;
