@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
-import styles from '../../access/css/AuthStyle';
+import styles from '../../assets/css/AuthStyle';
 const TabScreen = () => {
     LogBox.ignoreLogs([
         'A props object containing a "key" prop is being spread into JSX'
@@ -57,7 +57,7 @@ const AuthScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.topImageContainer}>
-                <Image source={require("../../access/Images/Restaurant.png")} style={styles.topImage} />
+                <Image source={require("../../assets/Images/Restaurant.png")} style={styles.topImage} />
             </View>
             <Animated.View style={[styles.animatedContainer, { transform: [{ translateY: slideAnim }] }]}>
                 <TabScreen />

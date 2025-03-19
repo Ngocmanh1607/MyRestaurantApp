@@ -1,6 +1,6 @@
 import { Text, View, Image, ScrollView } from 'react-native';
 import React from 'react';
-import styles from '../../access/css/OrderDetailStyle';
+import styles from '../../assets/css/OrderDetailStyle';
 import formatPrice from '../../utils/formatPrice';
 import formatTime from '../../utils/formatTime';
 const OrderDetailScreen = ({ route }) => {
@@ -59,7 +59,7 @@ const OrderDetailScreen = ({ route }) => {
                     <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
                     <Text>{orderDetails.driver.vehicle}</Text>
                     <View style={styles.driverDetails}>
-                        <Image source={require('../../access/Images/Shipper.webp')} style={styles.driverImage} />
+                        <Image source={require('../../assets/Images/Shipper.webp')} style={styles.driverImage} />
                         <View style={styles.driverInfo}>
                             <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
                             <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>

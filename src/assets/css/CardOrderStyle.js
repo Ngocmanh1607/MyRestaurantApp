@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     orderBtnContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: 100,
     },
     confirmOrder: {
         justifyContent: 'center',

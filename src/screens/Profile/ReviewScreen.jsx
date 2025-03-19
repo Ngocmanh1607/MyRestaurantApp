@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import React, { useMemo, useState, useEffect } from 'react';
-import styles from '../../access/css/ReviewStyle';
+import styles from '../../assets/css/ReviewStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import ReviewItem from '../../components/ReviewItem';

@@ -45,7 +45,6 @@ const NewOrders = () => {
 
       socket.on('error', (error) => {
         console.error("Error from server:", error.message);
-        // setErrorMessage(error.message);
       });
 
       socket.on('disconnect', () => {

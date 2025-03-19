@@ -2,7 +2,7 @@ import { Text, View, TouchableOpacity, Alert, Modal, FlatList } from 'react-nati
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { findDriver } from '../api/restaurantApi';
-import styles from '../access/css/CardOrderStyle';
+import styles from '../assets/css/CardOrderStyle';
 import formatTime from '../utils/formatTime';
 import { useDispatch } from 'react-redux';
 import { updateStatus } from '../store/orderSlice';

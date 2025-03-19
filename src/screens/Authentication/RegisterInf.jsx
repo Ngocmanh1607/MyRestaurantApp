@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateRestaurantApi } from '../../api/restaurantApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { selectImage, uploadImage } from '../../utils/utilsRestaurant';
-import styles from '../../access/css/RegisterInfStyle';
+import styles from '../../assets/css/RegisterInfStyle';
 const RegisterInf = () => {
     const route = useRoute();
     const location = route.params?.location;
@@ -69,7 +69,7 @@ const RegisterInf = () => {
             };
             try {
                 setIsLoading(true);
-                const response = await updateRestaurantApi(updatedRestaurant,navigation);
+                const response = await updateRestaurantApi(updatedRestaurant, navigation);
                 if (response) {
                     Snackbar.show({
                         text: 'Thông tin nhà hàng đã được cập nhật!',

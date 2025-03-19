@@ -1,7 +1,6 @@
 // src/components/FoodCard.js
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo'
 import ToggleSwitch from './ToggleSwitch';
 import { useNavigation } from '@react-navigation/native';
 import { publicProductApi, unPublicProductApi } from '../api/foodApi';

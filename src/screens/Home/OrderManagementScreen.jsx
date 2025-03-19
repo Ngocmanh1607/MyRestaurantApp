@@ -5,7 +5,7 @@ import { changeOrderStatus, findDriver, getInformationRes } from '../../api/rest
 import { formatTime } from '../../utils/utilsRestaurant';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from '../../access/css/OrderManagementStyle';
+import styles from '../../assets/css/OrderManagementStyle';
 const OrderManagementScreen = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);

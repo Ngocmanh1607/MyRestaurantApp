@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../../access/css/AccountStyle';
+import styles from '../../assets/css/AccountStyle';
 const AccountScreen = () => {
     const navigation = useNavigation();
 

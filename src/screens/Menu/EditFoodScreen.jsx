@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectImage } from '../../utils/utilsRestaurant';
 import { getCategories } from '../../api/restaurantApi';
 import formatPrice from '../../utils/formatPrice';
-import styles from '../../access/css/EditFoodStyle';
+import styles from '../../assets/css/EditFoodStyle';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const EditFoodScreen = ({ route, navigation }) => {

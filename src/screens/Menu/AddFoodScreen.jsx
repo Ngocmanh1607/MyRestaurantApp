@@ -7,7 +7,7 @@ import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createFoodInApi } from '../../api/foodApi';
 import { getCategories } from '../../api/restaurantApi';
-import styles from '../../access/css/AddFoodStyle';
+import styles from '../../assets/css/AddFoodStyle';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput } from 'react-native-paper';
 const AddFoodScreen = () => {
@@ -52,7 +52,7 @@ const AddFoodScreen = () => {
         fetchUserId();
         fetchCategories();
     }, []);
-    const uploadFirebase = async (name, imageUrl) => {
+    const uploadImage = async (name, imageUrl) => {
         try {
             const foodImage = await uploadFoodImage(userId, name, imageUrl);
             return foodImage;
@@ -83,7 +83,7 @@ const AddFoodScreen = () => {
         validateInputs();
         try {
             setIsLoading(true)
-            const uploadedImageUrl = await uploadFirebase(foodData.name, foodData.image);
+            const uploadedImageUrl = await uploadImage(foodData.name, foodData.image);
             if (uploadedImageUrl) {
                 const updatedFoodData = { ...foodData, image: uploadedImageUrl };
                 await createFoodInApi(updatedFoodData, navigation);

@@ -3,7 +3,6 @@ import { ScrollView, Text, TouchableOpacity, StyleSheet, View } from 'react-nati
 import FoodCard from '../../components/FoodCard';
 import { getFoodRes } from '../../api/restaurantApi';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { TextInput } from 'react-native-gesture-handler';
 import Snackbar from 'react-native-snackbar';
 
 const FoodManagementScreen = () => {
