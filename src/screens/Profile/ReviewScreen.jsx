@@ -40,9 +40,9 @@ const ReviewScreen = () => {
         if (reviews) {
             total = reviews.length;
 
-            reviews.forEach(({ rating }) => {
-                ratings[rating - 1]++;
-                sumRatings += rating;
+            reviews.forEach(({ res_rating }) => {
+                ratings[res_rating - 1]++;
+                sumRatings += res_rating;
             });
         }
         return {
@@ -57,46 +57,49 @@ const ReviewScreen = () => {
 
     return (
         <View style={styles.container}>
-            {isLoading && <ActivityIndicator size='large' color='red' />}
-            {
-                reviews?.length > 0 ? (< View style={styles.headerContainer}>
-                    <View style={styles.ratingContainer}>
-                        <Text style={styles.averageRating}>{averageRating}</Text>
-                        <View style={styles.starsRow}>
-                            {[...Array(5)].map((_, index) => (
-                                <FontAwesome key={index} name="star" size={20} color="gold" />
-                            ))}
-                        </View>
-                        <Text style={styles.totalReviews}>{totalReviews} đánh giá</Text>
-                    </View>
-
-                    {/* Biểu đồ đánh giá */}
-                    <View style={styles.ratingList}>
-                        {ratingsData.map((item) => (
-                            <View key={item.stars} style={styles.ratingRow}>
-                                <Text style={styles.starText}>{item.stars} <FontAwesome name="star" size={14} color="gold" /></Text>
-                                <Progress.Bar
-                                    progress={item.count / totalReviews}
-                                    width={150}
-                                    height={8}
-                                    color="gold"
-                                    unfilledColor="#ddd"
-                                    borderWidth={0}
-                                />
-                                <Text style={styles.countText}>{item.count}</Text>
+            {isLoading ? <View style={styles.loadingContainer}>
+                <ActivityIndicator size='large' color='red' />
+            </View> :
+                reviews?.length > 0 ?
+                    <>
+                        < View style={styles.headerContainer}>
+                            <View style={styles.ratingContainer}>
+                                <Text style={styles.averageRating}>{averageRating}</Text>
+                                <View style={styles.starsRow}>
+                                    {[...Array(5)].map((_, index) => (
+                                        <FontAwesome key={index} name="star" size={20} color="gold" />
+                                    ))}
+                                </View>
+                                <Text style={styles.totalReviews}>{totalReviews} đánh giá</Text>
                             </View>
-                        ))}
-                    </View>
-                    <FlatList
-                        data={reviews}
-                        renderItem={({ item }) => <ReviewItem review={item} />}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
-                </View >) : (
+
+                            {/* Biểu đồ đánh giá */}
+                            <View style={styles.ratingList}>
+                                {ratingsData.map((item) => (
+                                    <View key={item.stars} style={styles.ratingRow}>
+                                        <Text style={styles.starText}>{item.stars} <FontAwesome name="star" size={14} color="gold" /></Text>
+                                        <Progress.Bar
+                                            progress={item.count / totalReviews}
+                                            width={150}
+                                            height={8}
+                                            color="gold"
+                                            unfilledColor="#ddd"
+                                            borderWidth={0}
+                                        />
+                                        <Text style={styles.countText}>{item.count}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View >
+                        <FlatList
+                            data={reviews}
+                            renderItem={({ item }) => <ReviewItem review={item} />}
+                            keyExtractor={(item) => item.id.toString()}
+                        />
+                    </> :
                     <View style={styles.noReviewsContainer}>
                         <Text style={styles.noReviewsText}>Không có đánh giá nào</Text>
                     </View>
-                )
             }
         </View>
     );

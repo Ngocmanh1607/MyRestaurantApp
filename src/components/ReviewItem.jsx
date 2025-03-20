@@ -1,20 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import formatTime from '../utils/formatTime';
 const ReviewItem = ({ review }) => {
     return (
         <View style={styles.container}>
             <Image source={require('../assets/Images/avatar.png')} style={styles.avatar} />
             <View style={styles.content}>
                 <Text style={styles.userName}>{review.user}</Text>
-                <Text style={styles.date}>{review.date}</Text>
+                <Text style={styles.date}>{formatTime(review.createdAt)}</Text>
                 <View style={styles.starRow}>
-                    {[...Array(review.rating)].map((_, index) => (
+                    {[...Array(review.res_rating)].map((_, index) => (
                         <FontAwesome key={index} name="star" size={16} color="gold" />
                     ))}
                 </View>
-                <Text style={styles.reviewText}>{review.text}</Text>
+                <Text style={styles.reviewText}>{review.res_comment}</Text>
             </View>
         </View>
     );

@@ -72,7 +72,6 @@ const updateRestaurantApi = async (restaurant, navigation) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
-        console.log(restaurant)
         if (!userId || !accessToken) {
             Alert.alert("Thông báo", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
             navigation.navigate("Đăng kí thông tin");
@@ -331,9 +330,13 @@ const rejectOrder = async (orderId, reason) => {
     }
 }
 const getReview = async (restaurantId) => {
+    if (!restaurantId) {
+        return [];
+    }
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
+
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
