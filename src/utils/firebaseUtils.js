@@ -1,4 +1,4 @@
-import storage from '@react-native-firebase/storage';
+
 import { uploadImageToCloudinary } from './cloudinaryUtils';
 
 const uploadRestaurantImage = async (userId, imageUri) => {

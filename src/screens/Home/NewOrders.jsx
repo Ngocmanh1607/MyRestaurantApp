@@ -26,7 +26,6 @@ const NewOrders = () => {
       if (!restaurantId) {
         return;
       }
-      console.log("Restaurant ID:", restaurantId);
       // socket = io('https://1b10dbz1-3000.asse.devtunnels.ms');
       socket = io('http://localhost:3000');
 

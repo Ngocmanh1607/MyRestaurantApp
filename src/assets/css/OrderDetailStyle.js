@@ -16,9 +16,18 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
+    vehicleInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     licensePlate: {
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '600',
+        color: '#2c3e50'
+    },
+    car_name: {
+        fontSize: 16,
+        fontWeight: '600',
         color: '#2c3e50'
     },
     driverDetails: {
@@ -61,8 +70,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     orderItemImage: {
-        width: 70,
-        height: 70,
+        width: 90,
+        height: 90,
         borderRadius: 10,
         marginRight: 10,
     },
@@ -80,19 +89,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 2
     },
-    orderInfPay: {
-        flexDirection: 'row',
-        marginTop: 12,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingTop: 8,
-        borderTopWidth: 0.5,
-        borderTopColor: '#e8e8e8'
+    orderItemQuantity: {
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#666'
     },
     orderInfPayText: {
-        fontSize: 15,
+        marginTop: 10,
         fontWeight: '600',
-        color: '#2c3e50'
+        fontSize: 16,
+        color: '#FF0000'
     },
     noteContainer: {
         flex: 1,
@@ -105,6 +111,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+    },
+    paymentMethodContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     paymentInfoContainer: {
         backgroundColor: '#fff',
@@ -184,7 +195,7 @@ const styles = StyleSheet.create({
     paymentMethod: {
         fontSize: 15,
         color: '#2c3e50',
-        fontWeight: '500'
+        fontWeight: '600'
     }
 });
 export default styles;

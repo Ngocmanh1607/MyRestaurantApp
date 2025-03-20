@@ -5,7 +5,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import ReviewItem from '../../components/ReviewItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getReview } from '../../api/restaurantApi';
+import { getReview, getInformationRes } from '../../api/restaurantApi';
 import { ActivityIndicator } from 'react-native-paper';
 const ReviewScreen = () => {
     const [reviews, setReviews] = useState([]);
@@ -15,8 +15,8 @@ const ReviewScreen = () => {
         const fetchRestaurantId = async () => {
             try {
                 setIsLoading(true);
-                const id = await AsyncStorage.getItem('restaurantId');
-                setRestaurantId(id);
+                const res = await getInformationRes();
+                setRestaurantId(res.id);
             } catch (error) {
                 console.error('Error fetching restaurant ID:', error);
             } finally {
@@ -35,14 +35,16 @@ const ReviewScreen = () => {
     }, [restaurantId]);
     const { ratingsData, totalReviews, averageRating } = useMemo(() => {
         const ratings = [0, 0, 0, 0, 0];
-        let total = reviews.length;
+        let total = 0;
         let sumRatings = 0;
+        if (reviews) {
+            total = reviews.length;
 
-        reviews.forEach(({ rating }) => {
-            ratings[rating - 1]++;
-            sumRatings += rating;
-        });
-
+            reviews.forEach(({ rating }) => {
+                ratings[rating - 1]++;
+                sumRatings += rating;
+            });
+        }
         return {
             ratingsData: ratings.map((count, index) => ({
                 stars: index + 1,
@@ -57,7 +59,7 @@ const ReviewScreen = () => {
         <View style={styles.container}>
             {isLoading && <ActivityIndicator size='large' color='red' />}
             {
-                reviews.length > 0 ? (< View style={styles.headerContainer}>
+                reviews?.length > 0 ? (< View style={styles.headerContainer}>
                     <View style={styles.ratingContainer}>
                         <Text style={styles.averageRating}>{averageRating}</Text>
                         <View style={styles.starsRow}>

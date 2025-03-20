@@ -4,47 +4,10 @@ import styles from '../../assets/css/OrderDetailStyle';
 import formatPrice from '../../utils/formatPrice';
 import formatTime from '../../utils/formatTime';
 const OrderDetailScreen = ({ route }) => {
-    const { item } = route.params;
-    const items = item.listCartItem
+    const { item, shipper } = route.params;
+    const items = item.listCartItem;
     console.log('item', item)
-    // Mock data for the order details
-    const orderDetails = {
-        driver: {
-            name: 'Pham Trung Kien',
-            rating: 5.0,
-            vehicle: 'Yamaha | Nozza',
-            licensePlate: '68T1-572.84',
-            driverImage: 'https://link-to-driver-image.com/driver.jpg', // Replace with a real image
-        },
-        items: [
-            {
-                name: 'Mì Soyum bò Mỹ',
-                price: 70000,
-                quantity: 1,
-                options: [
-                    'Chọn cách chế biến I: Nấu Chín (Phí hộp đựng muỗng đũa)',
-                    'Chọn cấp độ cay: Cấp 2',
-                    'nhiều nước chấm muối ớt xanh'
-                ],
-                image: 'https://link-to-item-image.com/item1.jpg', // Replace with a real image
-            },
-            {
-                name: 'Mì Kim chi bò Mỹ',
-                price: 70000,
-                quantity: 2,
-                options: [
-                    'Chọn cách chế biến I: Nấu Chín (Phí hộp đựng muỗng đũa)',
-                    'Chọn cấp độ cay: Cấp 2'
-                ],
-                image: 'https://link-to-item-image.com/item2.jpg', // Replace with a real image
-            },
-        ],
-        total: '93.000₫',
-        paymentMethod: 'MoMo',
-        orderId: '29270933',
-        orderTime: '28/08/2024 | 19:20',
-    };
-
+    console.log('shipper', shipper);
     return (
         <ScrollView style={styles.container}>
             {/* Order ID */}
@@ -54,15 +17,16 @@ const OrderDetailScreen = ({ route }) => {
             </View>
             {/* Driver Information */}
             {
-                item.driver_id &&
+                shipper &&
                 <View style={styles.driverInfoContainer}>
-                    <Text style={styles.licensePlate}>{orderDetails.driver.licensePlate}</Text>
-                    <Text>{orderDetails.driver.vehicle}</Text>
+                    <View style={styles.vehicleInfo}>
+                        <Text style={styles.car_name}>{shipper.car_name} - {shipper.license_plate}</Text>
+                    </View>
                     <View style={styles.driverDetails}>
                         <Image source={require('../../assets/Images/Shipper.webp')} style={styles.driverImage} />
                         <View style={styles.driverInfo}>
-                            <Text style={styles.driverName}>{orderDetails.driver.name}</Text>
-                            <Text style={styles.driverRating}>⭐ {orderDetails.driver.rating}</Text>
+                            <Text style={styles.driverName}>{shipper.Profile.name}</Text>
+                            <Text style={styles.driverName}>{shipper.Profile.phone_number}</Text>
                         </View>
                     </View>
                 </View>
@@ -83,11 +47,9 @@ const OrderDetailScreen = ({ route }) => {
                                     </Text>
                                 ))
                             }
+                            <Text style={styles.orderItemQuantity}>Số lượng: {item.quantity}</Text>
+                            <Text style={styles.orderInfPayText}>{formatPrice(item.quantity * item.price)}</Text>
                         </View>
-                    </View>
-                    <View style={styles.orderInfPay}>
-                        <Text style={styles.orderInfPayText}>Số lượng: {item.quantity}</Text>
-                        <Text style={styles.orderInfPayText}>{formatPrice(item.quantity * item.price)}</Text>
                     </View>
                 </View>
             ))}
@@ -100,8 +62,11 @@ const OrderDetailScreen = ({ route }) => {
             }
             {/* Payment Information */}
             <View style={styles.paymentInfoContainer}>
-                <Text style={styles.paymentMethod}>Trả qua {item.order_pay}</Text>
-                <Text style={styles.orderTotal}>{formatPrice(item.price)}</Text>
+                <View style={styles.paymentMethodContainer}>
+                    <Text style={styles.paymentMethod}>Trả qua: {formatPrice(item.order_pay)}</Text>
+                    <Text style={styles.orderTotal}>{formatPrice(item.price)}</Text>
+                </View>
+
                 {/* <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Chi tiết thanh toán</Text> */}
                 {/* Tạm tính */}
                 {/* <View style={[styles.paymentContainer, { marginTop: 10 }]}>
