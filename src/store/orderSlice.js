@@ -14,9 +14,13 @@ const ordersSlice = createSlice({
         },
         updateStatus: (state, action) => {
             const { id, status } = action.payload;
-            const order = state.data.find(order => order.id === id);
-            order.order_status = status;
-            console.log("update ", state.data);
+
+            // Tìm vị trí của order trong mảng
+            const index = state.data.findIndex(order => order.id === id);
+            // Nếu tìm thấy thì thay đổi trực tiếp
+            if (index !== -1) {
+                state.data[index].order_status = status;
+            }
         },
     }
 });
