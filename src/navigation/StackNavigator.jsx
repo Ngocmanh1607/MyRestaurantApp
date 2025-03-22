@@ -13,6 +13,8 @@ import AddFoodScreen from '../screens/Menu/AddFoodScreen';
 import ReviewScreen from '../screens/Profile/ReviewScreen';
 import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 import WalletScreen from '../screens/Profile/WalletScreen';
+import OrdersHistoryScreen from '../screens/Profile/OrdersHistoryScreen';
+import OrderHisDetailScreen from '../screens/Profile/OrderHisDetailScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
@@ -78,6 +80,16 @@ const StackNavigator = () => {
                 name="Wallet"
                 component={WalletScreen}
                 options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Ví' }}
+            />
+            <Stack.Screen
+                name="OrdersHistory"
+                component={OrdersHistoryScreen}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Đơn hàng' }}
+            />
+            <Stack.Screen
+                name="OrderHisDetail"
+                component={OrderHisDetailScreen}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Chi tiết đơn hàng' }}
             />
         </Stack.Navigator>
     );

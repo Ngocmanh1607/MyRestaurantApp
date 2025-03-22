@@ -354,4 +354,27 @@ const getReview = async (restaurantId) => {
         console.error("Lỗi từ server: ", error.response.data);
     }
 }
-export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, changeOrderStatus, findDriver, rejectOrder, getReview };
+const getOrders = async () => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+
+        if (!userId || !accessToken) {
+            throw new Error("User not logged in");
+        }
+        const response = await apiClient.get(`/restaurant/order`,
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "authorization": accessToken,
+                    'x-client-id': userId,
+                }
+            }
+        );
+        console.log(response.data.metadata);
+        return response.data.metadata;
+    } catch (error) {
+        console.error("Lỗi từ server: ", error.response.data);
+    }
+}
+export { signupApi, loginApi, updateRestaurantApi, getInformationRes, getCategories, getFoodRes, changeOrderStatus, findDriver, rejectOrder, getReview, getOrders };

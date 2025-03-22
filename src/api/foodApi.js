@@ -53,7 +53,6 @@ const createFoodInApi = async (newFood, navigation) => {
     }
 };
 const getToppingFood = async (foodId) => {
-    console.log('1')
     try {
         const response = await apiClient.get(`/topping/getall/${foodId}`,
             {

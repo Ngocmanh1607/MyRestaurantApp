@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import StatisticCard from '../../components/StatisticCard';
 import formatPrice from '../../utils/formatPrice';
-import { getReview, getInformationRes } from '../../api/restaurantApi';
+import { getReview, getInformationRes, getOrders } from '../../api/restaurantApi';
 import { checkDateInCurrentWeek, checkDateInMonth, getWeekOfMonth } from '../../utils/utilsTime';
 import { styles } from '../../assets/css/StatisticStyle';
 const StatisticScreen = () => {
@@ -69,7 +69,7 @@ const StatisticScreen = () => {
                 const orderDate = new Date(order.order_date).getDate();
                 if (orderDate === day) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
-                        stats.totalEarnings += order.price;
+                        stats.totalEarnings += parseFloat(order.price.toString());
                         stats.completedOrders++;
                     } else if (order.order_status === 'ORDER_CANCELLED') {
                         stats.cancelledOrders++;
@@ -79,7 +79,7 @@ const StatisticScreen = () => {
                 if (checkDateInCurrentWeek(order.order_date)) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
                         const dayOrder = new Date(order.order_date).getDay();
-                        stats.dailyData.earnings[dayOrder - 1] += order.price;
+                        stats.dailyData.earnings[dayOrder - 1] += parseFloat(order.price.toString());
                         stats.dailyData.orders[dayOrder - 1]++;
                     }
                 }
@@ -90,7 +90,7 @@ const StatisticScreen = () => {
             orders.forEach(order => {
                 if (checkDateInCurrentWeek(order.order_date)) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
-                        stats.totalEarnings += order.price;
+                        stats.totalEarnings += parseFloat(order.price.toString());
                         stats.completedOrders++;
                     } else if (order.order_status === 'ORDER_CANCELLED') {
                         stats.cancelledOrders++;
@@ -100,7 +100,7 @@ const StatisticScreen = () => {
                 if (checkDateInMonth(order.order_date)) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
                         const dayOfWeek = getWeekOfMonth(order.order_date);
-                        stats.weeklyData.earnings[dayOfWeek - 1] += order.price;
+                        stats.weeklyData.earnings[dayOfWeek - 1] += parseFloat(order.price.toString());
                         stats.weeklyData.orders[dayOfWeek - 1]++;
                     }
                 }
@@ -111,7 +111,7 @@ const StatisticScreen = () => {
             orders.forEach(order => {
                 if (checkDateInMonth(order.order_date)) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
-                        stats.totalEarnings += order.price;
+                        stats.totalEarnings += parseFloat(order.price.toString());
                         stats.completedOrders++;
                     } else if (order.order_status === 'ORDER_CANCELLED') {
                         stats.cancelledOrders++;
@@ -122,7 +122,7 @@ const StatisticScreen = () => {
                 const currentYear = new Date().getFullYear();
                 const month = orderDate.getMonth(); // Lấy tháng (0 - 11)
                 if (order.order_status === 'ORDER_CONFIRMED' && orderDate.getFullYear() === currentYear) {
-                    stats.monthlyData.earnings[month] += order.price;
+                    stats.monthlyData.earnings[month] += parseFloat(order.price.toString());
                     stats.monthlyData.orders[month]++;
                 }
             });
@@ -130,43 +130,16 @@ const StatisticScreen = () => {
         }
     }
     useEffect(() => {
-        // Giả lập dữ liệu đơn hàng mẫu
-        const sampleOrders = [
-            {
-                id: 31,
-                price: 100000,
-                order_status: 'ORDER_CONFIRMED',
-                order_date: '2025-03-14 14:33:53',
-                delivery_fee: 10500,
-                order_pay: 'ZALOPAY'
-            },
-            {
-                id: 32,
-                price: 60000,
-                order_status: 'ORDER_CONFIRMED',
-                order_date: '2025-03-17 14:33:53',
-                delivery_fee: 10500,
-                order_pay: 'ZALOPAY'
-            }, {
-                id: 33,
-                price: 100000,
-                order_status: 'ORDER_CANCELLED',
-                order_date: '2025-03-22 14:33:53',
-                delivery_fee: 10500,
-                order_pay: 'ZALOPAY'
-            },
-            {
-                id: 34,
-                price: 200000,
-                order_status: 'ORDER_CONFIRMED',
-                order_date: '2025-03-22 14:33:53',
-                delivery_fee: 10500,
-                order_pay: 'ZALOPAY'
-            }];
-        setOrders(sampleOrders);
+        const getOrdersHistory = async () => {
+            const response = await getOrders();
+            console.log("order", response);
+            setOrders(response);
+        }
+        getOrdersHistory();
         const newStats = calculateStatistics();
         setStatistics(newStats);
     }, []);
+
     useEffect(() => {
         const fetchRestaurantId = async () => {
             try {
@@ -228,7 +201,7 @@ const StatisticScreen = () => {
                         labels: labels,
                         datasets: [
                             {
-                                data: data.earnings.map(val => val / 100000),
+                                data: data.earnings.map(val => val / 1000),
                             },
                         ],
                     }}
@@ -301,7 +274,7 @@ const StatisticScreen = () => {
                         <View style={styles.orderStatItem}>
                             <Text style={styles.orderStatLabel}>Tỷ lệ hoàn thành</Text>
                             <Text style={styles.orderStatValue}>
-                                {((statistics.completedOrders / statistics.totalOrders) * 100).toFixed(1)}%
+                                {statistics.totalOrders > 0 ? `${((statistics.completedOrders / statistics.totalOrders) * 100).toFixed(1)}%` : "100%"}
                             </Text>
                         </View>
                         <View style={styles.orderStatItem}>

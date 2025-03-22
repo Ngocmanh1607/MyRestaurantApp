@@ -33,7 +33,7 @@ const AccountScreen = () => {
         {
             title: 'Lịch sử đơn hàng',
             icon: 'history',
-            path: 'OrderHistory',
+            path: 'OrdersHistory',
         },
         {
             title: 'Cài đặt',
