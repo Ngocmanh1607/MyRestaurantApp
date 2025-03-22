@@ -1,11 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import OrderManagementScreen from '../screens/Home/OrderManagementScreen';
 import FoodManagementScreen from '../screens/Menu/FoodManagementScreen';
-import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
 import StatisticScreen from '../screens/Statistic/StatisticScreen';
-import Test from '../screens/Home/test';
+import OrderManagement from '../screens/Home/OrderManagement';
 import AccountScreen from '../screens/Profile/AccountScreen';
 
 const Tab = createBottomTabNavigator();
@@ -35,8 +33,7 @@ function TabBarNavigation() {
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            {/* <Tab.Screen name="Đơn Hàng" component={OrderManagementScreen} /> */}
-            <Tab.Screen name="Đơn Hàng" component={Test} />
+            <Tab.Screen name="Đơn Hàng" component={OrderManagement} />
             <Tab.Screen name="Quản lý món ăn" component={FoodManagementScreen} />
             <Tab.Screen name="Thống kê" component={StatisticScreen} />
             <Tab.Screen name="Tài khoản" component={AccountScreen} />

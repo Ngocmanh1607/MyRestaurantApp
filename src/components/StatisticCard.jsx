@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     iconContainer: {
         position: 'absolute',
         top: 20,
-        right: 25,
+        right: 20,
         zIndex: 1,
         padding: 8,
         borderRadius: 8,

@@ -59,22 +59,36 @@ const NewOrders = () => {
     };
   }, [restaurantId]);
   return (
-    <View>
-      <FlatList
-        style={styles.flatList}
-        data={newOrders}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <CardOrder item={item} />
+    <View style={styles.container}>
+      {
+        newOrders.length === 0 ? (
+          <Text style={styles.emptyText}>Chưa có đơn hàng mới</Text>
+        ) : (
+          <FlatList
+            style={styles.flatList}
+            data={newOrders}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) => (
+              <CardOrder item={item} />
+            )}
+          />
         )}
-      />
     </View>
   );
 };
 const styles = StyleSheet.create({
   flatList: {
     marginHorizontal: 10,
-
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'gray',
   },
 });
 export default NewOrders;

@@ -12,7 +12,7 @@ import MapScreen from '../screens/Profile/MapScreen';
 import AddFoodScreen from '../screens/Menu/AddFoodScreen';
 import ReviewScreen from '../screens/Profile/ReviewScreen';
 import RestaurantProfileScreen from '../screens/Profile/RestaurantScreen';
-
+import WalletScreen from '../screens/Profile/WalletScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
@@ -33,27 +33,6 @@ const StackNavigator = () => {
     useEffect(() => {
         fetchToken();
     }, []);
-
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size='small' color={'#FF0000'} />
-            </View>
-        );
-    }
-    const handleLogout = async () => {
-        try {
-            await AsyncStorage.removeItem('accessToken');
-            setAccessToken(null);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: "Auth" }],
-            });
-        } catch (error) {
-            console.error("Error during logout:", error);
-        }
-    };
-
     return (
         <Stack.Navigator initialRouteName={accessToken ? "Trang chủ" : "Auth"} screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Auth" component={AuthScreen} />
@@ -95,6 +74,11 @@ const StackNavigator = () => {
             />
             <Stack.Screen name='Profile' component={RestaurantProfileScreen}
                 options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+            />
+            <Stack.Screen
+                name="Wallet"
+                component={WalletScreen}
+                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Ví' }}
             />
         </Stack.Navigator>
     );

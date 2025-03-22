@@ -28,7 +28,7 @@ const AccountScreen = () => {
         {
             title: 'Thanh toán',
             icon: 'payment',
-            path: 'Payment',
+            path: 'Wallet',
         },
         {
             title: 'Lịch sử đơn hàng',
