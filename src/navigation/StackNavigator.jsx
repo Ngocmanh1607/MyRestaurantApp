@@ -16,7 +16,6 @@ import WalletScreen from '../screens/Profile/WalletScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
-    const navigation = useNavigation()
     const [accessToken, setAccessToken] = useState(null);
     const [loading, setLoading] = useState(true);
     const fetchToken = async () => {
