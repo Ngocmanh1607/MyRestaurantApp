@@ -5,9 +5,9 @@ import formatTime from '../utils/formatTime';
 const ReviewItem = ({ review }) => {
     return (
         <View style={styles.container}>
-            <Image source={require('../assets/Images/avatar.png')} style={styles.avatar} />
+            <Image source={{ uri: review.image }} style={styles.avatar} />
             <View style={styles.content}>
-                <Text style={styles.userName}>{review.user}</Text>
+                <Text style={styles.userName}>{review.name}</Text>
                 <Text style={styles.date}>{formatTime(review.createdAt)}</Text>
                 <View style={styles.starRow}>
                     {[...Array(review.res_rating)].map((_, index) => (
@@ -32,17 +32,18 @@ const styles = StyleSheet.create({
     avatar: {
         justifyContent: 'center',
         alignSelf: 'center',
-        width: 50,
-        height: 50,
-        borderRadius: 10,
+        width: 70,
+        height: 70,
+        borderRadius: 50,
         marginRight: 10,
     },
     content: {
         flex: 1,
     },
     userName: {
-        fontWeight: 'bold',
+        fontWeight: '500',
         fontSize: 16,
+        color: '#333',
     },
     date: {
         fontSize: 14,
