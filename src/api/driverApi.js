@@ -1,12 +1,12 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
+import handleApiError from './handleApiError';
 const apiKey = '123';
 const getInfoDriver = async (driver_id) => {
     try {
         const userId = await AsyncStorage.getItem('userId');
         const accessToken = await AsyncStorage.getItem('accessToken');
-
         if (!userId || !accessToken) {
             throw new Error("User not logged in");
         }
@@ -19,9 +19,12 @@ const getInfoDriver = async (driver_id) => {
                 }
             }
         );
-        return response.data.metadata;
+        return {
+            success: true,
+            data: response.data.metadata,
+        }
     } catch (error) {
-        console.error("Lỗi từ server: ", error.response.data);
+        return handleApiError(error);
     }
 }
 export { getInfoDriver };

@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import { Alert } from 'react-native';
+import handleApiError from './handleApiError';
 const apiKey = '123';
-const createFoodInApi = async (newFood, navigation) => {
+const createFoodInApi = async (newFood) => {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (!userId || !accessToken) {
@@ -33,23 +34,12 @@ const createFoodInApi = async (newFood, navigation) => {
                     'x-client-id': userId,
                 }
             });
-        return response.data;
-    } catch (error) {
-        if (error.response) {
-            if (error.response.status === 401) {
-                await AsyncStorage.removeItem('accessToken');
-                await AsyncStorage.removeItem('userId');
-                Alert.alert("Phiên hết hạn", "Vui lòng đăng nhập lại.");
-                navigation.navigate("Đăng kí thông tin");
-                return;
-            }
-            const serverError = error.response.data?.message || "Có lỗi xảy ra từ phía server";
-            throw new Error(serverError);
-        } else if (error.request) {
-            throw new Error("Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.");
-        } else {
-            throw new Error("Đã xảy ra lỗi không xác định . Vui lòng thử lại.");
+        return {
+            success: true,
+            data: response.data
         }
+    } catch (error) {
+        return handleApiError(error);
     }
 };
 const getToppingFood = async (foodId) => {

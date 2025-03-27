@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../assets/css/CardOrderStyle';
@@ -8,21 +8,18 @@ import { ActivityIndicator } from 'react-native-paper';
 const CardOrderInHistory = ({ item }) => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
-    const [shipper, setShipper] = useState();
     const getInfo = async () => {
         setIsLoading(true);
-        try {
-            const response = await getInfoDriver(item.driver_id);
-            setShipper(response);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setIsLoading(false);
+        const response = await getInfoDriver(item.driver_id);
+        setIsLoading(false);
+        if (!response.success) {
+            Alert.alert("Đã xảy ra lỗi", response.message);
         }
+        return response.data;
     };
 
     const handlePress = async () => {
-        await getInfo();
+        const shipper = await getInfo();
         navigation.navigate('OrderHisDetail', { item, shipper });
     };
     return (

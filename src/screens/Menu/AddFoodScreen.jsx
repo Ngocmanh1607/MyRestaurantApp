@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar'
 import CheckBox from '@react-native-community/checkbox';
@@ -86,17 +86,38 @@ const AddFoodScreen = () => {
             const uploadedImageUrl = await uploadImage(foodData.name, foodData.image);
             if (uploadedImageUrl) {
                 const updatedFoodData = { ...foodData, image: uploadedImageUrl };
-                await createFoodInApi(updatedFoodData, navigation);
-                Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
-                setFoodData({
-                    name: '',
-                    descriptions: '',
-                    categories: [],
-                    price: '',
-                    number: '',
-                    image: null,
-                    options: [{ topping_name: '', price: '' }],
-                });
+                const response = await createFoodInApi(updatedFoodData);
+                if (response.success) {
+                    Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
+                    setFoodData({
+                        name: '',
+                        descriptions: '',
+                        categories: [],
+                        price: '',
+                        number: '',
+                        image: null,
+                        options: [{ topping_name: '', price: '' }],
+                    });
+                }
+                else {
+                    if (response.message === 500) {
+                        Alert.alert("Đã xảy ra lỗi", "Hết phiên làm việc, vui lòng đăng nhập lại", [
+                            {
+                                text: 'OK',
+                                onPress: () => (
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Auth' }],
+                                    })
+                                )
+                            }
+                        ])
+                    }
+                    else {
+                        Alert.alert("Đã xảy ra lỗi", response.message);
+                        return;
+                    }
+                }
             }
         } catch (error) {
             Snackbar.show({ text: error, duration: Snackbar.LENGTH_SHORT });
