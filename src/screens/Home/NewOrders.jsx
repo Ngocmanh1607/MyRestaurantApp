@@ -62,7 +62,9 @@ const NewOrders = () => {
     <View style={styles.container}>
       {
         newOrders.length === 0 ? (
-          <Text style={styles.emptyText}>Chưa có đơn hàng mới</Text>
+          <View style={styles.containerEmpty}>
+            <Text style={styles.emptyText}>Chưa có đơn hàng mới</Text>
+          </View>
         ) : (
           <FlatList
             style={styles.flatList}
@@ -78,9 +80,10 @@ const NewOrders = () => {
 };
 const styles = StyleSheet.create({
   flatList: {
+    // flex: 1,
     marginHorizontal: 10,
   },
-  container: {
+  containerEmpty: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
