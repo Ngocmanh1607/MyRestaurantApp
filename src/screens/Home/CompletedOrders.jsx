@@ -8,10 +8,12 @@ const CompletedOrders = () => {
   const completedOrders = orders.filter(order => order.order_status === 'ORDER_CONFIRMED' || order.order_status === 'ORDER_CANCELED');
 
   return (
-    <View style={{ flex: 1, marginHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1 }}>
       {
         completedOrders.length === 0 ? (
-          <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>Chưa có đơn hàng hoàn tất</Text>
+          <View style={{ flex: 1, marginHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>Chưa có đơn hàng hoàn tất</Text>
+          </View>
         ) : (
           <FlatList
             data={completedOrders}

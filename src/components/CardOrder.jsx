@@ -93,7 +93,7 @@ const CardOrder = ({ item }) => {
                                     <Text style={styles.textStatus}>Shipper đang lấy đơn</Text>
                                 </View>
                             )}
-                            {item.order_status === "GIVED ORDER" && (
+                            {item.order_status === "ORDER_RECEIVED" && (
                                 <View style={styles.orderBtnContainer}>
                                     <Text style={[styles.textStatus]}>Đã giao cho shipper</Text>
                                 </View>

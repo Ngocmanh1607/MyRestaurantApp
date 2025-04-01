@@ -6,13 +6,15 @@ import CardOrder from '../../components/CardOrder';
 
 const InProgressOrders = () => {
   const orders = useSelector(state => state.orders.data);
-  const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'DELIVERING' || order.order_status === 'GIVED ORDER');
+  const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'DELIVERING' || order.order_status === 'ORDER_RECEIVED');
 
   return (
-    <View style={{ flex: 1, marginHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, marginHorizontal: 10 }}>
       {
         inProgressOrders.length === 0 ? (
-          <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>Chưa có đơn hàng đang xử lý</Text>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>Chưa có đơn hàng đang xử lý</Text>
+          </View>
         ) : (
           <FlatList
             data={inProgressOrders}

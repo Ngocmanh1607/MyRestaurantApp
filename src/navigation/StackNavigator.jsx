@@ -1,4 +1,4 @@
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Modal } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabBarNavigation from './TabBarNavigation';
@@ -18,24 +18,41 @@ import OrderHisDetailScreen from '../screens/Profile/OrderHisDetailScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
+    const [loading, setLoading] = useState(false);
     const [accessToken, setAccessToken] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const fetchToken = async () => {
-        try {
-            const token = await AsyncStorage.getItem("accessToken");
-            setAccessToken(token);
-        } catch (error) {
-            console.error("Failed to retrieve access token:", error);
-        } finally {
-            setLoading(false);
-        }
-
-    };
     useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                setLoading(true);
+                const token = await AsyncStorage.getItem("accessToken");
+                console.log(accessToken);
+                setAccessToken(token);
+            } catch (error) {
+                console.error("Failed to retrieve access token:", error);
+            } finally {
+                setLoading(false);
+            };
+        }
         fetchToken();
     }, []);
+    if (accessToken === null) {
+        return (
+            <Modal transparent={true} animationType="fade" visible={loading}>
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                    }}
+                >
+                    <ActivityIndicator size="small" color="#ffffff" />
+                </View>
+            </Modal>
+        );
+    }
     return (
-        <Stack.Navigator initialRouteName={accessToken ? "Trang chủ" : "Auth"} screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName={accessToken ? "Home" : "Auth"} screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Auth" component={AuthScreen} />
             <Stack.Screen
                 name="Đăng kí thông tin"
@@ -47,7 +64,7 @@ const StackNavigator = () => {
                 }}
             />
 
-            <Stack.Screen name="Trang chủ">{() => <TabBarNavigation />}</Stack.Screen>
+            <Stack.Screen name="Home">{() => <TabBarNavigation />}</Stack.Screen>
             <Stack.Screen
                 name="Chỉnh sửa món ăn"
                 component={EditFoodScreen}
