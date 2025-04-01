@@ -75,7 +75,7 @@ const RegisterInf = () => {
                         text: 'Thông tin nhà hàng đã được cập nhật!',
                         duration: Snackbar.LENGTH_SHORT,
                     });
-                    navigation.navigate('Trang chủ');
+                    navigation.navigate('Home');
                 } else {
                     Snackbar.show({
                         text: 'Cập nhật thất bại, vui lòng thử lại.',

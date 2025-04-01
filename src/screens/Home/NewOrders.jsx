@@ -79,8 +79,8 @@ const NewOrders = () => {
   );
 };
 const styles = StyleSheet.create({
-  flatList: {
-    // flex: 1,
+  container: {
+    flex: 1,
     marginHorizontal: 10,
   },
   containerEmpty: {
@@ -89,9 +89,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'gray',
+    fontSize: 16, fontWeight: 'bold', color: 'gray'
   },
 });
 export default NewOrders;

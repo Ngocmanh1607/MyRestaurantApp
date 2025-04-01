@@ -35,8 +35,9 @@ const StackNavigator = () => {
         }
         fetchToken();
     }, []);
-    if (accessToken === null) {
-        return (
+
+    return (
+        <>
             <Modal transparent={true} animationType="fade" visible={loading}>
                 <View
                     style={{
@@ -46,69 +47,67 @@ const StackNavigator = () => {
                         backgroundColor: "rgba(0,0,0,0.5)",
                     }}
                 >
-                    <ActivityIndicator size="small" color="#ffffff" />
+                    <ActivityIndicator size="lager" color="#ff0" />
                 </View>
             </Modal>
-        );
-    }
-    return (
-        <Stack.Navigator initialRouteName={accessToken ? "Home" : "Auth"} screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Auth" component={AuthScreen} />
-            <Stack.Screen
-                name="Đăng kí thông tin"
-                component={RegisterInf}
-                options={{
-                    headerShown: true,
-                    headerBackTitleVisible: false,
-                    headerLeft: null,
-                }}
-            />
+            <Stack.Navigator initialRouteName={accessToken ? "Home" : "Auth"} screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Auth" component={AuthScreen} />
+                <Stack.Screen
+                    name="Đăng kí thông tin"
+                    component={RegisterInf}
+                    options={{
+                        headerShown: true,
+                        headerBackTitleVisible: false,
+                        headerLeft: null,
+                    }}
+                />
 
-            <Stack.Screen name="Home">{() => <TabBarNavigation />}</Stack.Screen>
-            <Stack.Screen
-                name="Chỉnh sửa món ăn"
-                component={EditFoodScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen
-                name="Thêm món ăn"
-                component={AddFoodScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen
-                name="Địa chỉ"
-                component={MapScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen
-                name="Chi tiết đơn hàng"
-                component={OrderDetailScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen
-                name="Review"
-                component={ReviewScreen}
-                options={{ headerShown: true, headerTitle: 'Đánh giá', headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen name='Profile' component={RestaurantProfileScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
-            />
-            <Stack.Screen
-                name="Wallet"
-                component={WalletScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Ví' }}
-            />
-            <Stack.Screen
-                name="OrdersHistory"
-                component={OrdersHistoryScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Đơn hàng' }}
-            />
-            <Stack.Screen
-                name="OrderHisDetail"
-                component={OrderHisDetailScreen}
-                options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Chi tiết đơn hàng' }}
-            />
-        </Stack.Navigator>
+                <Stack.Screen name="Home">{() => <TabBarNavigation />}</Stack.Screen>
+                <Stack.Screen
+                    name="Chỉnh sửa món ăn"
+                    component={EditFoodScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen
+                    name="Thêm món ăn"
+                    component={AddFoodScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen
+                    name="Địa chỉ"
+                    component={MapScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen
+                    name="Chi tiết đơn hàng"
+                    component={OrderDetailScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen
+                    name="Review"
+                    component={ReviewScreen}
+                    options={{ headerShown: true, headerTitle: 'Đánh giá', headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen name='Profile' component={RestaurantProfileScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+                />
+                <Stack.Screen
+                    name="Wallet"
+                    component={WalletScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Ví' }}
+                />
+                <Stack.Screen
+                    name="OrdersHistory"
+                    component={OrdersHistoryScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Đơn hàng' }}
+                />
+                <Stack.Screen
+                    name="OrderHisDetail"
+                    component={OrderHisDetailScreen}
+                    options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Chi tiết đơn hàng' }}
+                />
+            </Stack.Navigator>
+        </>
     );
 };
 

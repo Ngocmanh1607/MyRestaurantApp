@@ -47,11 +47,9 @@ const loginApi = async (email, password) => {
         const { message, metadata } = response.data;
         const { accessToken, refreshToken } = metadata.tokens;
         const { email: userEmail, id: userId } = metadata.user;
-
+        console.log(accessToken, refreshToken, userId)
         await AsyncStorage.multiSet([
             ["accessToken", accessToken],
-            ["refreshToken", refreshToken],
-            ["userEmail", userEmail],
             ["userId", userId.toString()],
         ]);
         return metadata;

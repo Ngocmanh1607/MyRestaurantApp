@@ -28,6 +28,7 @@ const CardOrder = ({ item }) => {
         const socket = io("http://localhost:3000");
         socket.emit("joinOrder", item.id);
         socket.on("orderStatusUpdate", ({ orderId, status, detailDriver }) => {
+            console.log(status);
             dispatch(updateStatus({ id: item.id, status: status }));
             setShipper(detailDriver);
         });
@@ -93,7 +94,7 @@ const CardOrder = ({ item }) => {
                                     <Text style={styles.textStatus}>Shipper đang lấy đơn</Text>
                                 </View>
                             )}
-                            {item.order_status === "ORDER_RECEIVED" && (
+                            {(item.order_status === "GIVED ORDER" || item.order_status === "ORDER_RECEIVED") && (
                                 <View style={styles.orderBtnContainer}>
                                     <Text style={[styles.textStatus]}>Đã giao cho shipper</Text>
                                 </View>

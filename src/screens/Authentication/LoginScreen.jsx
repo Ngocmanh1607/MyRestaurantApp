@@ -41,7 +41,7 @@ const LoginScreen = () => {
                 setLoading(true);
                 const response = await loginApi(email, password);
                 if (response) {
-                    navigation.navigate('Trang chủ');
+                    navigation.navigate('Home');
                 }
             }
             catch (error) {

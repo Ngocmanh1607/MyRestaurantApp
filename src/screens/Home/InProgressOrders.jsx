@@ -6,7 +6,7 @@ import CardOrder from '../../components/CardOrder';
 
 const InProgressOrders = () => {
   const orders = useSelector(state => state.orders.data);
-  const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'DELIVERING' || order.order_status === 'ORDER_RECEIVED');
+  const inProgressOrders = orders.filter(order => order.order_status === 'PREPARING_ORDER' || order.order_status === 'DELIVERING' || order.order_status === "GIVED ORDER" || order.order_status === 'ORDER_RECEIVED');
 
   return (
     <View style={{ flex: 1, marginHorizontal: 10 }}>
