@@ -100,8 +100,8 @@ const StatisticScreen = () => {
                 if (checkDateInMonth(order.order_date)) {
                     if (order.order_status === 'ORDER_CONFIRMED') {
                         const dayOfWeek = getWeekOfMonth(order.order_date);
-                        stats.weeklyData.earnings[dayOfWeek - 1] += parseFloat(order.price.toString());
-                        stats.weeklyData.orders[dayOfWeek - 1]++;
+                        stats.weeklyData.earnings[dayOfWeek] += parseFloat(order.price.toString());
+                        stats.weeklyData.orders[dayOfWeek]++;
                     }
                 }
             });
