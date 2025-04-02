@@ -11,9 +11,11 @@ const NewOrders = () => {
   const navigation = useNavigation();
   const [restaurantId, setRestaurantId] = useState();
 
-  const orders = useSelector(state => state.orders.data);
+  const orders = useSelector((state) => state.orders.data);
   const dispatch = useDispatch();
-  const newOrders = orders.filter(order => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID');
+  const newOrders = orders.filter(
+    (order) => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID'
+  );
   useEffect(() => {
     const fetchInfRes = async () => {
       await getInformationRes(navigation);
@@ -30,7 +32,7 @@ const NewOrders = () => {
       socket = io('http://localhost:3000');
 
       socket.on('connect', () => {
-        console.log("Socket connected:", socket.id);
+        console.log('Socket connected:', socket.id);
         socket.emit('joinRestaurant', restaurantId);
       });
 
@@ -43,11 +45,11 @@ const NewOrders = () => {
       });
 
       socket.on('error', (error) => {
-        console.error("Error from server:", error.message);
+        console.error('Error from server:', error.message);
       });
 
       socket.on('disconnect', () => {
-        console.log("Socket disconnected:", socket.id);
+        console.log('Socket disconnected:', socket.id);
       });
     };
 
@@ -60,21 +62,18 @@ const NewOrders = () => {
   }, [restaurantId]);
   return (
     <View style={styles.container}>
-      {
-        newOrders.length === 0 ? (
-          <View style={styles.containerEmpty}>
-            <Text style={styles.emptyText}>Chưa có đơn hàng mới</Text>
-          </View>
-        ) : (
-          <FlatList
-            style={styles.flatList}
-            data={newOrders}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              <CardOrder item={item} />
-            )}
-          />
-        )}
+      {newOrders.length === 0 ? (
+        <View style={styles.containerEmpty}>
+          <Text style={styles.emptyText}>Chưa có đơn hàng mới</Text>
+        </View>
+      ) : (
+        <FlatList
+          style={styles.flatList}
+          data={newOrders}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <CardOrder item={item} />}
+        />
+      )}
     </View>
   );
 };
@@ -89,7 +88,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 16, fontWeight: 'bold', color: 'gray'
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'gray',
   },
 });
 export default NewOrders;
