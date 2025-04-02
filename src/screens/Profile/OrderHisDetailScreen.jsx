@@ -23,7 +23,10 @@ const OrderHisDetailScreen = ({ route }) => {
           </View>
           <View style={styles.driverDetails}>
             {shipper.image ? (
-              <Image source={{ uri: shipper.image }} style={styles.driverImage} />
+              <Image
+                source={{ uri: shipper.image }}
+                style={styles.driverImage}
+              />
             ) : (
               <Image
                 source={require('../../assets/Images/Shipper.webp')}
@@ -52,8 +55,12 @@ const OrderHisDetailScreen = ({ route }) => {
                     {topping.topping_name}
                   </Text>
                 ))}
-              <Text style={styles.orderItemQuantity}>Số lượng: {item.quantity}</Text>
-              <Text style={styles.orderInfPayText}>{formatPrice(item.quantity * item.price)}</Text>
+              <Text style={styles.orderItemQuantity}>
+                Số lượng: {item.quantity}
+              </Text>
+              <Text style={styles.orderInfPayText}>
+                {formatPrice(item.quantity * item.price)}
+              </Text>
             </View>
           </View>
         </View>
@@ -67,7 +74,9 @@ const OrderHisDetailScreen = ({ route }) => {
       {/* Payment Information */}
       <View style={styles.paymentInfoContainer}>
         <View style={styles.paymentMethodContainer}>
-          <Text style={styles.paymentMethod}>Trả qua: {formatPrice(item.order_pay)}</Text>
+          <Text style={styles.paymentMethod}>
+            Trả qua: {formatPrice(item.order_pay)}
+          </Text>
           <Text style={styles.orderTotal}>{formatPrice(item.price)}</Text>
         </View>
 
@@ -84,7 +93,9 @@ const OrderHisDetailScreen = ({ route }) => {
                 </View> */}
         {/* Tổng thu */}
         <View style={styles.paymentSumContainer}>
-          <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Tổng tính</Text>
+          <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>
+            Tổng tính
+          </Text>
           <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>
             {formatPrice(item.price)}
           </Text>

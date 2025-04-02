@@ -49,7 +49,10 @@ const EditPriceScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
 
   // Lấy danh sách các danh mục duy nhất từ dữ liệu
-  const categories = ['Tất cả', ...new Set(foodItems.map((item) => item.category))];
+  const categories = [
+    'Tất cả',
+    ...new Set(foodItems.map((item) => item.category)),
+  ];
 
   useEffect(() => {
     const loadData = async () => {
@@ -132,10 +135,13 @@ const EditPriceScreen = () => {
 
   const renderItem = ({ item }) => {
     const currentValue =
-      editedItems[item.id] !== undefined ? editedItems[item.id] : item.price.toString();
+      editedItems[item.id] !== undefined
+        ? editedItems[item.id]
+        : item.price.toString();
 
     const hasChanged =
-      editedItems[item.id] !== undefined && parseInt(editedItems[item.id], 10) !== item.price;
+      editedItems[item.id] !== undefined &&
+      parseInt(editedItems[item.id], 10) !== item.price;
 
     return (
       <View style={[styles.itemContainer, hasChanged && styles.changedItem]}>
@@ -145,7 +151,9 @@ const EditPriceScreen = () => {
         </View>
         <View style={styles.priceContainer}>
           {hasChanged && (
-            <Text style={styles.oldPrice}>{item.price.toLocaleString('vi-VN')} đ</Text>
+            <Text style={styles.oldPrice}>
+              {item.price.toLocaleString('vi-VN')} đ
+            </Text>
           )}
           <TextInput
             style={styles.priceInput}
@@ -214,7 +222,8 @@ const EditPriceScreen = () => {
               <Text
                 style={[
                   styles.categoryButtonText,
-                  selectedCategory === item && styles.selectedCategoryButtonText,
+                  selectedCategory === item &&
+                    styles.selectedCategoryButtonText,
                 ]}>
                 {item}
               </Text>
@@ -245,7 +254,8 @@ const EditPriceScreen = () => {
         <TouchableOpacity
           style={[
             styles.saveButton,
-            (Object.keys(editedItems).length === 0 || saving) && styles.disabledButton,
+            (Object.keys(editedItems).length === 0 || saving) &&
+              styles.disabledButton,
           ]}
           onPress={saveChanges}
           disabled={Object.keys(editedItems).length === 0 || saving}>

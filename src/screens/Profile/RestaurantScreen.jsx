@@ -14,7 +14,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../assets/css/RestaurantStyle';
 import { uploadRestaurantImage } from '../../utils/firebaseUtils';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getInformationRes, updateRestaurantApi } from '../../api/restaurantApi';
+import {
+  getInformationRes,
+  updateRestaurantApi,
+} from '../../api/restaurantApi';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -272,9 +275,14 @@ const RestaurantProfileScreen = () => {
                 style={styles.imagePicker}
                 disabled={!isEditing}>
                 {restaurant.image ? (
-                  <Image source={{ uri: restaurant.image }} style={styles.image} />
+                  <Image
+                    source={{ uri: restaurant.image }}
+                    style={styles.image}
+                  />
                 ) : (
-                  <Text style={styles.imagePlaceholderText}>Chọn ảnh nhà hàng</Text>
+                  <Text style={styles.imagePlaceholderText}>
+                    Chọn ảnh nhà hàng
+                  </Text>
                 )}
               </TouchableOpacity>
 
@@ -284,7 +292,9 @@ const RestaurantProfileScreen = () => {
                   style={styles.input}
                   value={restaurant.name}
                   editable={isEditing}
-                  onChangeText={(text) => setRestaurant((prev) => ({ ...prev, name: text }))}
+                  onChangeText={(text) =>
+                    setRestaurant((prev) => ({ ...prev, name: text }))
+                  }
                 />
               </View>
 
@@ -317,7 +327,9 @@ const RestaurantProfileScreen = () => {
                   style={styles.input}
                   value={restaurant.description}
                   editable={isEditing}
-                  onChangeText={(text) => setRestaurant((prev) => ({ ...prev, description: text }))}
+                  onChangeText={(text) =>
+                    setRestaurant((prev) => ({ ...prev, description: text }))
+                  }
                   multiline
                 />
               </View>
@@ -330,7 +342,9 @@ const RestaurantProfileScreen = () => {
                     <TextInput
                       style={styles.workingHoursInput}
                       value={item.open}
-                      onChangeText={(value) => updateWorkingHours(item.day, 'open', value)}
+                      onChangeText={(value) =>
+                        updateWorkingHours(item.day, 'open', value)
+                      }
                       editable={isEditing}
                       keyboardType="numeric"
                     />
@@ -338,7 +352,9 @@ const RestaurantProfileScreen = () => {
                     <TextInput
                       style={styles.workingHoursInput}
                       value={item.close}
-                      onChangeText={(value) => updateWorkingHours(item.day, 'close', value)}
+                      onChangeText={(value) =>
+                        updateWorkingHours(item.day, 'close', value)
+                      }
                       editable={isEditing}
                       keyboardType="numeric"
                     />
@@ -350,20 +366,41 @@ const RestaurantProfileScreen = () => {
 
           {isEditing ? (
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={toggleEditMode}>
                 <Text style={styles.buttonText}>Lưu</Text>
-                <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                <Icon
+                  name="save"
+                  size={18}
+                  color="#fff"
+                  style={styles.logoutIcon}
+                />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={handleCancel}>
                 <Text style={styles.buttonText}>Huỷ</Text>
-                <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                <Icon
+                  name="times"
+                  size={18}
+                  color="#fff"
+                  style={styles.logoutIcon}
+                />
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={toggleEditMode}>
                 <Text style={styles.buttonText}>Chỉnh sửa</Text>
-                <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+                <Icon
+                  name="edit"
+                  size={18}
+                  color="#fff"
+                  style={styles.logoutIcon}
+                />
               </TouchableOpacity>
             </View>
           )}

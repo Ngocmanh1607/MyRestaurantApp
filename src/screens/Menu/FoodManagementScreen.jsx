@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, StyleSheet, View } from 'react-native';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+} from 'react-native';
 import FoodCard from '../../components/FoodCard';
 import { getFoodRes } from '../../api/restaurantApi';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -47,10 +53,16 @@ const FoodManagementScreen = () => {
       <ScrollView style={styles.mainContainer}>
         {filterFoodItems.length > 0 ? (
           filterFoodItems.map((food) => (
-            <FoodCard key={food.id} food={food} onPress={() => console.log(`Add ${food.name}`)} />
+            <FoodCard
+              key={food.id}
+              food={food}
+              onPress={() => console.log(`Add ${food.name}`)}
+            />
           ))
         ) : (
-          <Text style={{ textAlign: 'center', marginTop: 20 }}>Không có món ăn nào</Text>
+          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+            Không có món ăn nào
+          </Text>
         )}
       </ScrollView>
       <View style={styles.addContainer}>
@@ -59,7 +71,11 @@ const FoodManagementScreen = () => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
-        style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 20,
+        }}
         onPress={() => {
           navigation.navigate('EditPrices');
         }}>

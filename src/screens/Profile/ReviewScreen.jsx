@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import React, { useMemo, useState, useEffect } from 'react';
 import styles from '../../assets/css/ReviewStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -81,7 +88,8 @@ const ReviewScreen = () => {
               {ratingsData.map((item) => (
                 <View key={item.stars} style={styles.ratingRow}>
                   <Text style={styles.starText}>
-                    {item.stars} <FontAwesome name="star" size={14} color="gold" />
+                    {item.stars}{' '}
+                    <FontAwesome name="star" size={14} color="gold" />
                   </Text>
                   <Progress.Bar
                     progress={item.count / totalReviews}

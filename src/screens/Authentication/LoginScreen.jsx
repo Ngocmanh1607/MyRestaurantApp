@@ -72,7 +72,12 @@ const LoginScreen = () => {
         <View style={styles.container}>
           <View>
             <View style={styles.inputContainer}>
-              <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
+              <Fontisto
+                name="email"
+                color="#9a9a9a"
+                size={22}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.textInput}
                 placeholder="Email"
@@ -81,10 +86,18 @@ const LoginScreen = () => {
                 onChangeText={setEmail}
               />
             </View>
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
 
-            <PasswordInput value={password} onChangeText={setPassword} placeholderText="Mật khẩu" />
-            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            <PasswordInput
+              value={password}
+              onChangeText={setPassword}
+              placeholderText="Mật khẩu"
+            />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
 
             <TouchableOpacity>
               <Text style={styles.forgotPassText}>Quên mật khẩu?</Text>
@@ -92,7 +105,9 @@ const LoginScreen = () => {
           </View>
 
           <View>
-            <TouchableOpacity style={styles.loginButtonContainer} onPress={handleSubmit}>
+            <TouchableOpacity
+              style={styles.loginButtonContainer}
+              onPress={handleSubmit}>
               <Text style={styles.textLogin}>Đăng nhập</Text>
             </TouchableOpacity>
           </View>

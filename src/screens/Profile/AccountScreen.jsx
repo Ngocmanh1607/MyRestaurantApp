@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../assets/css/AccountStyle';
@@ -28,9 +35,9 @@ const AccountScreen = () => {
       path: 'Wallet',
     },
     {
-      title: 'Lịch sử đơn hàng',
-      icon: 'history',
-      path: 'OrdersHistory',
+      title: 'Chương trình khuyến mãi',
+      icon: 'confirmation-num',
+      path: 'PromotionManagementScreen',
     },
     {
       title: 'Cài đặt',
@@ -64,7 +71,9 @@ const AccountScreen = () => {
   };
 
   const MenuItem = ({ item }) => (
-    <TouchableOpacity style={styles.menuItem} onPress={() => handleNavigate(item.path)}>
+    <TouchableOpacity
+      style={styles.menuItem}
+      onPress={() => handleNavigate(item.path)}>
       <View style={styles.menuItemContent}>
         <View style={styles.menuItemLeft}>
           <Icon name={item.icon} size={24} color="#333" />
@@ -93,7 +102,9 @@ const AccountScreen = () => {
           <View style={styles.menuItemContent}>
             <View style={styles.menuItemLeft}>
               <Icon name="exit-to-app" size={24} color="#FF4444" />
-              <Text style={[styles.menuItemText, styles.logoutText]}>Đăng xuất</Text>
+              <Text style={[styles.menuItemText, styles.logoutText]}>
+                Đăng xuất
+              </Text>
             </View>
             <Icon name="chevron-right" size={24} color="#FF4444" />
           </View>

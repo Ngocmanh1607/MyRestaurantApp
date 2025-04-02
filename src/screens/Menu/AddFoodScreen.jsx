@@ -87,7 +87,10 @@ const AddFoodScreen = () => {
   };
 
   const addOption = () => {
-    setFoodData({ ...foodData, options: [...foodData.options, { name: '', price: '' }] });
+    setFoodData({
+      ...foodData,
+      options: [...foodData.options, { name: '', price: '' }],
+    });
   };
 
   const handleSave = async () => {
@@ -99,7 +102,10 @@ const AddFoodScreen = () => {
         const updatedFoodData = { ...foodData, image: uploadedImageUrl };
         const response = await createFoodInApi(updatedFoodData);
         if (response.success) {
-          Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
+          Snackbar.show({
+            text: 'Lưu thành công!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
           setFoodData({
             name: '',
             descriptions: '',
@@ -111,16 +117,20 @@ const AddFoodScreen = () => {
           });
         } else {
           if (response.message === 500) {
-            Alert.alert('Đã xảy ra lỗi', 'Hết phiên làm việc, vui lòng đăng nhập lại', [
-              {
-                text: 'OK',
-                onPress: () =>
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth' }],
-                  }),
-              },
-            ]);
+            Alert.alert(
+              'Đã xảy ra lỗi',
+              'Hết phiên làm việc, vui lòng đăng nhập lại',
+              [
+                {
+                  text: 'OK',
+                  onPress: () =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Auth' }],
+                    }),
+                },
+              ]
+            );
           } else {
             Alert.alert('Đã xảy ra lỗi', response.message);
             return;
@@ -137,19 +147,31 @@ const AddFoodScreen = () => {
 
   const validateInputs = () => {
     if (!foodData.image) {
-      Snackbar.show({ text: 'Vui lòng thêm ảnh món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng thêm ảnh món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.name.trim()) {
-      Snackbar.show({ text: 'Vui lòng nhập tên món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập tên món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.price.trim() || isNaN(foodData.price)) {
-      Snackbar.show({ text: 'Vui lòng nhập giá hợp lệ.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập giá hợp lệ.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.descriptions.trim()) {
-      Snackbar.show({ text: 'Vui lòng nhập mô tả món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập mô tả món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (foodData.categories.length === 0) {
@@ -172,12 +194,15 @@ const AddFoodScreen = () => {
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#FF0000" />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.container}>
-          <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+          <TouchableOpacity
+            onPress={handleSelectImage}
+            style={styles.imagePicker}>
             {foodData.image ? (
               <Image source={{ uri: foodData.image }} style={styles.image} />
             ) : (
@@ -249,7 +274,9 @@ const AddFoodScreen = () => {
                 activeOutlineColor="#007bff"
                 style={styles.optionName}
                 value={option.topping_name}
-                onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
+                onChangeText={(value) =>
+                  handleOptionChange(index, 'topping_name', value)
+                }
               />
               <TextInput
                 mode="outlined"
@@ -258,7 +285,9 @@ const AddFoodScreen = () => {
                 activeOutlineColor="#007bff"
                 style={styles.optionPrice}
                 value={option.price}
-                onChangeText={(value) => handleOptionChange(index, 'price', value)}
+                onChangeText={(value) =>
+                  handleOptionChange(index, 'price', value)
+                }
                 keyboardType="numeric"
               />
             </View>

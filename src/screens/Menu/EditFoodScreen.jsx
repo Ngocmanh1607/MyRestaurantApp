@@ -14,7 +14,11 @@ import {
 import React, { useState, useEffect } from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import Snackbar from 'react-native-snackbar';
-import { getCategoryFood, getToppingFood, updateFoodInApi } from '../../api/foodApi';
+import {
+  getCategoryFood,
+  getToppingFood,
+  updateFoodInApi,
+} from '../../api/foodApi';
 import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectImage } from '../../utils/utilsRestaurant';
@@ -58,9 +62,13 @@ const EditFoodScreen = ({ route, navigation }) => {
       console.log(categoriesData);
       setAllCategories(categoriesData);
       setToppings(toppingData);
-      const currentCats = categoriesData.filter((cat) => foodCategories.includes(cat.id));
+      const currentCats = categoriesData.filter((cat) =>
+        foodCategories.includes(cat.id)
+      );
       setCurrentCategories(currentCats);
-      const selectedCategoriesId = foodCategories.map((category) => category.id);
+      const selectedCategoriesId = foodCategories.map(
+        (category) => category.id
+      );
 
       setSelectedCategories(selectedCategoriesId);
 
@@ -140,7 +148,9 @@ const EditFoodScreen = ({ route, navigation }) => {
         ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId];
 
-      const newCurrentCategories = allCategories.filter((cat) => newSelection.includes(cat.id));
+      const newCurrentCategories = allCategories.filter((cat) =>
+        newSelection.includes(cat.id)
+      );
       setCurrentCategories(newCurrentCategories);
 
       return newSelection;
@@ -249,7 +259,10 @@ const EditFoodScreen = ({ route, navigation }) => {
                       <ActivityIndicator size="small" color="#FF0000" />
                     </View>
                   ) : (
-                    <Image style={styles.foodImage} source={{ uri: foodData.image }} />
+                    <Image
+                      style={styles.foodImage}
+                      source={{ uri: foodData.image }}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -312,7 +325,9 @@ const EditFoodScreen = ({ route, navigation }) => {
                     style={styles.checkbox}
                     color="#333"
                     disabled={!isEditing}
-                    value={foodData.categories.some((cate) => cate.id === category.id)}
+                    value={foodData.categories.some(
+                      (cate) => cate.id === category.id
+                    )}
                     onValueChange={() => toggleCategory(category.id)}
                   />
                   <Text style={styles.categoryText}>{category.name}</Text>
@@ -336,7 +351,9 @@ const EditFoodScreen = ({ route, navigation }) => {
                       style={styles.toppingName}
                       value={topping.topping_name}
                       placeholder="Topping name"
-                      onChangeText={(value) => handleToppingChange(index, 'topping_name', value)}
+                      onChangeText={(value) =>
+                        handleToppingChange(index, 'topping_name', value)
+                      }
                       editable={isEditing}
                     />
                     <TextInput
@@ -344,14 +361,18 @@ const EditFoodScreen = ({ route, navigation }) => {
                       value={formatPrice(topping.price)}
                       placeholder="Price"
                       editable={isEditing}
-                      onChangeText={(value) => handleToppingChange(index, 'price', value)}
+                      onChangeText={(value) =>
+                        handleToppingChange(index, 'price', value)
+                      }
                       keyboardType="numeric"
                     />
                   </View>
                 ))}
 
                 {isEditing && (
-                  <TouchableOpacity onPress={addNewTopping} style={styles.addButton}>
+                  <TouchableOpacity
+                    onPress={addNewTopping}
+                    style={styles.addButton}>
                     <Text style={styles.addButtonText}>+ Thêm topping</Text>
                   </TouchableOpacity>
                 )}
@@ -360,21 +381,40 @@ const EditFoodScreen = ({ route, navigation }) => {
           </TouchableWithoutFeedback>
           {isEditing ? (
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={toggleEditMode}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={toggleEditMode}>
                 <Text style={styles.buttonText}>Lưu</Text>
-                <Icon name="save" size={18} color="#fff" style={styles.logoutIcon} />
+                <Icon
+                  name="save"
+                  size={18}
+                  color="#fff"
+                  style={styles.logoutIcon}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={() => setIsEditing(!isEditing)}>
                 <Text style={styles.buttonText}>Huỷ</Text>
-                <Icon name="times" size={18} color="#fff" style={styles.logoutIcon} />
+                <Icon
+                  name="times"
+                  size={18}
+                  color="#fff"
+                  style={styles.logoutIcon}
+                />
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={toggleEditMode}>
               <Text style={styles.buttonText}>Chỉnh sửa</Text>
-              <Icon name="edit" size={18} color="#fff" style={styles.logoutIcon} />
+              <Icon
+                name="edit"
+                size={18}
+                color="#fff"
+                style={styles.logoutIcon}
+              />
             </TouchableOpacity>
           )}
         </View>
