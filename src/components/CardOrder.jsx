@@ -73,11 +73,39 @@ const CardOrder = ({ item }) => {
       setIsLoading(false);
     }
   };
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'ORDER_CANCELED':
+        return { color: '#FF0000' };
+      case 'ORDER_CONFIRMED':
+        return { color: '#28a745' };
+      default:
+        return { color: '#FF6347' };
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'PREPARING_ORDER':
+        return 'Đang chuẩn bị';
+      case 'ORDER_CANCELED':
+        return 'Đơn bị hủy';
+      case 'DELIVERING':
+        return 'Shipper đang lấy đơn';
+      case 'GIVED ORDER':
+      case 'ORDER_RECEIVED':
+        return 'Đã giao cho shipper';
+      case 'ORDER_CONFIRMED':
+        return 'Đã giao xong';
+      default:
+        return '';
+    }
+  };
   return (
     <>
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#FF6347" />
         </View>
       ) : (
         <TouchableOpacity
@@ -85,72 +113,72 @@ const CardOrder = ({ item }) => {
           onPress={() =>
             navigation.navigate('Chi tiết đơn hàng', { item, shipper })
           }>
-          <View style={styles.orderInfo}>
-            <View style={styles.orderInfoContainer}>
-              <Text style={styles.orderId}>Đơn hàng số {item.id}</Text>
-              {item.order_status === 'PREPARING_ORDER' && (
-                <View style={styles.orderBtnContainer}>
-                  <Text style={styles.textStatus}>Đang chuẩn bị</Text>
-                </View>
-              )}
-              {item.order_status === 'ORDER_CANCELED' && (
-                <View style={styles.orderBtnContainer}>
-                  <Text style={[styles.textStatus, { color: '#FF0000' }]}>
-                    Đơn bị hủy
-                  </Text>
-                </View>
-              )}
-              {item.order_status === 'DELIVERING' && (
-                <View style={styles.orderBtnContainer}>
-                  <Text style={styles.textStatus}>Shipper đang lấy đơn</Text>
-                </View>
-              )}
-              {(item.order_status === 'GIVED ORDER' ||
-                item.order_status === 'ORDER_RECEIVED') && (
-                <View style={styles.orderBtnContainer}>
-                  <Text style={[styles.textStatus]}>Đã giao cho shipper</Text>
-                </View>
-              )}
-              {item.order_status === 'ORDER_CONFIRMED' && (
-                <View style={styles.orderBtnContainer}>
-                  <Text style={[styles.textStatus, { color: '#28a745' }]}>
-                    Đã giao xong
-                  </Text>
-                </View>
-              )}
-            </View>
-            <Text style={styles.orderTime}>{formatTime(item.createdAt)}</Text>
-            <Text style={styles.orderName}>
-              Người đặt: {item.receiver_name}
-            </Text>
-            <Text style={styles.orderItems}>
-              {item.listCartItem.length} món
-            </Text>
-            <Text
-              style={styles.orderAddress}
-              numberOfLines={2}
-              ellipsizeMode="tail">
-              {item.address_receiver}
-            </Text>
+          {/* Order Header */}
+          <View style={styles.orderHeader}>
+            <Text style={styles.orderId}>Đơn hàng số {item.id}</Text>
+            {item.order_status && (
+              <View style={styles.statusContainer}>
+                <Text
+                  style={[
+                    styles.statusText,
+                    getStatusStyle(item.order_status),
+                  ]}>
+                  {getStatusText(item.order_status)}
+                </Text>
+              </View>
+            )}
           </View>
+
+          {/* Order Details */}
+          <View style={styles.orderInfo}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Thời gian:</Text>
+              <Text style={styles.infoValue}>{formatTime(item.createdAt)}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Người đặt:</Text>
+              <Text style={styles.infoValue}>{item.receiver_name}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Số món:</Text>
+              <Text style={styles.infoValue}>
+                {item.listCartItem.length} món
+              </Text>
+            </View>
+
+            <View style={styles.addressRow}>
+              <Text style={styles.infoLabel}>Địa chỉ:</Text>
+              <Text
+                style={styles.addressValue}
+                numberOfLines={2}
+                ellipsizeMode="tail">
+                {item.address_receiver}
+              </Text>
+            </View>
+          </View>
+
+          {/* Action Buttons */}
           {item.order_status === 'PAID' && (
-            <View style={styles.orderBtnContainer}>
+            <View style={styles.actionButtons}>
               <TouchableOpacity
-                style={styles.confirmOrder}
+                style={styles.acceptButton}
                 onPress={() => handleAcceptOrder(item.id)}>
-                <Text style={styles.textOrderPro}>Nhận đơn</Text>
+                <Text style={styles.buttonText}>Nhận đơn</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.cancelOrder}
+                style={styles.cancelButton}
                 onPress={() => handleCancelOrder(item.id)}>
-                <Text style={styles.textOrderPro}>Huỷ đơn</Text>
+                <Text style={styles.buttonText}>Huỷ đơn</Text>
               </TouchableOpacity>
             </View>
           )}
         </TouchableOpacity>
       )}
+
+      {/* Reason Modal */}
       <Modal
-        Modal
         transparent={true}
         visible={isReasonModalVisible}
         animationType="slide"
@@ -172,19 +200,11 @@ const CardOrder = ({ item }) => {
                 </TouchableOpacity>
               )}
             />
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                style={styles.modalButtonCancel}
-                onPress={() => setIsReasonModalVisible(false)}>
-                <Text style={styles.buttonText}>Hủy</Text>
-              </TouchableOpacity>
-              {/* <TouchableOpacity
-                                style={styles.modalButtonSubmit}
-                                onPress={submitCancelOrder}
-                            >
-                                <Text style={styles.buttonText}>Xác nhận</Text>
-                            </TouchableOpacity> */}
-            </View>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setIsReasonModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Hủy</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

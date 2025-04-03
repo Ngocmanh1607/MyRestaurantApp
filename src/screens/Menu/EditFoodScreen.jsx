@@ -237,187 +237,217 @@ const EditFoodScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <KeyboardAvoidingView style={styles.container}>
-        <View style={styles.container}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView style={styles.mainContainer}>
-              {/* Image Section */}
-              <View style={styles.infContainer}>
-                <Text style={styles.textLeft}>Ảnh món ăn</Text>
+    <View style={styles.mainContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>Chi tiết sản phẩm</Text>
+              {!isEditing && (
                 <TouchableOpacity
-                  onPress={isEditing ? chooseImage : null}
-                  disabled={!isEditing || isLoading.uploadingImage}
-                  style={styles.imageContainer}>
-                  {isLoading.uploadingImage ? (
-                    <View
-                      style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <ActivityIndicator size="small" color="#FF0000" />
-                    </View>
-                  ) : (
+                  style={styles.editHeaderButton}
+                  onPress={toggleEditMode}>
+                  <Icon name="edit" size={18} color="#007AFF" />
+                  <Text style={styles.editHeaderText}>Chỉnh sửa</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Image Section */}
+            <View style={styles.imageSection}>
+              <TouchableOpacity
+                onPress={isEditing ? chooseImage : null}
+                disabled={!isEditing || isLoading.uploadingImage}
+                style={[
+                  styles.imageContainer,
+                  isEditing && styles.imageContainerEditing,
+                ]}>
+                {isLoading.uploadingImage ? (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007AFF" />
+                  </View>
+                ) : (
+                  <>
                     <Image
                       style={styles.foodImage}
                       source={{ uri: foodData.image }}
+                      resizeMode="cover"
                     />
-                  )}
-                </TouchableOpacity>
-              </View>
+                    {isEditing && (
+                      <View style={styles.imageOverlay}>
+                        <Icon name="camera" size={24} color="#FFFFFF" />
+                        <Text style={styles.changeImageText}>Thay đổi ảnh</Text>
+                      </View>
+                    )}
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
 
-              {/* Name Input */}
-              <View style={styles.infContainer}>
-                <Text style={styles.textLeft}>Tên sản phẩm *</Text>
-                <TextInput
-                  style={[styles.textRight, styles.smallInput]}
-                  value={foodData.name}
-                  onChangeText={(value) => handleChange('name', value)}
-                  editable={isEditing}
-                  placeholder="Enter food name"
-                />
-              </View>
+            {/* Form Content */}
+            <View style={styles.formContainer}>
+              {/* Basic Information */}
+              <View style={styles.formSection}>
+                <Text style={styles.sectionTitle}>Thông tin cơ bản</Text>
 
-              {/* Price Input */}
-              <View style={styles.infContainer}>
-                <Text style={styles.textLeft}>Giá *</Text>
-                <TextInput
-                  style={[styles.textRight, styles.smallInput]}
-                  value={formatPrice(foodData.price)}
-                  onChangeText={(value) => handleChange('price', value)}
-                  editable={isEditing}
-                  keyboardType="numeric"
-                  placeholder="Enter price"
-                />
-              </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Tên sản phẩm *</Text>
+                  <TextInput
+                    style={[
+                      styles.textInput,
+                      !isEditing && styles.disabledInput,
+                    ]}
+                    value={foodData.name}
+                    onChangeText={(value) => handleChange('name', value)}
+                    editable={isEditing}
+                    placeholder="Nhập tên sản phẩm"
+                  />
+                </View>
 
-              {/* Description Input */}
-              <View style={styles.infContainer}>
-                <Text style={styles.textLeft}>Mô tả *</Text>
-                <TextInput
-                  style={[styles.textRight, styles.descriptionInput]}
-                  value={foodData.descriptions}
-                  onChangeText={(value) => handleChange('descriptions', value)}
-                  editable={isEditing}
-                  multiline={true}
-                  placeholder="Enter description"
-                />
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Giá *</Text>
+                  <TextInput
+                    style={[
+                      styles.textInput,
+                      !isEditing && styles.disabledInput,
+                    ]}
+                    value={formatPrice(foodData.price)}
+                    onChangeText={(value) => handleChange('price', value)}
+                    editable={isEditing}
+                    keyboardType="numeric"
+                    placeholder="Nhập giá sản phẩm"
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Mô tả *</Text>
+                  <TextInput
+                    style={[
+                      styles.textAreaInput,
+                      !isEditing && styles.disabledInput,
+                    ]}
+                    value={foodData.descriptions}
+                    onChangeText={(value) =>
+                      handleChange('descriptions', value)
+                    }
+                    editable={isEditing}
+                    multiline={true}
+                    numberOfLines={4}
+                    textAlignVertical="top"
+                    placeholder="Nhập mô tả chi tiết sản phẩm"
+                  />
+                </View>
               </View>
 
               {/* Categories Section */}
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  {
-                    marginLeft: 15,
-                    fontSize: 16,
-                    marginTop: 10,
-                    fontWeight: '500',
-                    color: '#333',
-                  },
-                ]}>
-                Danh mục *
-              </Text>
-              {allCategories.map((category) => (
-                <View key={category.id} style={styles.checkboxContainer}>
-                  <CheckBox
-                    style={styles.checkbox}
-                    color="#333"
-                    disabled={!isEditing}
-                    value={foodData.categories.some(
-                      (cate) => cate.id === category.id
-                    )}
-                    onValueChange={() => toggleCategory(category.id)}
-                  />
-                  <Text style={styles.categoryText}>{category.name}</Text>
+              <View style={styles.formSection}>
+                <Text style={styles.sectionTitle}>Danh mục *</Text>
+                <View style={styles.categoriesContainer}>
+                  {allCategories.map((category) => (
+                    <View key={category.id} style={styles.checkboxContainer}>
+                      <CheckBox
+                        style={styles.checkbox}
+                        tintColors={{ true: '#007AFF', false: '#999' }}
+                        disabled={!isEditing}
+                        value={foodData.categories.some(
+                          (cate) => cate.id === category.id
+                        )}
+                        onValueChange={() => toggleCategory(category.id)}
+                      />
+                      <Text style={styles.categoryText}>{category.name}</Text>
+                    </View>
+                  ))}
                 </View>
-              ))}
+              </View>
 
               {/* Toppings Section */}
-              <View style={styles.toppingsSection}>
-                <Text
-                  style={{
-                    marginLeft: 15,
-                    fontSize: 16,
-                    marginTop: 10,
-                    fontWeight: '500',
-                  }}>
-                  Các lựa chọn
-                </Text>
-                {toppings.map((topping, index) => (
-                  <View key={topping.id} style={styles.toppingContainer}>
-                    <TextInput
-                      style={styles.toppingName}
-                      value={topping.topping_name}
-                      placeholder="Topping name"
-                      onChangeText={(value) =>
-                        handleToppingChange(index, 'topping_name', value)
-                      }
-                      editable={isEditing}
-                    />
-                    <TextInput
-                      style={styles.toppingPrice}
-                      value={formatPrice(topping.price)}
-                      placeholder="Price"
-                      editable={isEditing}
-                      onChangeText={(value) =>
-                        handleToppingChange(index, 'price', value)
-                      }
-                      keyboardType="numeric"
-                    />
-                  </View>
-                ))}
+              <View style={styles.formSection}>
+                <View style={styles.sectionHeaderRow}>
+                  <Text style={styles.sectionTitle}>Các lựa chọn</Text>
+                  {isEditing && (
+                    <TouchableOpacity
+                      onPress={addNewTopping}
+                      style={styles.addToppingButton}>
+                      <Icon name="plus" size={14} color="#FFFFFF" />
+                      <Text style={styles.addToppingText}>Thêm</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
 
-                {isEditing && (
-                  <TouchableOpacity
-                    onPress={addNewTopping}
-                    style={styles.addButton}>
-                    <Text style={styles.addButtonText}>+ Thêm topping</Text>
-                  </TouchableOpacity>
+                {toppings.length > 0 ? (
+                  <View style={styles.toppingsContainer}>
+                    <View style={styles.toppingHeaderRow}>
+                      <Text style={styles.toppingHeaderText}>Tên lựa chọn</Text>
+                      <Text style={styles.toppingHeaderText}>Giá</Text>
+                    </View>
+
+                    {toppings.map((topping, index) => (
+                      <View key={topping.id} style={styles.toppingRow}>
+                        <TextInput
+                          style={[
+                            styles.toppingName,
+                            !isEditing && styles.disabledInput,
+                          ]}
+                          value={topping.topping_name}
+                          placeholder="Tên lựa chọn"
+                          onChangeText={(value) =>
+                            handleToppingChange(index, 'topping_name', value)
+                          }
+                          editable={isEditing}
+                        />
+                        <TextInput
+                          style={[
+                            styles.toppingPrice,
+                            !isEditing && styles.disabledInput,
+                          ]}
+                          value={formatPrice(topping.price)}
+                          placeholder="Giá"
+                          editable={isEditing}
+                          onChangeText={(value) =>
+                            handleToppingChange(index, 'price', value)
+                          }
+                          keyboardType="numeric"
+                        />
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.emptyToppings}>
+                    <Text style={styles.emptyToppingsText}>
+                      {isEditing
+                        ? "Nhấn 'Thêm' để tạo lựa chọn cho sản phẩm này"
+                        : 'Không có lựa chọn nào cho sản phẩm này'}
+                    </Text>
+                  </View>
                 )}
               </View>
-            </ScrollView>
-          </TouchableWithoutFeedback>
-          {isEditing ? (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={toggleEditMode}>
-                <Text style={styles.buttonText}>Lưu</Text>
-                <Icon
-                  name="save"
-                  size={18}
-                  color="#fff"
-                  style={styles.logoutIcon}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setIsEditing(!isEditing)}>
-                <Text style={styles.buttonText}>Huỷ</Text>
-                <Icon
-                  name="times"
-                  size={18}
-                  color="#fff"
-                  style={styles.logoutIcon}
-                />
-              </TouchableOpacity>
             </View>
-          ) : (
+          </ScrollView>
+        </TouchableWithoutFeedback>
+
+        {/* Bottom Action Buttons */}
+        {isEditing ? (
+          <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
-              style={styles.editButton}
+              style={styles.saveButton}
               onPress={toggleEditMode}>
-              <Text style={styles.buttonText}>Chỉnh sửa</Text>
-              <Icon
-                name="edit"
-                size={18}
-                color="#fff"
-                style={styles.logoutIcon}
-              />
+              <Icon name="check" size={18} color="#FFFFFF" />
+              <Text style={styles.buttonText}>Lưu thay đổi</Text>
             </TouchableOpacity>
-          )}
-        </View>
+
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setIsEditing(false)}>
+              <Icon name="times" size={18} color="#FFFFFF" />
+              <Text style={styles.buttonText}>Hủy</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </KeyboardAvoidingView>
     </View>
   );

@@ -12,7 +12,7 @@ const CompletedOrders = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginHorizontal: 10 }}>
       {completedOrders.length === 0 ? (
         <View
           style={{

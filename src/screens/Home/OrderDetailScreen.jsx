@@ -25,7 +25,11 @@ const OrderDetailScreen = ({ route }) => {
           </View>
           <View style={styles.driverDetails}>
             <Image
-              source={require('../../assets/Images/Shipper.webp')}
+              source={
+                shipper.Profile.image
+                  ? { uri: shipper.Profile.image }
+                  : require('../../assets/Images/Shipper.webp')
+              }
               style={styles.driverImage}
             />
             <View style={styles.driverInfo}>
