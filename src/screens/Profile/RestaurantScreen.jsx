@@ -302,6 +302,7 @@ const RestaurantProfileScreen = () => {
                 <Text style={styles.label}>Địa chỉ:</Text>
                 <TouchableOpacity
                   style={styles.addressContainer}
+                  editable={isEditing}
                   onPress={() => {
                     if (isEditing) handleUpdateAddress();
                   }}>

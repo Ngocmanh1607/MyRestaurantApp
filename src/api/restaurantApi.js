@@ -200,7 +200,7 @@ const getCategories = async () => {
     }
   }
 };
-const getFoodRes = async (navigation) => {
+const getFoodRes = async (restaurantId, navigation) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
@@ -215,7 +215,7 @@ const getFoodRes = async (navigation) => {
         return;
       }
     }
-    const response = await apiClient.get('/products/restaurantId', {
+    const response = await apiClient.get(`/products/${restaurantId}`, {
       headers: {
         'x-api-key': apiKey,
         authorization: accessToken,
