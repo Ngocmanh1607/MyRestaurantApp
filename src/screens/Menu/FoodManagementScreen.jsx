@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   ScrollView,
   Text,
@@ -18,7 +18,15 @@ const FoodManagementScreen = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [restaurantId, setRestaurantId] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef(null);
+  const sectionListRef = useRef();
+  const itemLayouts = useRef({});
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {
@@ -42,22 +50,31 @@ const FoodManagementScreen = () => {
             ('Restaurant ID không hợp lệ');
           }
           const data = await getFoodRes(restaurantId, navigation);
+          const cate = [];
           console.log('Dữ liệu món ăn:', data);
           if (!data || !Array.isArray(data)) {
             throw new Error('Dữ liệu món ăn không hợp lệ');
           }
-          const sections = data.map((category) => ({
-            title: category.category_name,
-            data: category.products.map((product) => ({
-              id: product.product_id,
-              name: product.product_name,
-              price: product.product_price,
-              image: product.image,
-              descriptions: product.product_description,
-              quantity: product.product_quantity,
-            })),
-          }));
+          const sections = data.map((category) => {
+            cate.push({
+              id: category.category_id,
+              name: category.category_name,
+            });
+            return {
+              title: category.category_name,
+              data: category.products.map((product) => ({
+                id: product.product_id,
+                name: product.product_name,
+                price: product.product_price,
+                image: product.image,
+                descriptions: product.product_description,
+                quantity: product.product_quantity,
+                toppings: product.toppings,
+              })),
+            };
+          });
           setFoodItems(sections);
+          setCategories(cate);
         } catch (error) {
           Snackbar.show({
             text: error.message || 'Lỗi lấy dữ liệu món ăn',
@@ -69,40 +86,109 @@ const FoodManagementScreen = () => {
       fetchFoodRes();
     }, [restaurantId])
   );
+  const handleLayout = (event, index) => {
+    const { x } = event.nativeEvent.layout;
+    itemLayouts.current[index] = { x };
+  };
+  const onViewableItemsChanged = ({ viewableItems }) => {
+    if (viewableItems.length > 0 && viewableItems[0].section) {
+      const sectionIndex = foodItems.findIndex(
+        (section) => section.title === viewableItems[0].section.title
+      );
+      if (sectionIndex !== -1) {
+        setActiveCategory(sectionIndex);
+        const layout = itemLayouts.current[sectionIndex];
+        if (layout) {
+          scrollRef.current?.scrollTo({
+            x: layout.x - 20,
+            animated: true,
+          });
+        }
+      }
+    }
+  };
   const handlePress = () => {
     navigation.navigate('Thêm món ăn');
   };
-  // const filterFoodItems = foodItems.filter((food) =>
-  //   food.name.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+
+  const handleCategoryPress = (index) => {
+    if (index !== activeCategory) {
+      // setActiveCategory(index);
+      const layout = itemLayouts.current[index];
+      if (layout) {
+        scrollRef.current?.scrollTo({
+          x: layout.x - 20, // scroll hơi lệch trái cho đẹp
+          animated: true,
+        });
+      }
+      if (sectionListRef.current) {
+        sectionListRef.current.scrollToLocation({
+          sectionIndex: index,
+          itemIndex: 0,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
       {foodItems.length > 0 ? (
-        <SectionList
-          sections={foodItems}
-          keyExtractor={(item, index) => item.id + index}
-          renderItem={({ item }) => (
-            <FoodCard
-              key={item.id}
-              food={item}
-              onPress={() => console.log(`Add ${food.name}`)}
-            />
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <View style={styles.sectionHeaderContainer}>
-              <Text style={styles.sectionTitle}>{title}</Text>
-            </View>
-          )}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.foodListContainer}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Feather name="alert-circle" size={50} color="#ccc" />
-              <Text style={styles.emptyText}>Không tìm thấy món ăn nào</Text>
-            </View>
-          }
-        />
+        <View style={styles.mainContainer}>
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoryListContainer}>
+            {categories.map((item, index) => (
+              <TouchableOpacity
+                key={item.id.toString()}
+                onLayout={(event) => handleLayout(event, index)}
+                style={[
+                  styles.categoryItem,
+                  activeCategory === index && styles.activeCategoryItem,
+                ]}
+                onPress={() => handleCategoryPress(index)}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    activeCategory === index && styles.activeCategoryText,
+                  ]}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <SectionList
+            ref={sectionListRef}
+            sections={foodItems}
+            keyExtractor={(item, index) => item.id + index}
+            renderItem={({ item }) => (
+              <FoodCard
+                key={item.id}
+                food={item}
+                onPress={() => console.log(`Add ${food.name}`)}
+              />
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <View style={styles.sectionHeaderContainer}>
+                <Text style={styles.sectionTitle}>{title}</Text>
+              </View>
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.foodListContainer}
+            stickySectionHeadersEnabled={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Feather name="alert-circle" size={50} color="#ccc" />
+                <Text style={styles.emptyText}>Không tìm thấy món ăn nào</Text>
+              </View>
+            }
+            viewabilityConfig={viewabilityConfig}
+            onViewableItemsChanged={onViewableItemsChanged}
+          />
+        </View>
       ) : (
         <View style={styles.emptyContainer}>
           <Feather name="coffee" size={48} color="#ccc" />
@@ -133,8 +219,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingBottom: 100,
+  },
   scrollContainer: {
     flex: 1,
+  },
+  categoryListContainer: {
+    paddingHorizontal: 8,
+  },
+  categoryItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#e8f4ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+    // marginRight: 12,
+    height: 40,
+    margin: 8,
+  },
+  activeCategoryItem: {
+    backgroundColor: '#f0f0f0',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF6347',
+  },
+  activeCategoryText: {
+    fontWeight: 'bold',
+    color: '#FF6347',
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#0066cc',
   },
   contentContainer: {
     paddingHorizontal: 20,
