@@ -16,6 +16,8 @@ import WalletScreen from '../screens/Profile/WalletScreen';
 import OrdersHistoryScreen from '../screens/Profile/OrdersHistoryScreen';
 import OrderHisDetailScreen from '../screens/Profile/OrderHisDetailScreen';
 import EditPriceScreen from '../screens/Menu/EditPricesScreen';
+import PromotionManagementScreen from '../screens/Profile/PromotionManagementScreen';
+import ConfirmEmailScreen from '../screens/Authentication/ConfirmEmailScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
@@ -107,12 +109,20 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Wallet"
         component={WalletScreen}
-        options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Ví' }}
+        options={{
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+          title: 'Ví',
+        }}
       />
       <Stack.Screen
         name="OrdersHistory"
         component={OrdersHistoryScreen}
-        options={{ headerShown: true, headerBackTitle: 'Quay lại', title: 'Đơn hàng' }}
+        options={{
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+          title: 'Đơn hàng',
+        }}
       />
       <Stack.Screen
         name="OrderHisDetail"
@@ -127,6 +137,25 @@ const StackNavigator = () => {
         name="EditPrices"
         component={EditPriceScreen}
         options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+      />
+      <Stack.Screen
+        name="PromotionManagementScreen"
+        component={PromotionManagementScreen}
+        options={{
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+          title: 'Quản lý khuyến mãi',
+        }}
+      />
+      <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+      <Stack.Screen
+        name="Register"
+        component={RegisterInf}
+        options={{
+          title: 'Đăng kí thông tin',
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+        }}
       />
     </Stack.Navigator>
   );

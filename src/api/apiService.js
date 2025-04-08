@@ -3,13 +3,16 @@ const HERE_API_KEY = '7sef-qPLms2vVRE4COs57FGzk4LuYC20NtU6TCd13kU';
 const apiService = {
   currentLocation: async (latitude, longitude) => {
     try {
-      const response = await axios.get('https://revgeocode.search.hereapi.com/v1/revgeocode', {
-        params: {
-          at: `${latitude},${longitude}`,
-          lang: 'en-US',
-          apiKey: HERE_API_KEY,
-        },
-      });
+      const response = await axios.get(
+        'https://revgeocode.search.hereapi.com/v1/revgeocode',
+        {
+          params: {
+            at: `${latitude},${longitude}`,
+            lang: 'en-US',
+            apiKey: HERE_API_KEY,
+          },
+        }
+      );
 
       const data = response.data;
       if (data.items && data.items.length > 0) {
@@ -29,12 +32,15 @@ const apiService = {
 
   searchAddress: async (search) => {
     try {
-      const response = await axios.get('https://geocode.search.hereapi.com/v1/geocode', {
-        params: {
-          q: search,
-          apiKey: HERE_API_KEY,
-        },
-      });
+      const response = await axios.get(
+        'https://geocode.search.hereapi.com/v1/geocode',
+        {
+          params: {
+            q: search,
+            apiKey: HERE_API_KEY,
+          },
+        }
+      );
 
       const data = response.data;
       if (data.items && data.items.length > 0) {

@@ -1,11 +1,20 @@
-import { Text, View, LogBox, useWindowDimensions, Animated, Image } from 'react-native';
+import {
+  Text,
+  View,
+  LogBox,
+  useWindowDimensions,
+  Animated,
+  Image,
+} from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import styles from '../../assets/css/AuthStyle';
 const TabScreen = () => {
-  LogBox.ignoreLogs(['A props object containing a "key" prop is being spread into JSX']);
+  LogBox.ignoreLogs([
+    'A props object containing a "key" prop is being spread into JSX',
+  ]);
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -24,7 +33,8 @@ const TabScreen = () => {
         indicatorStyle={styles.indicator}
         style={styles.tabBar}
         renderLabel={({ route, focused }) => (
-          <Text style={[styles.label, { color: focused ? '#FF0000' : 'black' }]}>
+          <Text
+            style={[styles.label, { color: focused ? '#FF0000' : 'black' }]}>
             {route.title}
           </Text>
         )}
@@ -55,9 +65,16 @@ const AuthScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.topImageContainer}>
-        <Image source={require('../../assets/Images/Restaurant.png')} style={styles.topImage} />
+        <Image
+          source={require('../../assets/Images/Restaurant.png')}
+          style={styles.topImage}
+        />
       </View>
-      <Animated.View style={[styles.animatedContainer, { transform: [{ translateY: slideAnim }] }]}>
+      <Animated.View
+        style={[
+          styles.animatedContainer,
+          { transform: [{ translateY: slideAnim }] },
+        ]}>
         <TabScreen />
       </Animated.View>
     </View>

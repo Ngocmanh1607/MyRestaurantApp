@@ -19,19 +19,31 @@ const FoodCard = ({ food }) => {
     if (isEnabled) {
       const response = await publicProductApi(foodId);
       if (response == true) {
-        Snackbar.show({ text: 'Tắt sản phẩm thành công', duration: Snackbar.LENGTH_SHORT });
+        Snackbar.show({
+          text: 'Tắt sản phẩm thành công',
+          duration: Snackbar.LENGTH_SHORT,
+        });
         handleToggle();
       } else {
-        Snackbar.show({ text: 'Cập nhật thất bại', duration: Snackbar.LENGTH_SHORT });
+        Snackbar.show({
+          text: 'Cập nhật thất bại',
+          duration: Snackbar.LENGTH_SHORT,
+        });
       }
     } else {
       const response = await unPublicProductApi(foodId);
       console.log(response);
       if (response == true) {
-        Snackbar.show({ text: 'Bật sản phẩm thành công', duration: Snackbar.LENGTH_SHORT });
+        Snackbar.show({
+          text: 'Bật sản phẩm thành công',
+          duration: Snackbar.LENGTH_SHORT,
+        });
         handleToggle();
       } else {
-        Snackbar.show({ text: 'Cập nhật thất bại', duration: Snackbar.LENGTH_SHORT });
+        Snackbar.show({
+          text: 'Cập nhật thất bại',
+          duration: Snackbar.LENGTH_SHORT,
+        });
       }
     }
   };

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  TextInput,
+  Alert,
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../../assets/css/WalletStyle';
 import formatPrice from '../../utils/formatPrice';
@@ -38,7 +46,10 @@ const WalletScreen = () => {
       return;
     }
 
-    if (withdrawType === 'bank' && (!bankAccount || !bankName || !accountName)) {
+    if (
+      withdrawType === 'bank' &&
+      (!bankAccount || !bankName || !accountName)
+    ) {
       Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin ngân hàng');
       return;
     }
@@ -67,7 +78,9 @@ const WalletScreen = () => {
       date: new Date().toISOString().split('T')[0],
       status: 'pending',
       note:
-        withdrawType === 'bank' ? `Rút về STK: ${bankAccount}` : `Rút về ZaloPay: ${zaloPayNumber}`,
+        withdrawType === 'bank'
+          ? `Rút về STK: ${bankAccount}`
+          : `Rút về ZaloPay: ${zaloPayNumber}`,
     };
 
     setTransactions([newTransaction, ...transactions]);
@@ -78,7 +91,10 @@ const WalletScreen = () => {
     setAccountName('');
     setZaloPayNumber('');
 
-    Alert.alert('Thành công', 'Yêu cầu rút tiền của bạn đã được ghi nhận và đang được xử lý');
+    Alert.alert(
+      'Thành công',
+      'Yêu cầu rút tiền của bạn đã được ghi nhận và đang được xử lý'
+    );
   };
 
   return (
@@ -93,7 +109,9 @@ const WalletScreen = () => {
 
       {/* Các nút thao tác */}
       <View style={styles.actionContainer}>
-        <TouchableOpacity style={styles.actionButton} onPress={() => setShowWithdrawModal(true)}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setShowWithdrawModal(true)}>
           <View style={styles.actionIcon}>
             <FontAwesome name="money" size={24} color="#e74c3c" />
           </View>
@@ -124,7 +142,9 @@ const WalletScreen = () => {
               <Text
                 style={[
                   styles.transactionAmount,
-                  transaction.type === 'withdraw' ? styles.withdrawAmount : styles.depositAmount,
+                  transaction.type === 'withdraw'
+                    ? styles.withdrawAmount
+                    : styles.depositAmount,
                 ]}>
                 {transaction.type === 'withdraw' ? '-' : '+'}
                 {formatPrice(transaction.amount)}
@@ -152,7 +172,10 @@ const WalletScreen = () => {
       </ScrollView>
 
       {/* Modal rút tiền */}
-      <Modal visible={showWithdrawModal} animationType="slide" transparent={true}>
+      <Modal
+        visible={showWithdrawModal}
+        animationType="slide"
+        transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity
@@ -173,7 +196,10 @@ const WalletScreen = () => {
 
             <View style={styles.actionContainer}>
               <TouchableOpacity
-                style={[styles.actionButton, withdrawType === 'bank' && styles.actionButtonActive]}
+                style={[
+                  styles.actionButton,
+                  withdrawType === 'bank' && styles.actionButtonActive,
+                ]}
                 onPress={() => setWithdrawType('bank')}>
                 <Text style={styles.actionText}>Ngân hàng</Text>
               </TouchableOpacity>
@@ -221,7 +247,9 @@ const WalletScreen = () => {
               />
             )}
 
-            <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
+            <TouchableOpacity
+              style={styles.withdrawButton}
+              onPress={handleWithdraw}>
               <Text style={styles.withdrawButtonText}>Xác nhận rút tiền</Text>
             </TouchableOpacity>
           </View>

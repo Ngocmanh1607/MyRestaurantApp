@@ -35,7 +35,9 @@ const CardOrderInHistory = ({ item }) => {
           <Text style={styles.orderId}>Đơn hàng số {item.id}</Text>
           {item.order_status === 'PAID' && (
             <View style={styles.orderBtnContainer}>
-              <Text style={[styles.textStatus, { color: '#FF0000' }]}>Đơn hàng mới</Text>
+              <Text style={[styles.textStatus, { color: '#FF0000' }]}>
+                Đơn hàng mới
+              </Text>
             </View>
           )}
           {item.order_status === 'PREPARING_ORDER' && (
@@ -50,7 +52,9 @@ const CardOrderInHistory = ({ item }) => {
           )}
           {item.order_status === 'ORDER_CANCELED' && (
             <View style={styles.orderBtnContainer}>
-              <Text style={[styles.textStatus, { color: '#FF0000' }]}>Đơn bị hủy</Text>
+              <Text style={[styles.textStatus, { color: '#FF0000' }]}>
+                Đơn bị hủy
+              </Text>
             </View>
           )}
           {item.order_status === 'DELIVERING' && (
@@ -65,14 +69,19 @@ const CardOrderInHistory = ({ item }) => {
           )}
           {item.order_status === 'ORDER_CONFIRMED' && (
             <View style={styles.orderBtnContainer}>
-              <Text style={[styles.textStatus, { color: '#28a745' }]}>Đã giao xong</Text>
+              <Text style={[styles.textStatus, { color: '#28a745' }]}>
+                Đã giao xong
+              </Text>
             </View>
           )}
         </View>
         <Text style={styles.orderTime}>{formatTime(item.createdAt)}</Text>
         <Text style={styles.orderName}>Người đặt: {item.receiver_name}</Text>
         <Text style={styles.orderItems}>{item.listCartItem.length} món</Text>
-        <Text style={styles.orderAddress} numberOfLines={2} ellipsizeMode="tail">
+        <Text
+          style={styles.orderAddress}
+          numberOfLines={2}
+          ellipsizeMode="tail">
           {item.address_receiver}
         </Text>
       </View>

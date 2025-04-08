@@ -12,7 +12,12 @@ const PasswordInput = ({ value, onChangeText, placeholderText }) => {
 
   return (
     <View style={styles.inputSignContainer}>
-      <Fontisto name="locked" color="#9a9a9a" size={24} style={styles.inputIcon} />
+      <Fontisto
+        name="locked"
+        color="#9a9a9a"
+        size={24}
+        style={styles.inputIcon}
+      />
       <TextInput
         style={styles.textInput}
         value={value} // Nhận giá trị từ prop

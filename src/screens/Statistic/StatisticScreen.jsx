@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import StatisticCard from '../../components/StatisticCard';
 import formatPrice from '../../utils/formatPrice';
-import { getReview, getInformationRes, getOrders } from '../../api/restaurantApi';
-import { checkDateInCurrentWeek, checkDateInMonth, getWeekOfMonth } from '../../utils/utilsTime';
+import {
+  getReview,
+  getInformationRes,
+  getOrders,
+} from '../../api/restaurantApi';
+import {
+  checkDateInCurrentWeek,
+  checkDateInMonth,
+  getWeekOfMonth,
+} from '../../utils/utilsTime';
 import { styles } from '../../assets/css/StatisticStyle';
 const StatisticScreen = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('day');
@@ -29,7 +44,20 @@ const StatisticScreen = () => {
       orders: Array(5).fill(0),
     },
     monthlyData: {
-      labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+      labels: [
+        'T1',
+        'T2',
+        'T3',
+        'T4',
+        'T5',
+        'T6',
+        'T7',
+        'T8',
+        'T9',
+        'T10',
+        'T11',
+        'T12',
+      ],
       earnings: Array(12).fill(0),
       orders: Array(12).fill(0),
     },
@@ -51,7 +79,20 @@ const StatisticScreen = () => {
         orders: Array(5).fill(0),
       },
       monthlyData: {
-        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+        labels: [
+          'T1',
+          'T2',
+          'T3',
+          'T4',
+          'T5',
+          'T6',
+          'T7',
+          'T8',
+          'T9',
+          'T10',
+          'T11',
+          'T12',
+        ],
         earnings: Array(12).fill(0),
         orders: Array(12).fill(0),
       },
@@ -72,7 +113,9 @@ const StatisticScreen = () => {
         if (checkDateInCurrentWeek(order.order_date)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
             const dayOrder = new Date(order.order_date).getDay();
-            stats.dailyData.earnings[dayOrder - 1] += parseFloat(order.price.toString());
+            stats.dailyData.earnings[dayOrder - 1] += parseFloat(
+              order.price.toString()
+            );
             stats.dailyData.orders[dayOrder - 1]++;
           }
         }
@@ -92,7 +135,9 @@ const StatisticScreen = () => {
         if (checkDateInMonth(order.order_date)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
             const dayOfWeek = getWeekOfMonth(order.order_date);
-            stats.weeklyData.earnings[dayOfWeek] += parseFloat(order.price.toString());
+            stats.weeklyData.earnings[dayOfWeek] += parseFloat(
+              order.price.toString()
+            );
             stats.weeklyData.orders[dayOfWeek]++;
           }
         }
@@ -112,8 +157,13 @@ const StatisticScreen = () => {
         const orderDate = new Date(order.order_date);
         const currentYear = new Date().getFullYear();
         const month = orderDate.getMonth(); // Lấy tháng (0 - 11)
-        if (order.order_status === 'ORDER_CONFIRMED' && orderDate.getFullYear() === currentYear) {
-          stats.monthlyData.earnings[month] += parseFloat(order.price.toString());
+        if (
+          order.order_status === 'ORDER_CONFIRMED' &&
+          orderDate.getFullYear() === currentYear
+        ) {
+          stats.monthlyData.earnings[month] += parseFloat(
+            order.price.toString()
+          );
           stats.monthlyData.orders[month]++;
         }
       });
@@ -149,7 +199,8 @@ const StatisticScreen = () => {
     const fetchReviews = async () => {
       const response = await getReview(restaurantId);
       const averageRating =
-        response.reduce((sum, review) => sum + review.res_rating, 0) / response.length;
+        response.reduce((sum, review) => sum + review.res_rating, 0) /
+        response.length;
       setAverageRating(averageRating);
     };
     fetchReviews();
@@ -209,14 +260,18 @@ const StatisticScreen = () => {
   const handlePeriodChange = (period) => {
     setSelectedPeriod(period);
   };
-  const rating = () => ((statistics.completedOrders / statistics.totalOrders) * 100).toFixed(1);
+  const rating = () =>
+    ((statistics.completedOrders / statistics.totalOrders) * 100).toFixed(1);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
           <View style={styles.periodContainer}>
             <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'day' && styles.periodButtonActive]}
+              style={[
+                styles.periodButton,
+                selectedPeriod === 'day' && styles.periodButtonActive,
+              ]}
               onPress={() => handlePeriodChange('day')}>
               <Text
                 style={[
@@ -227,7 +282,10 @@ const StatisticScreen = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'week' && styles.periodButtonActive]}
+              style={[
+                styles.periodButton,
+                selectedPeriod === 'week' && styles.periodButtonActive,
+              ]}
               onPress={() => handlePeriodChange('week')}>
               <Text
                 style={[
@@ -238,7 +296,10 @@ const StatisticScreen = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.periodButton, selectedPeriod === 'month' && styles.periodButtonActive]}
+              style={[
+                styles.periodButton,
+                selectedPeriod === 'month' && styles.periodButtonActive,
+              ]}
               onPress={() => handlePeriodChange('month')}>
               <Text
                 style={[
@@ -292,7 +353,9 @@ const StatisticScreen = () => {
               <Text style={styles.orderStatLabel}>Đánh giá trung bình</Text>
               <View style={styles.ratingContainer}>
                 <Icon name="star" size={20} color="#FFC107" />
-                <Text style={styles.orderStatValue}>{averageRating.toFixed(1)}</Text>
+                <Text style={styles.orderStatValue}>
+                  {averageRating.toFixed(1)}
+                </Text>
               </View>
             </View>
           </View>

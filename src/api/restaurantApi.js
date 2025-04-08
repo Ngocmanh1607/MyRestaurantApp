@@ -7,31 +7,25 @@ const signupApi = async (email, password) => {
   try {
     // const fcmToken = await fetchFcmToken();
 
-    const response = await apiClient.post(
+    await apiClient.post(
       '/user/signup',
       { email, password, fcmToken: '123', role: 'seller' },
       {
         headers: { 'x-api-key': apiKey },
       }
     );
-    const { metadata } = response.data;
-    const { accessToken, refreshToken } = metadata.tokens;
-    const { email: userEmail, id: userId } = metadata.user;
-    await AsyncStorage.multiSet([
-      ['accessToken', accessToken],
-      ['refreshToken', refreshToken],
-      ['userEmail', userEmail],
-      ['userId', userId.toString()],
-    ]);
-    return response.data.metadata;
+    return true;
   } catch (error) {
     if (error.response) {
       console.log(error.response);
       console.error('Lỗi từ server:', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server.';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server.';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối mạng.'
+      );
     } else {
       console.error('Lỗi không xác định:', error.message);
       throw new Error('Đã xảy ra lỗi không xác định. Vui lòng thử lại.');
@@ -58,10 +52,13 @@ const loginApi = async (email, password) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -73,7 +70,10 @@ const updateRestaurantApi = async (restaurant, navigation) => {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (!userId || !accessToken) {
-      Alert.alert('Thông báo', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      Alert.alert(
+        'Thông báo',
+        'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+      );
       navigation.navigate('Đăng kí thông tin');
       return;
     }
@@ -107,10 +107,13 @@ const updateRestaurantApi = async (restaurant, navigation) => {
         navigation.navigate('Đăng kí thông tin');
         return;
       }
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -122,7 +125,10 @@ const getInformationRes = async (navigation) => {
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      Alert.alert('Thông báo', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      Alert.alert(
+        'Thông báo',
+        'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+      );
       navigation.navigate('Đăng kí thông tin');
       return;
     }
@@ -134,6 +140,9 @@ const getInformationRes = async (navigation) => {
       },
     });
     const { message, metadata } = response.data;
+    if (!metadata) {
+      return;
+    }
     await AsyncStorage.setItem('restaurantId', metadata.id.toString());
     console.log(metadata.id);
     if (!message) {
@@ -150,10 +159,13 @@ const getInformationRes = async (navigation) => {
         navigation.navigate('Đăng kí thông tin');
         return;
       }
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -170,28 +182,34 @@ const getCategories = async () => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
   }
 };
-const getFoodRes = async (navigation) => {
+const getFoodRes = async (restaurantId, navigation) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
       if (!userId || !accessToken) {
-        Alert.alert('Thông báo', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        Alert.alert(
+          'Thông báo',
+          'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+        );
         navigation.navigate('Đăng kí thông tin');
         return;
       }
     }
-    const response = await apiClient.get('/products/restaurantId', {
+    const response = await apiClient.get(`/products/${restaurantId}`, {
       headers: {
         'x-api-key': apiKey,
         authorization: accessToken,
@@ -215,10 +233,13 @@ const getFoodRes = async (navigation) => {
         navigation.navigate('Auth');
         return;
       }
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -252,10 +273,13 @@ const changeOrderStatus = async (orderId, status) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -280,10 +304,13 @@ const findDriver = async (orderId) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -296,13 +323,16 @@ const rejectOrder = async (orderId, reason) => {
     if (!userId || !accessToken) {
       throw new Error('User not logged in');
     }
-    const response = await apiClient.get(`/restaurant/reject/${orderId}/${reason}`, {
-      headers: {
-        'x-api-key': apiKey,
-        authorization: accessToken,
-        'x-client-id': userId,
-      },
-    });
+    const response = await apiClient.get(
+      `/restaurant/reject/${orderId}/${reason}`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
 
     const { metadata } = response.data;
     console.log(metadata);
@@ -310,10 +340,13 @@ const rejectOrder = async (orderId, reason) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }

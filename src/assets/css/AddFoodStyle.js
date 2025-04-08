@@ -1,115 +1,136 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 15,
-    backgroundColor: '#f8f8f8',
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
   },
-  input: {
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  textArea: {
-    backgroundColor: '#fff',
-    height: 100,
-    marginBottom: 10,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  createCategoryButton: {
-    backgroundColor: 'transparent',
-    padding: 10,
-    marginBottom: 20,
-  },
-  createCategoryButtonText: {
-    color: '#007bff',
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  pickerContainer: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  submitButton: {
-    backgroundColor: '#FF0000',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  imagePicker: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    alignSelf: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderStyle: 'dashed',
+  },
+  container: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  section: {
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 4,
     elevation: 2,
   },
-  imagePlaceholderText: {
-    color: '#888',
+  imagePicker: {
+    flex: 1,
+    width: 160,
+    height: 160,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
-    resizeMode: 'cover',
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  imagePlaceholderText: {
+    color: '#666',
+    fontSize: 16,
+  },
+  input: {
+    marginBottom: 16,
+    backgroundColor: '#fff',
+  },
+  inputOutline: {
+    borderRadius: 8,
+  },
+  textArea: {
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    height: 100,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfInput: {
+    width: '48%',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 16,
+  },
+  categoriesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '50%',
+    marginBottom: 12,
+  },
+  categoryText: {
+    color: '#333',
+    marginLeft: 8,
   },
   optionContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
     justifyContent: 'space-between',
+    marginBottom: 12,
   },
   optionName: {
     flex: 3,
+    marginRight: 8,
     backgroundColor: '#fff',
-    marginRight: 10,
-    borderRadius: 8,
   },
   optionPrice: {
     flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 8,
   },
   addButton: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 8,
   },
   addButtonText: {
-    color: '#007bff',
-    fontSize: 16,
+    color: '#FF6347',
+    fontWeight: '600',
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 10,
-    color: '#333',
+  submitButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 16,
   },
-  checkbox: {
-    transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],
-    marginRight: 10,
-    color: '#333',
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 export default styles;

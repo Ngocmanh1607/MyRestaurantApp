@@ -14,31 +14,40 @@ import { updateRestaurantApi } from '../../api/restaurantApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { selectImage, uploadImage } from '../../utils/utilsRestaurant';
 import styles from '../../assets/css/RegisterInfStyle';
+
 const RegisterInf = () => {
   const route = useRoute();
   const location = route.params?.location;
+  const existingRestaurantData = route.params?.restaurantData;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [restaurant, setRestaurant] = useState({
-    name: '',
-    image: '',
-    address: '',
-    opening_hours: '',
-    phone_number: '',
-    description: '',
-    address_x: '',
-    address_y: '',
-  });
+
+  // Initialize with existing data if available
+  const [restaurant, setRestaurant] = useState(
+    existingRestaurantData || {
+      name: '',
+      image: '',
+      address: '',
+      opening_hours: '',
+      phone_number: '',
+      description: '',
+      address_x: '',
+      address_y: '',
+    }
+  );
+
+  // Update only the address fields when location changes
   useEffect(() => {
     if (location) {
-      setRestaurant({
-        ...restaurant,
+      setRestaurant((prevState) => ({
+        ...prevState,
         address: location.address,
         address_x: location.latitude,
         address_y: location.longitude,
-      });
+      }));
     }
   }, [location]);
+
   const [userId, setUserId] = useState(null);
   useEffect(() => {
     const fetchUserId = async () => {
@@ -64,6 +73,7 @@ const RegisterInf = () => {
     const uri = await selectImage();
     setRestaurant({ ...restaurant, image: uri });
   };
+
   const handelUploadImage = async () => {
     const UrlImage = await uploadImage(userId, restaurant.image);
     if (UrlImage) {
@@ -82,7 +92,10 @@ const RegisterInf = () => {
       };
       try {
         setIsLoading(true);
-        const response = await updateRestaurantApi(updatedRestaurant, navigation);
+        const response = await updateRestaurantApi(
+          updatedRestaurant,
+          navigation
+        );
         if (response) {
           Snackbar.show({
             text: 'Thông tin nhà hàng đã được cập nhật!',
@@ -112,11 +125,15 @@ const RegisterInf = () => {
     );
     setWorkingHours(updatedHours);
   };
+
   const handleUpdateAddress = () => {
+    // Pass the current restaurant data when navigating
     navigation.navigate('Địa chỉ', {
       targetScreen: 'Đăng kí thông tin',
+      restaurantData: restaurant,
     });
   };
+
   return (
     <View style={styles.container}>
       {isLoading ? (
@@ -127,11 +144,18 @@ const RegisterInf = () => {
         <>
           <ScrollView>
             <View style={styles.profileSection}>
-              <TouchableOpacity onPress={handelSelectImage} style={styles.imagePicker}>
+              <TouchableOpacity
+                onPress={handelSelectImage}
+                style={styles.imagePicker}>
                 {restaurant.image ? (
-                  <Image source={{ uri: restaurant.image }} style={styles.image} />
+                  <Image
+                    source={{ uri: restaurant.image }}
+                    style={styles.image}
+                  />
                 ) : (
-                  <Text style={styles.imagePlaceholderText}>Chọn ảnh nhà hàng</Text>
+                  <Text style={styles.imagePlaceholderText}>
+                    Chọn ảnh nhà hàng
+                  </Text>
                 )}
               </TouchableOpacity>
               <View style={styles.profileInfo}>
@@ -139,7 +163,9 @@ const RegisterInf = () => {
                 <TextInput
                   style={styles.input}
                   value={restaurant.name}
-                  onChangeText={(text) => setRestaurant({ ...restaurant, name: text })}
+                  onChangeText={(text) =>
+                    setRestaurant({ ...restaurant, name: text })
+                  }
                 />
               </View>
 
@@ -158,7 +184,9 @@ const RegisterInf = () => {
                 <TextInput
                   style={styles.input}
                   value={restaurant.phone_number}
-                  onChangeText={(text) => setRestaurant({ ...restaurant, phone_number: text })}
+                  onChangeText={(text) =>
+                    setRestaurant({ ...restaurant, phone_number: text })
+                  }
                 />
               </View>
 
@@ -167,7 +195,9 @@ const RegisterInf = () => {
                 <TextInput
                   style={styles.input}
                   value={restaurant.description}
-                  onChangeText={(text) => setRestaurant({ ...restaurant, description: text })}
+                  onChangeText={(text) =>
+                    setRestaurant({ ...restaurant, description: text })
+                  }
                   multiline
                 />
               </View>
@@ -180,14 +210,18 @@ const RegisterInf = () => {
                     <TextInput
                       style={styles.workingHoursInput}
                       value={item.open}
-                      onChangeText={(value) => updateWorkingHours(item.day, 'open', value)}
+                      onChangeText={(value) =>
+                        updateWorkingHours(item.day, 'open', value)
+                      }
                       keyboardType="numeric"
                     />
                     <Text style={styles.workingHoursText}> - </Text>
                     <TextInput
                       style={styles.workingHoursInput}
                       value={item.close}
-                      onChangeText={(value) => updateWorkingHours(item.day, 'close', value)}
+                      onChangeText={(value) =>
+                        updateWorkingHours(item.day, 'close', value)
+                      }
                       keyboardType="numeric"
                     />
                   </View>

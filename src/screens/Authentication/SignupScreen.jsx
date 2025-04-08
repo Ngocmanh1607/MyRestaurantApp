@@ -57,7 +57,7 @@ const SignupScreen = () => {
       try {
         setLoading(true);
         await signupApi(email, password);
-        navigation.navigate('Đăng kí thông tin');
+        navigation.navigate('ConfirmEmail');
       } catch (error) {
         Alert.alert('Lỗi', error.message);
       } finally {
@@ -70,7 +70,12 @@ const SignupScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.inputSignContainer}>
-          <Fontisto name="email" color="#9a9a9a" size={22} style={styles.inputIcon} />
+          <Fontisto
+            name="email"
+            color="#9a9a9a"
+            size={22}
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.textInput}
             placeholder="Email"
@@ -80,22 +85,34 @@ const SignupScreen = () => {
           />
         </View>
         {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-        <PasswordInput value={password} onChangeText={setPassword} placeholderText="Mật khẩu" />
-        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        <PasswordInput
+          value={password}
+          onChangeText={setPassword}
+          placeholderText="Mật khẩu"
+        />
+        {errors.password && (
+          <Text style={styles.errorText}>{errors.password}</Text>
+        )}
         <PasswordInput
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           placeholderText="Xác nhận mật khẩu"
         />
-        {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
+        {errors.confirmPassword && (
+          <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+        )}
 
-        {errors.apiError && <Text style={styles.errorText}>{errors.apiError}</Text>}
+        {errors.apiError && (
+          <Text style={styles.errorText}>{errors.apiError}</Text>
+        )}
 
         <TouchableOpacity
           style={styles.loginButtonContainer}
           onPress={handleSignUp}
           disabled={loading}>
-          <Text style={styles.textLogin}>{loading ? 'Đang đăng ký ...' : 'Đăng ký'}</Text>
+          <Text style={styles.textLogin}>
+            {loading ? 'Đang đăng ký ...' : 'Đăng ký'}
+          </Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
