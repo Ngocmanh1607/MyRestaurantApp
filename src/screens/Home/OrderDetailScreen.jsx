@@ -25,12 +25,18 @@ const OrderDetailScreen = ({ route }) => {
           </View>
           <View style={styles.driverDetails}>
             <Image
-              source={require('../../assets/Images/Shipper.webp')}
+              source={
+                shipper.Profile.image
+                  ? { uri: shipper.Profile.image }
+                  : require('../../assets/Images/Shipper.webp')
+              }
               style={styles.driverImage}
             />
             <View style={styles.driverInfo}>
               <Text style={styles.driverName}>{shipper.Profile.name}</Text>
-              <Text style={styles.driverName}>{shipper.Profile.phone_number}</Text>
+              <Text style={styles.driverName}>
+                {shipper.Profile.phone_number}
+              </Text>
             </View>
           </View>
         </View>
@@ -50,8 +56,12 @@ const OrderDetailScreen = ({ route }) => {
                     {topping.topping_name}
                   </Text>
                 ))}
-              <Text style={styles.orderItemQuantity}>Số lượng: {item.quantity}</Text>
-              <Text style={styles.orderInfPayText}>{formatPrice(item.quantity * item.price)}</Text>
+              <Text style={styles.orderItemQuantity}>
+                Số lượng: {item.quantity}
+              </Text>
+              <Text style={styles.orderInfPayText}>
+                {formatPrice(item.quantity * item.price)}
+              </Text>
             </View>
           </View>
         </View>
@@ -65,7 +75,9 @@ const OrderDetailScreen = ({ route }) => {
       {/* Payment Information */}
       <View style={styles.paymentInfoContainer}>
         <View style={styles.paymentMethodContainer}>
-          <Text style={styles.paymentMethod}>Trả qua: {formatPrice(item.order_pay)}</Text>
+          <Text style={styles.paymentMethod}>
+            Trả qua: {formatPrice(item.order_pay)}
+          </Text>
           <Text style={styles.orderTotal}>{formatPrice(item.price)}</Text>
         </View>
 
@@ -82,7 +94,9 @@ const OrderDetailScreen = ({ route }) => {
                 </View> */}
         {/* Tổng thu */}
         <View style={styles.paymentSumContainer}>
-          <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>Tổng tính</Text>
+          <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>
+            Tổng tính
+          </Text>
           <Text style={[styles.paymentText, { fontWeight: 'bold' }]}>
             {formatPrice(item.price)}
           </Text>

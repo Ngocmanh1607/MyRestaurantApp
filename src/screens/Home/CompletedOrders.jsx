@@ -6,11 +6,13 @@ import CardOrder from '../../components/CardOrder';
 const CompletedOrders = () => {
   const orders = useSelector((state) => state.orders.data);
   const completedOrders = orders.filter(
-    (order) => order.order_status === 'ORDER_CONFIRMED' || order.order_status === 'ORDER_CANCELED'
+    (order) =>
+      order.order_status === 'ORDER_CONFIRMED' ||
+      order.order_status === 'ORDER_CANCELED'
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginHorizontal: 10 }}>
       {completedOrders.length === 0 ? (
         <View
           style={{

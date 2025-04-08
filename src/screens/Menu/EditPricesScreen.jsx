@@ -17,6 +17,7 @@ const EditPriceScreen = () => {
   const [editedItems, setEditedItems] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [categories, setCategories] = useState([]);
 
@@ -46,19 +47,62 @@ const EditPriceScreen = () => {
     fetchFoodRes;
   }, []);
   useEffect(() => {
-    const loadData = async () => {
+    const fetchRestaurantId = async () => {
       try {
-        const data = await fetchFoodItems();
-        setFoodItems(data);
-        setLoading(false);
+        setLoading(true);
+        const res = await getInformationRes();
+        setRestaurantId(res.id);
       } catch (error) {
-        Alert.alert('Lỗi', 'Không thể tải dữ liệu món ăn');
+        console.error('Error fetching restaurant ID:', error);
+      } finally {
         setLoading(false);
       }
     };
-
-    loadData();
+    fetchRestaurantId();
   }, []);
+  useEffect(() => {
+    const fetchFoodRes = async () => {
+      try {
+        if (!restaurantId) {
+          console.log();
+          ('Restaurant ID không hợp lệ');
+        }
+        const data = await getFoodRes(restaurantId, navigation);
+        const cate = [];
+        console.log('Dữ liệu món ăn:', data);
+        if (!data || !Array.isArray(data)) {
+          throw new Error('Dữ liệu món ăn không hợp lệ');
+        }
+        const sections = data.map((category) => {
+          cate.push({
+            id: category.category_id,
+            name: category.category_name,
+          });
+          return {
+            title: category.category_name,
+            data: category.products.map((product) => ({
+              id: product.product_id,
+              name: product.product_name,
+              price: product.product_price,
+              image: product.image,
+              descriptions: product.product_description,
+              quantity: product.product_quantity,
+              toppings: product.toppings,
+            })),
+          };
+        });
+        setFoodItems(sections);
+        setCategories(cate);
+      } catch (error) {
+        Snackbar.show({
+          text: error.message || 'Lỗi lấy dữ liệu món ăn',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      }
+    };
+
+    fetchFoodRes();
+  }, [restaurantId]);
 
   const handlePriceChange = (id, value) => {
     // Chỉ lưu trữ các giá trị đã chỉnh sửa
@@ -201,7 +245,7 @@ const EditPriceScreen = () => {
         <FlatList
           horizontal
           data={categories}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.id}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -216,7 +260,7 @@ const EditPriceScreen = () => {
                   selectedCategory === item &&
                     styles.selectedCategoryButtonText,
                 ]}>
-                {item}
+                {item.category_name}
               </Text>
             </TouchableOpacity>
           )}

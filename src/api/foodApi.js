@@ -54,10 +54,13 @@ const getToppingFood = async (foodId) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -74,10 +77,13 @@ const getCategoryFood = async (foodId) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -120,10 +126,13 @@ const updateFoodInApi = async (foodData) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -154,10 +163,13 @@ const publicProductApi = async (foodId) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
@@ -188,10 +200,13 @@ const unPublicProductApi = async (foodId) => {
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
-      const serverError = error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
       throw new Error(serverError);
     } else if (error.request) {
-      throw new Error('Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.');
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
     } else {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }

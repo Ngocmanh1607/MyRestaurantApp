@@ -14,7 +14,8 @@ const NewOrders = () => {
   const orders = useSelector((state) => state.orders.data);
   const dispatch = useDispatch();
   const newOrders = orders.filter(
-    (order) => order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID'
+    (order) =>
+      order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID'
   );
   useEffect(() => {
     const fetchInfRes = async () => {

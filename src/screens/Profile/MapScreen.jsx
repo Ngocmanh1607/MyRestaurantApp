@@ -1,4 +1,12 @@
-import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import apiService from '../../api/apiService';
@@ -41,7 +49,10 @@ const MapScreen = () => {
       };
 
       const targetScreen = route.params.targetScreen;
-      navigation.navigate(targetScreen, { location: locationData });
+      navigation.navigate(targetScreen, {
+        location: locationData,
+        restaurantData: route.params.restaurantData,
+      });
     } catch (error) {
       console.log(error);
       Alert.alert('Lỗi', 'Có lỗi xảy ra khi chọn địa chỉ.');
@@ -65,11 +76,15 @@ const MapScreen = () => {
         data={results}
         keyExtractor={(item) => `${item.latitude}-${item.longitude}`}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.textContainer} onPress={() => handlePress(item)}>
+          <TouchableOpacity
+            style={styles.textContainer}
+            onPress={() => handlePress(item)}>
             <Text>{item.address}</Text>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={<Text style={styles.noResultsText}>Không tìm thấy địa chỉ nào</Text>}
+        ListEmptyComponent={
+          <Text style={styles.noResultsText}>Không tìm thấy địa chỉ nào</Text>
+        }
       />
     </View>
   );

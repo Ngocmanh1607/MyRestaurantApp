@@ -2,7 +2,11 @@ import { uploadImageToCloudinary } from './cloudinaryUtils';
 
 const uploadRestaurantImage = async (userId, imageUri) => {
   try {
-    const downloadURL = await uploadImageToCloudinary(userId, imageUri, 'restaurant_image');
+    const downloadURL = await uploadImageToCloudinary(
+      userId,
+      imageUri,
+      'restaurant_image'
+    );
     return downloadURL;
   } catch (error) {
     console.error('Error uploading food image:', error);
@@ -12,7 +16,11 @@ const uploadRestaurantImage = async (userId, imageUri) => {
 
 const uploadFoodImage = async (restaurantId, foodName, imageUri) => {
   try {
-    const downloadURL = await uploadImageToCloudinary(restaurantId, imageUri, foodName);
+    const downloadURL = await uploadImageToCloudinary(
+      restaurantId,
+      imageUri,
+      foodName
+    );
     return downloadURL;
   } catch (error) {
     console.error('Error uploading food image:', error);

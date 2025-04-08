@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import Snackbar from 'react-native-snackbar';
-import CheckBox from '@react-native-community/checkbox';
 import { uploadFoodImage } from '../../utils/firebaseUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createFoodInApi } from '../../api/foodApi';
@@ -18,6 +17,7 @@ import { getCategories } from '../../api/restaurantApi';
 import styles from '../../assets/css/AddFoodStyle';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput } from 'react-native-paper';
+import CheckBox from '@react-native-community/checkbox';
 const AddFoodScreen = () => {
   const navigation = useNavigation();
   const [foodData, setFoodData] = useState({
@@ -87,7 +87,10 @@ const AddFoodScreen = () => {
   };
 
   const addOption = () => {
-    setFoodData({ ...foodData, options: [...foodData.options, { name: '', price: '' }] });
+    setFoodData({
+      ...foodData,
+      options: [...foodData.options, { name: '', price: '' }],
+    });
   };
 
   const handleSave = async () => {
@@ -99,7 +102,10 @@ const AddFoodScreen = () => {
         const updatedFoodData = { ...foodData, image: uploadedImageUrl };
         const response = await createFoodInApi(updatedFoodData);
         if (response.success) {
-          Snackbar.show({ text: 'Lưu thành công!', duration: Snackbar.LENGTH_SHORT });
+          Snackbar.show({
+            text: 'Lưu thành công!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
           setFoodData({
             name: '',
             descriptions: '',
@@ -111,16 +117,20 @@ const AddFoodScreen = () => {
           });
         } else {
           if (response.message === 500) {
-            Alert.alert('Đã xảy ra lỗi', 'Hết phiên làm việc, vui lòng đăng nhập lại', [
-              {
-                text: 'OK',
-                onPress: () =>
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth' }],
-                  }),
-              },
-            ]);
+            Alert.alert(
+              'Đã xảy ra lỗi',
+              'Hết phiên làm việc, vui lòng đăng nhập lại',
+              [
+                {
+                  text: 'OK',
+                  onPress: () =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Auth' }],
+                    }),
+                },
+              ]
+            );
           } else {
             Alert.alert('Đã xảy ra lỗi', response.message);
             return;
@@ -137,19 +147,31 @@ const AddFoodScreen = () => {
 
   const validateInputs = () => {
     if (!foodData.image) {
-      Snackbar.show({ text: 'Vui lòng thêm ảnh món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng thêm ảnh món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.name.trim()) {
-      Snackbar.show({ text: 'Vui lòng nhập tên món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập tên món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.price.trim() || isNaN(foodData.price)) {
-      Snackbar.show({ text: 'Vui lòng nhập giá hợp lệ.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập giá hợp lệ.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (!foodData.descriptions.trim()) {
-      Snackbar.show({ text: 'Vui lòng nhập mô tả món ăn.', duration: Snackbar.LENGTH_SHORT });
+      Snackbar.show({
+        text: 'Vui lòng nhập mô tả món ăn.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       return false;
     }
     if (foodData.categories.length === 0) {
@@ -170,104 +192,137 @@ const AddFoodScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.mainContainer}>
       {isLoading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#FF0000" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FF6347" />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.container}>
-          <TouchableOpacity onPress={handleSelectImage} style={styles.imagePicker}>
+          {/* Image Picker */}
+          <TouchableOpacity
+            onPress={handleSelectImage}
+            style={styles.imagePicker}>
             {foodData.image ? (
               <Image source={{ uri: foodData.image }} style={styles.image} />
             ) : (
-              <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
+              <View style={styles.imagePlaceholder}>
+                <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
+              </View>
             )}
           </TouchableOpacity>
 
-          <TextInput
-            mode="outlined"
-            label={'Tên món'}
-            activeOutlineColor="#007bff"
-            textColor="#333"
-            style={styles.input}
-            value={foodData.name}
-            onChangeText={(value) => handleChange('name', value)}
-          />
+          {/* Basic Info Section */}
+          <View style={styles.section}>
+            <TextInput
+              mode="outlined"
+              label="Tên món"
+              activeOutlineColor="#FF6347"
+              textColor="#333"
+              style={styles.input}
+              value={foodData.name}
+              onChangeText={(value) => handleChange('name', value)}
+              outlineStyle={styles.inputOutline}
+            />
 
-          <TextInput
-            mode="outlined"
-            label={'Mô tả'}
-            activeOutlineColor="#007bff"
-            textColor="#333"
-            style={styles.textArea}
-            value={foodData.descriptions}
-            onChangeText={(value) => handleChange('descriptions', value)}
-            multiline
-          />
+            <TextInput
+              mode="outlined"
+              label="Mô tả"
+              activeOutlineColor="#FF6347"
+              textColor="#333"
+              style={styles.textArea}
+              value={foodData.descriptions}
+              onChangeText={(value) => handleChange('descriptions', value)}
+              multiline
+              numberOfLines={4}
+              outlineStyle={styles.inputOutline}
+            />
 
-          <TextInput
-            mode="outlined"
-            label={'Giá gốc'}
-            textColor="#333"
-            activeOutlineColor="#007bff"
-            style={styles.input}
-            value={foodData.price}
-            onChangeText={(value) => handleChange('price', value)}
-            keyboardType="numeric"
-          />
-          <TextInput
-            mode="outlined"
-            label={'Số lượng'}
-            textColor="#333"
-            activeOutlineColor="#007bff"
-            style={styles.input}
-            value={foodData.number}
-            onChangeText={(value) => handleChange('number', value)}
-            keyboardType="number"
-          />
-
-          <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
-          {allCategories.map((category) => (
-            <View key={category.id} style={styles.checkboxContainer}>
-              <CheckBox
-                value={foodData.categories.includes(category.id)}
-                onValueChange={() => toggleCategory(category.id)}
-                style={styles.checkbox}
-              />
-              <Text style={{ color: '#333' }}>{category.name}</Text>
-            </View>
-          ))}
-
-          <Text style={styles.sectionTitle}>Các lựa chọn khác</Text>
-          {foodData.options.map((option, index) => (
-            <View key={index} style={styles.optionContainer}>
+            <View style={styles.priceRow}>
               <TextInput
                 mode="outlined"
-                label={'Tên lựa chọn'}
+                label="Giá gốc"
                 textColor="#333"
-                activeOutlineColor="#007bff"
-                style={styles.optionName}
-                value={option.topping_name}
-                onChangeText={(value) => handleOptionChange(index, 'topping_name', value)}
-              />
-              <TextInput
-                mode="outlined"
-                label={'Giá'}
-                textColor="#333"
-                activeOutlineColor="#007bff"
-                style={styles.optionPrice}
-                value={option.price}
-                onChangeText={(value) => handleOptionChange(index, 'price', value)}
+                activeOutlineColor="#FF6347"
+                style={[styles.input, styles.halfInput]}
+                value={foodData.price}
+                onChangeText={(value) => handleChange('price', value)}
                 keyboardType="numeric"
+                outlineStyle={styles.inputOutline}
+                left={<TextInput.Affix text="₫" />}
+              />
+              <TextInput
+                mode="outlined"
+                label="Số lượng"
+                textColor="#333"
+                activeOutlineColor="#FF6347"
+                style={[styles.input, styles.halfInput]}
+                value={foodData.number}
+                onChangeText={(value) => handleChange('number', value)}
+                keyboardType="number"
+                outlineStyle={styles.inputOutline}
               />
             </View>
-          ))}
+          </View>
 
-          <TouchableOpacity onPress={addOption} style={styles.addButton}>
-            <Text style={styles.addButtonText}>+ Thêm lựa chọn</Text>
-          </TouchableOpacity>
+          {/* Categories Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
+            <View style={styles.categoriesContainer}>
+              {allCategories.map((category) => (
+                <View key={category.id} style={styles.checkboxContainer}>
+                  <CheckBox
+                    value={foodData.categories.includes(category.id)}
+                    onValueChange={() => toggleCategory(category.id)}
+                    style={styles.checkbox}
+                    tintColors={{ true: '#FF6347', false: '#666' }}
+                  />
+                  <Text style={styles.categoryText}>{category.name}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
 
+          {/* Options Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Các lựa chọn khác</Text>
+            {foodData.options.map((option, index) => (
+              <View key={index} style={styles.optionContainer}>
+                <TextInput
+                  mode="outlined"
+                  label="Tên lựa chọn"
+                  textColor="#333"
+                  activeOutlineColor="#FF6347"
+                  style={styles.optionName}
+                  value={option.topping_name}
+                  onChangeText={(value) =>
+                    handleOptionChange(index, 'topping_name', value)
+                  }
+                  outlineStyle={styles.inputOutline}
+                />
+                <TextInput
+                  mode="outlined"
+                  label="Giá"
+                  textColor="#333"
+                  activeOutlineColor="#FF6347"
+                  style={styles.optionPrice}
+                  value={option.price}
+                  onChangeText={(value) =>
+                    handleOptionChange(index, 'price', value)
+                  }
+                  keyboardType="numeric"
+                  outlineStyle={styles.inputOutline}
+                  left={<TextInput.Affix text="₫" />}
+                />
+              </View>
+            ))}
+
+            <TouchableOpacity onPress={addOption} style={styles.addButton}>
+              <Text style={styles.addButtonText}>+ Thêm lựa chọn</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Submit Button */}
           <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
             <Text style={styles.submitButtonText}>Lưu</Text>
           </TouchableOpacity>
