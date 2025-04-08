@@ -49,7 +49,10 @@ const MapScreen = () => {
       };
 
       const targetScreen = route.params.targetScreen;
-      navigation.navigate(targetScreen, { location: locationData });
+      navigation.navigate(targetScreen, {
+        location: locationData,
+        restaurantData: route.params.restaurantData,
+      });
     } catch (error) {
       console.log(error);
       Alert.alert('Lỗi', 'Có lỗi xảy ra khi chọn địa chỉ.');

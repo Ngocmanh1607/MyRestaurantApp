@@ -57,7 +57,7 @@ const SignupScreen = () => {
       try {
         setLoading(true);
         await signupApi(email, password);
-        navigation.navigate('Đăng kí thông tin');
+        navigation.navigate('ConfirmEmail');
       } catch (error) {
         Alert.alert('Lỗi', error.message);
       } finally {

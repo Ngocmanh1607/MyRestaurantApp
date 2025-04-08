@@ -254,7 +254,8 @@ const RestaurantProfileScreen = () => {
 
   const handleUpdateAddress = () => {
     navigation.navigate('Địa chỉ', {
-      targetScreen: 'Hồ Sơ',
+      targetScreen: 'Profile',
+      restaurantData: restaurant,
     });
   };
 

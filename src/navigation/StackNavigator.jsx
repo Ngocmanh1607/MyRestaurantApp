@@ -17,6 +17,7 @@ import OrdersHistoryScreen from '../screens/Profile/OrdersHistoryScreen';
 import OrderHisDetailScreen from '../screens/Profile/OrderHisDetailScreen';
 import EditPriceScreen from '../screens/Menu/EditPricesScreen';
 import PromotionManagementScreen from '../screens/Profile/PromotionManagementScreen';
+import ConfirmEmailScreen from '../screens/Authentication/ConfirmEmailScreen';
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
@@ -144,6 +145,16 @@ const StackNavigator = () => {
           headerShown: true,
           headerBackTitle: 'Quay lại',
           title: 'Quản lý khuyến mãi',
+        }}
+      />
+      <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+      <Stack.Screen
+        name="Register"
+        component={RegisterInf}
+        options={{
+          title: 'Đăng kí thông tin',
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
         }}
       />
     </Stack.Navigator>

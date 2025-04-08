@@ -14,31 +14,40 @@ import { updateRestaurantApi } from '../../api/restaurantApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { selectImage, uploadImage } from '../../utils/utilsRestaurant';
 import styles from '../../assets/css/RegisterInfStyle';
+
 const RegisterInf = () => {
   const route = useRoute();
   const location = route.params?.location;
+  const existingRestaurantData = route.params?.restaurantData;
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [restaurant, setRestaurant] = useState({
-    name: '',
-    image: '',
-    address: '',
-    opening_hours: '',
-    phone_number: '',
-    description: '',
-    address_x: '',
-    address_y: '',
-  });
+
+  // Initialize with existing data if available
+  const [restaurant, setRestaurant] = useState(
+    existingRestaurantData || {
+      name: '',
+      image: '',
+      address: '',
+      opening_hours: '',
+      phone_number: '',
+      description: '',
+      address_x: '',
+      address_y: '',
+    }
+  );
+
+  // Update only the address fields when location changes
   useEffect(() => {
     if (location) {
-      setRestaurant({
-        ...restaurant,
+      setRestaurant((prevState) => ({
+        ...prevState,
         address: location.address,
         address_x: location.latitude,
         address_y: location.longitude,
-      });
+      }));
     }
   }, [location]);
+
   const [userId, setUserId] = useState(null);
   useEffect(() => {
     const fetchUserId = async () => {
@@ -64,6 +73,7 @@ const RegisterInf = () => {
     const uri = await selectImage();
     setRestaurant({ ...restaurant, image: uri });
   };
+
   const handelUploadImage = async () => {
     const UrlImage = await uploadImage(userId, restaurant.image);
     if (UrlImage) {
@@ -115,11 +125,15 @@ const RegisterInf = () => {
     );
     setWorkingHours(updatedHours);
   };
+
   const handleUpdateAddress = () => {
+    // Pass the current restaurant data when navigating
     navigation.navigate('Địa chỉ', {
       targetScreen: 'Đăng kí thông tin',
+      restaurantData: restaurant,
     });
   };
+
   return (
     <View style={styles.container}>
       {isLoading ? (

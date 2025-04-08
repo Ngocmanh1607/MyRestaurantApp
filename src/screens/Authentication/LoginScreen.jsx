@@ -15,6 +15,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import { loginApi } from '../../api/restaurantApi';
 import PasswordInput from '../../components/PasswordInput';
 import styles from '../../assets/css/LoginStyle';
+import checkRegister from '../../utils/checkRegister';
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -49,19 +50,20 @@ const LoginScreen = () => {
     if (validate()) {
       try {
         setLoading(true);
-        const response = await loginApi(email, password);
-        if (response) {
-          navigation.navigate('Home');
-        }
+        await loginApi(email, password);
       } catch (error) {
         Alert.alert('Lỗi', error.message);
         setErrors({ apiError: error.message });
       } finally {
+        await checkRegisterInfo();
         setLoading(false);
       }
     }
   };
-
+  const checkRegisterInfo = async () => {
+    const res = await checkRegister(navigation);
+    res ? navigation.navigate('Home') : navigation.navigate('Register');
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       {loading ? (

@@ -11,63 +11,103 @@ import {
   StatusBar,
 } from 'react-native';
 import { styles } from '../../assets/css/EditPricesStyle';
-// Giả lập API để lấy dữ liệu và cập nhật
-const fetchFoodItems = () => {
-  // Trong ứng dụng thực tế, đây sẽ là một API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { id: '1', name: 'Phở bò', price: 65000, category: 'Món chính' },
-        { id: '2', name: 'Bún chả', price: 60000, category: 'Món chính' },
-        { id: '3', name: 'Bánh mì thịt', price: 35000, category: 'Ăn nhẹ' },
-        { id: '4', name: 'Cơm tấm', price: 55000, category: 'Món chính' },
-        { id: '5', name: 'Chả giò', price: 40000, category: 'Khai vị' },
-        { id: '6', name: 'Gỏi cuốn', price: 45000, category: 'Khai vị' },
-        { id: '7', name: 'Cà phê sữa đá', price: 30000, category: 'Đồ uống' },
-        { id: '8', name: 'Sinh tố xoài', price: 35000, category: 'Đồ uống' },
-        { id: '9', name: 'Chè ba màu', price: 25000, category: 'Tráng miệng' },
-        { id: '10', name: 'Bánh flan', price: 20000, category: 'Tráng miệng' },
-      ]);
-    }, 500);
-  });
-};
+import { getFoodRes } from '../../api/restaurantApi';
+import { getInformationRes } from '../../api/restaurantApi';
+// // Giả lập API để lấy dữ liệu và cập nhật
+// const fetchFoodItems = () => {
+//   // Trong ứng dụng thực tế, đây sẽ là một API call
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve([
+//         { id: '1', name: 'Phở bò', price: 65000, category: 'Món chính' },
+//         { id: '2', name: 'Bún chả', price: 60000, category: 'Món chính' },
+//         { id: '3', name: 'Bánh mì thịt', price: 35000, category: 'Ăn nhẹ' },
+//         { id: '4', name: 'Cơm tấm', price: 55000, category: 'Món chính' },
+//         { id: '5', name: 'Chả giò', price: 40000, category: 'Khai vị' },
+//         { id: '6', name: 'Gỏi cuốn', price: 45000, category: 'Khai vị' },
+//         { id: '7', name: 'Cà phê sữa đá', price: 30000, category: 'Đồ uống' },
+//         { id: '8', name: 'Sinh tố xoài', price: 35000, category: 'Đồ uống' },
+//         { id: '9', name: 'Chè ba màu', price: 25000, category: 'Tráng miệng' },
+//         { id: '10', name: 'Bánh flan', price: 20000, category: 'Tráng miệng' },
+//       ]);
+//     }, 500);
+//   });
+// };
 
-const updateFoodPrices = (updatedItems) => {
-  // Trong ứng dụng thực tế, đây sẽ là một API call để cập nhật giá
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 1000);
-  });
-};
+// const updateFoodPrices = (updatedItems) => {
+//   // Trong ứng dụng thực tế, đây sẽ là một API call để cập nhật giá
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve({ success: true });
+//     }, 1000);
+//   });
+// };
 
 const EditPriceScreen = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [editedItems, setEditedItems] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
-
-  // Lấy danh sách các danh mục duy nhất từ dữ liệu
-  const categories = [
-    'Tất cả',
-    ...new Set(foodItems.map((item) => item.category)),
-  ];
-
+  const [categories, setCategories] = useState([]);
   useEffect(() => {
-    const loadData = async () => {
+    const fetchRestaurantId = async () => {
       try {
-        const data = await fetchFoodItems();
-        setFoodItems(data);
-        setLoading(false);
+        setLoading(true);
+        const res = await getInformationRes();
+        setRestaurantId(res.id);
       } catch (error) {
-        Alert.alert('Lỗi', 'Không thể tải dữ liệu món ăn');
+        console.error('Error fetching restaurant ID:', error);
+      } finally {
         setLoading(false);
       }
     };
-
-    loadData();
+    fetchRestaurantId();
   }, []);
+  useEffect(() => {
+    const fetchFoodRes = async () => {
+      try {
+        if (!restaurantId) {
+          console.log();
+          ('Restaurant ID không hợp lệ');
+        }
+        const data = await getFoodRes(restaurantId, navigation);
+        const cate = [];
+        console.log('Dữ liệu món ăn:', data);
+        if (!data || !Array.isArray(data)) {
+          throw new Error('Dữ liệu món ăn không hợp lệ');
+        }
+        const sections = data.map((category) => {
+          cate.push({
+            id: category.category_id,
+            name: category.category_name,
+          });
+          return {
+            title: category.category_name,
+            data: category.products.map((product) => ({
+              id: product.product_id,
+              name: product.product_name,
+              price: product.product_price,
+              image: product.image,
+              descriptions: product.product_description,
+              quantity: product.product_quantity,
+              toppings: product.toppings,
+            })),
+          };
+        });
+        setFoodItems(sections);
+        setCategories(cate);
+      } catch (error) {
+        Snackbar.show({
+          text: error.message || 'Lỗi lấy dữ liệu món ăn',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      }
+    };
+
+    fetchFoodRes();
+  }, [restaurantId]);
 
   const handlePriceChange = (id, value) => {
     // Chỉ lưu trữ các giá trị đã chỉnh sửa
@@ -210,7 +250,7 @@ const EditPriceScreen = () => {
         <FlatList
           horizontal
           data={categories}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.id}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -225,7 +265,7 @@ const EditPriceScreen = () => {
                   selectedCategory === item &&
                     styles.selectedCategoryButtonText,
                 ]}>
-                {item}
+                {item.category_name}
               </Text>
             </TouchableOpacity>
           )}

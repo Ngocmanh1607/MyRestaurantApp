@@ -7,23 +7,14 @@ const signupApi = async (email, password) => {
   try {
     // const fcmToken = await fetchFcmToken();
 
-    const response = await apiClient.post(
+    await apiClient.post(
       '/user/signup',
       { email, password, fcmToken: '123', role: 'seller' },
       {
         headers: { 'x-api-key': apiKey },
       }
     );
-    const { metadata } = response.data;
-    const { accessToken, refreshToken } = metadata.tokens;
-    const { email: userEmail, id: userId } = metadata.user;
-    await AsyncStorage.multiSet([
-      ['accessToken', accessToken],
-      ['refreshToken', refreshToken],
-      ['userEmail', userEmail],
-      ['userId', userId.toString()],
-    ]);
-    return response.data.metadata;
+    return true;
   } catch (error) {
     if (error.response) {
       console.log(error.response);
@@ -149,6 +140,9 @@ const getInformationRes = async (navigation) => {
       },
     });
     const { message, metadata } = response.data;
+    if (!metadata) {
+      return;
+    }
     await AsyncStorage.setItem('restaurantId', metadata.id.toString());
     console.log(metadata.id);
     if (!message) {
