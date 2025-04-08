@@ -11,46 +11,40 @@ import {
   StatusBar,
 } from 'react-native';
 import { styles } from '../../assets/css/EditPricesStyle';
-// Giả lập API để lấy dữ liệu và cập nhật
-const fetchFoodItems = () => {
-  // Trong ứng dụng thực tế, đây sẽ là một API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { id: '1', name: 'Phở bò', price: 65000, category: 'Món chính' },
-        { id: '2', name: 'Bún chả', price: 60000, category: 'Món chính' },
-        { id: '3', name: 'Bánh mì thịt', price: 35000, category: 'Ăn nhẹ' },
-        { id: '4', name: 'Cơm tấm', price: 55000, category: 'Món chính' },
-        { id: '5', name: 'Chả giò', price: 40000, category: 'Khai vị' },
-        { id: '6', name: 'Gỏi cuốn', price: 45000, category: 'Khai vị' },
-        { id: '7', name: 'Cà phê sữa đá', price: 30000, category: 'Đồ uống' },
-        { id: '8', name: 'Sinh tố xoài', price: 35000, category: 'Đồ uống' },
-        { id: '9', name: 'Chè ba màu', price: 25000, category: 'Tráng miệng' },
-        { id: '10', name: 'Bánh flan', price: 20000, category: 'Tráng miệng' },
-      ]);
-    }, 500);
-  });
-};
-
-const updateFoodPrices = (updatedItems) => {
-  // Trong ứng dụng thực tế, đây sẽ là một API call để cập nhật giá
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 1000);
-  });
-};
-
+import { getFoodRes } from '../../api/restaurantApi';
 const EditPriceScreen = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [editedItems, setEditedItems] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+  const [categories, setCategories] = useState([]);
 
-  // Lấy danh sách các danh mục duy nhất từ dữ liệu
-  const categories = ['Tất cả', ...new Set(foodItems.map((item) => item.category))];
-
+  useEffect(() => {
+    const fetchFoodRes = async () => {
+      try {
+        const data = await getFoodRes(navigation);
+        if (!data || !Array.isArray(data)) {
+          throw new Error('Dữ liệu món ăn không hợp lệ');
+        }
+        setFoodItems(
+          data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            image: item.image,
+            descriptions: item.descriptions,
+            price: item.price,
+          }))
+        );
+      } catch (error) {
+        Snackbar.show({
+          text: error.message || 'Lỗi lấy dữ liệu món ăn',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      }
+    };
+    fetchFoodRes;
+  }, []);
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -132,10 +126,13 @@ const EditPriceScreen = () => {
 
   const renderItem = ({ item }) => {
     const currentValue =
-      editedItems[item.id] !== undefined ? editedItems[item.id] : item.price.toString();
+      editedItems[item.id] !== undefined
+        ? editedItems[item.id]
+        : item.price.toString();
 
     const hasChanged =
-      editedItems[item.id] !== undefined && parseInt(editedItems[item.id], 10) !== item.price;
+      editedItems[item.id] !== undefined &&
+      parseInt(editedItems[item.id], 10) !== item.price;
 
     return (
       <View style={[styles.itemContainer, hasChanged && styles.changedItem]}>
@@ -145,7 +142,9 @@ const EditPriceScreen = () => {
         </View>
         <View style={styles.priceContainer}>
           {hasChanged && (
-            <Text style={styles.oldPrice}>{item.price.toLocaleString('vi-VN')} đ</Text>
+            <Text style={styles.oldPrice}>
+              {item.price.toLocaleString('vi-VN')} đ
+            </Text>
           )}
           <TextInput
             style={styles.priceInput}
@@ -214,7 +213,8 @@ const EditPriceScreen = () => {
               <Text
                 style={[
                   styles.categoryButtonText,
-                  selectedCategory === item && styles.selectedCategoryButtonText,
+                  selectedCategory === item &&
+                    styles.selectedCategoryButtonText,
                 ]}>
                 {item}
               </Text>
@@ -245,7 +245,8 @@ const EditPriceScreen = () => {
         <TouchableOpacity
           style={[
             styles.saveButton,
-            (Object.keys(editedItems).length === 0 || saving) && styles.disabledButton,
+            (Object.keys(editedItems).length === 0 || saving) &&
+              styles.disabledButton,
           ]}
           onPress={saveChanges}
           disabled={Object.keys(editedItems).length === 0 || saving}>
