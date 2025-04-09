@@ -147,7 +147,7 @@ const publicProductApi = async (foodId) => {
       throw new Error('User not logged in');
     }
     const response = await apiClient.put(
-      `/products/show/${foodId}`,
+      `/products/hidden/${foodId}`,
       {},
       {
         headers: {
@@ -212,6 +212,7 @@ const unPublicProductApi = async (foodId) => {
     }
   }
 };
+
 export {
   createFoodInApi,
   updateFoodInApi,

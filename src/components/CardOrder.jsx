@@ -15,7 +15,7 @@ import formatTime from '../utils/formatTime';
 import { useDispatch } from 'react-redux';
 import { updateStatus } from '../store/orderSlice';
 import { io } from 'socket.io-client';
-
+import { changeOrderStatus } from '../api/restaurantApi';
 const CardOrder = ({ item }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -62,7 +62,7 @@ const CardOrder = ({ item }) => {
   const submitCancelOrder = async () => {
     try {
       setIsLoading(true);
-      // await changeOrderStatus(item.id, 'ORDER_CANCELED');
+      await changeOrderStatus(item.id, 'ORDER_CANCELED');
       item.order_status = 'ORDER_CANCELED';
       dispatch(updateStatus({ id: item.id, status: 'ORDER_CANCELED' }));
       Alert.alert('Thành công', 'Đơn hàng đã bị hủy!');

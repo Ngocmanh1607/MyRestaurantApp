@@ -209,13 +209,16 @@ const getFoodRes = async (restaurantId, navigation) => {
         return;
       }
     }
-    const response = await apiClient.get(`/products/${restaurantId}`, {
-      headers: {
-        'x-api-key': apiKey,
-        authorization: accessToken,
-        'x-client-id': userId,
-      },
-    });
+    const response = await apiClient.get(
+      `/products/${restaurantId}/restaurantId`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
 
     const { message, metadata } = response.data;
     if (!message) {
@@ -396,6 +399,46 @@ const getOrders = async () => {
     console.error('Lỗi từ server: ', error.response.data);
   }
 };
+const editListProduct = async (restaurantId, listProduct) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.post(
+      `/restaurant/price`,
+      {
+        restaurant_id: restaurantId,
+        products: listProduct,
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+};
 export {
   signupApi,
   loginApi,
@@ -408,4 +451,5 @@ export {
   rejectOrder,
   getReview,
   getOrders,
+  editListProduct,
 };

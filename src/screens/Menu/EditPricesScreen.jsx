@@ -11,46 +11,24 @@ import {
   StatusBar,
 } from 'react-native';
 import { styles } from '../../assets/css/EditPricesStyle';
-import { getFoodRes } from '../../api/restaurantApi';
-import { getInformationRes } from '../../api/restaurantApi';
-// // Giả lập API để lấy dữ liệu và cập nhật
-// const fetchFoodItems = () => {
-//   // Trong ứng dụng thực tế, đây sẽ là một API call
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve([
-//         { id: '1', name: 'Phở bò', price: 65000, category: 'Món chính' },
-//         { id: '2', name: 'Bún chả', price: 60000, category: 'Món chính' },
-//         { id: '3', name: 'Bánh mì thịt', price: 35000, category: 'Ăn nhẹ' },
-//         { id: '4', name: 'Cơm tấm', price: 55000, category: 'Món chính' },
-//         { id: '5', name: 'Chả giò', price: 40000, category: 'Khai vị' },
-//         { id: '6', name: 'Gỏi cuốn', price: 45000, category: 'Khai vị' },
-//         { id: '7', name: 'Cà phê sữa đá', price: 30000, category: 'Đồ uống' },
-//         { id: '8', name: 'Sinh tố xoài', price: 35000, category: 'Đồ uống' },
-//         { id: '9', name: 'Chè ba màu', price: 25000, category: 'Tráng miệng' },
-//         { id: '10', name: 'Bánh flan', price: 20000, category: 'Tráng miệng' },
-//       ]);
-//     }, 500);
-//   });
-// };
-
-// const updateFoodPrices = (updatedItems) => {
-//   // Trong ứng dụng thực tế, đây sẽ là một API call để cập nhật giá
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve({ success: true });
-//     }, 1000);
-//   });
-// };
+import {
+  editListProduct,
+  getFoodRes,
+  getInformationRes,
+} from '../../api/restaurantApi';
+import { useNavigation } from '@react-navigation/native';
+import { Modal } from 'react-native-paper';
 
 const EditPriceScreen = () => {
-  const [foodItems, setFoodItems] = useState([]);
   const [editedItems, setEditedItems] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [restaurantId, setRestaurantId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [categories, setCategories] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const navigation = useNavigation();
+
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {
@@ -65,27 +43,36 @@ const EditPriceScreen = () => {
     };
     fetchRestaurantId();
   }, []);
+
   useEffect(() => {
     const fetchFoodRes = async () => {
       try {
         if (!restaurantId) {
-          console.log();
-          ('Restaurant ID không hợp lệ');
+          console.log('Restaurant ID không hợp lệ');
+          return;
         }
+
         const data = await getFoodRes(restaurantId, navigation);
-        const cate = [];
         console.log('Dữ liệu món ăn:', data);
+
         if (!data || !Array.isArray(data)) {
           throw new Error('Dữ liệu món ăn không hợp lệ');
         }
-        const sections = data.map((category) => {
-          cate.push({
+
+        // Prepare categories with "Tất cả" as first option
+        const categoryList = [{ id: 'all', name: 'Tất cả' }];
+        const allProductsList = [];
+
+        // Process the data
+        data.forEach((category) => {
+          categoryList.push({
             id: category.category_id,
             name: category.category_name,
           });
-          return {
-            title: category.category_name,
-            data: category.products.map((product) => ({
+
+          // Add all products to a flat list with category info
+          category.products.forEach((product) => {
+            allProductsList.push({
               id: product.product_id,
               name: product.product_name,
               price: product.product_price,
@@ -93,21 +80,23 @@ const EditPriceScreen = () => {
               descriptions: product.product_description,
               quantity: product.product_quantity,
               toppings: product.toppings,
-            })),
-          };
+              category: category.category_name,
+              categoryId: category.category_id,
+            });
+          });
         });
-        setFoodItems(sections);
-        setCategories(cate);
+
+        setCategories(categoryList);
+        setAllProducts(allProductsList);
       } catch (error) {
-        Snackbar.show({
-          text: error.message || 'Lỗi lấy dữ liệu món ăn',
-          duration: Snackbar.LENGTH_SHORT,
-        });
+        Alert.alert('Lỗi', error.message || 'Lỗi lấy dữ liệu món ăn');
       }
     };
 
-    fetchFoodRes();
-  }, [restaurantId]);
+    if (restaurantId) {
+      fetchFoodRes();
+    }
+  }, [restaurantId, navigation]);
 
   const handlePriceChange = (id, value) => {
     // Chỉ lưu trữ các giá trị đã chỉnh sửa
@@ -120,11 +109,16 @@ const EditPriceScreen = () => {
   };
 
   const applyPercentageChange = (percentage) => {
-    const updatedItems = {};
+    const updatedItems = { ...editedItems };
 
-    foodItems.forEach((item) => {
-      const newPrice = Math.round(item.price * (1 + percentage / 100));
-      updatedItems[item.id] = newPrice.toString();
+    allProducts.forEach((product) => {
+      const currentPrice =
+        editedItems[product.id] !== undefined
+          ? parseInt(editedItems[product.id], 10)
+          : product.price;
+
+      const newPrice = Math.round(currentPrice * (1 + percentage / 100));
+      updatedItems[product.id] = newPrice.toString();
     });
 
     setEditedItems(updatedItems);
@@ -135,43 +129,44 @@ const EditPriceScreen = () => {
       Alert.alert('Thông báo', 'Không có thay đổi nào để lưu');
       return;
     }
+
     setSaving(true);
     try {
+      setLoading(true);
       // Tạo mảng các mục cần cập nhật
       const itemsToUpdate = Object.keys(editedItems).map((id) => ({
-        id,
-        price: parseInt(editedItems[id], 10),
+        product_id: id,
+        new_price: parseInt(editedItems[id], 10),
       }));
+      console.log('Items to update:', itemsToUpdate);
+      await editListProduct(restaurantId, itemsToUpdate);
+      // Update allProducts with new prices
+      const updatedProducts = allProducts.map((product) => {
+        if (editedItems[product.id] !== undefined) {
+          return {
+            ...product,
+            price: parseInt(editedItems[product.id], 10),
+          };
+        }
+        return product;
+      });
 
-      const result = await updateFoodPrices(itemsToUpdate);
-
-      if (result.success) {
-        // Cập nhật state với giá mới
-        const updatedFoodItems = foodItems.map((item) => {
-          if (editedItems[item.id]) {
-            return {
-              ...item,
-              price: parseInt(editedItems[item.id], 10),
-            };
-          }
-          return item;
-        });
-
-        setFoodItems(updatedFoodItems);
-        setEditedItems({});
-        Alert.alert('Thành công', 'Đã cập nhật giá thành công');
-      }
+      setAllProducts(updatedProducts);
+      setEditedItems({});
+      Alert.alert('Thành công', 'Đã cập nhật giá thành công');
     } catch (error) {
       Alert.alert('Lỗi', 'Không thể cập nhật giá món ăn');
     } finally {
       setSaving(false);
+      setLoading(false);
     }
   };
 
-  const filteredItems =
+  // Filter products based on selected category
+  const filteredProducts =
     selectedCategory === 'Tất cả'
-      ? foodItems
-      : foodItems.filter((item) => item.category === selectedCategory);
+      ? allProducts
+      : allProducts.filter((product) => product.category === selectedCategory);
 
   const renderItem = ({ item }) => {
     const currentValue =
@@ -208,64 +203,49 @@ const EditPriceScreen = () => {
     );
   };
 
-  if (loading) {
+  const renderPercentageButton = (percentage) => {
     return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#0066cc" />
-        <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
-      </View>
+      <TouchableOpacity
+        style={styles.percentageButton}
+        onPress={() => applyPercentageChange(percentage)}>
+        <Text style={styles.percentageButtonText}>{`${percentage}%`}</Text>
+      </TouchableOpacity>
     );
-  }
-
+  };
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f8f8f8" />
       <View style={styles.toolbarContainer}>
         <Text style={styles.toolbarTitle}>Thay đổi hàng loạt:</Text>
         <View style={styles.percentageButtons}>
-          <TouchableOpacity
-            style={styles.percentageButton}
-            onPress={() => applyPercentageChange(5)}>
-            <Text style={styles.percentageButtonText}>+5%</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.percentageButton}
-            onPress={() => applyPercentageChange(10)}>
-            <Text style={styles.percentageButtonText}>+10%</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.percentageButton}
-            onPress={() => applyPercentageChange(-5)}>
-            <Text style={styles.percentageButtonText}>-5%</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.percentageButton}
-            onPress={() => applyPercentageChange(-10)}>
-            <Text style={styles.percentageButtonText}>-10%</Text>
-          </TouchableOpacity>
+          {renderPercentageButton(5)}
+          {renderPercentageButton(10)}
+          {renderPercentageButton(-5)}
+          {renderPercentageButton(-10)}
         </View>
       </View>
+
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryLabel}>Lọc theo danh mục:</Text>
         <FlatList
           horizontal
           data={categories}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id.toString()}-${index}`}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[
                 styles.categoryButton,
-                selectedCategory === item && styles.selectedCategoryButton,
+                selectedCategory === item.name && styles.selectedCategoryButton,
               ]}
-              onPress={() => setSelectedCategory(item)}>
+              onPress={() => setSelectedCategory(item.name)}>
               <Text
                 style={[
                   styles.categoryButtonText,
-                  selectedCategory === item &&
+                  selectedCategory === item.name &&
                     styles.selectedCategoryButtonText,
                 ]}>
-                {item.category_name}
+                {item.name}
               </Text>
             </TouchableOpacity>
           )}
@@ -274,8 +254,8 @@ const EditPriceScreen = () => {
       </View>
 
       <FlatList
-        data={filteredItems}
-        keyExtractor={(item) => item.id}
+        data={filteredProducts}
+        keyExtractor={(item, index) => `${item.id.toString()}-${index}`}
         renderItem={renderItem}
         contentContainerStyle={styles.listContent}
       />
@@ -308,6 +288,9 @@ const EditPriceScreen = () => {
           )}
         </TouchableOpacity>
       </View>
+      <Modal style={styles.centerContainer} visible={loading}>
+        <ActivityIndicator size="large" color="#F00" />
+      </Modal>
     </SafeAreaView>
   );
 };
