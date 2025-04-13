@@ -202,7 +202,10 @@ export const styles = StyleSheet.create({
     color: '#4b5563',
     marginBottom: 8,
   },
-  // Add this to your styles
+  dateTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
   dateInput: {
     height: 48,
     backgroundColor: '#F5F5F5',
@@ -280,6 +283,7 @@ export const styles = StyleSheet.create({
   foodListContainer: {
     marginVertical: 10,
     maxHeight: 300,
+    marginBottom: 60,
   },
   foodItemContainer: {
     flexDirection: 'row',

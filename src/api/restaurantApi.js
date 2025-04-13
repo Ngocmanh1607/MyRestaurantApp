@@ -225,6 +225,7 @@ const getFoodRes = async (restaurantId, navigation) => {
       console.error('Error message:', message);
       return;
     }
+    console.log(metadata);
 
     return metadata;
   } catch (error) {
@@ -450,7 +451,7 @@ const addCoupon = async (restaurantId, formData) => {
       `/coupon`,
       {
         restaurant_id: restaurantId,
-        ...formData
+        ...formData,
       },
       {
         headers: {
@@ -477,7 +478,7 @@ const addCoupon = async (restaurantId, formData) => {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
   }
-}
+};
 const editCoupon = async (restaurantId, formData) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
@@ -490,8 +491,8 @@ const editCoupon = async (restaurantId, formData) => {
       `/coupon/${restaurantId}/restautant`,
       {
         body: {
-          ...formData
-        }
+          ...formData,
+        },
       },
       {
         headers: {
@@ -518,7 +519,7 @@ const editCoupon = async (restaurantId, formData) => {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
   }
-}
+};
 const getCoupon = async (restaurantId) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
@@ -527,18 +528,14 @@ const getCoupon = async (restaurantId) => {
     if (!userId || !accessToken) {
       throw new Error('User not logged in');
     }
-    const response = await apiClient.get(
-      `/coupon/${restaurantId}/restaurant`,
-      {
-        headers: {
-          'x-api-key': apiKey,
-          authorization: accessToken,
-          'x-client-id': userId,
-        },
-      }
-    );
-    if (response.status === 200)
-      return response.data.metadata
+    const response = await apiClient.get(`/coupon/${restaurantId}/restaurant`, {
+      headers: {
+        'x-api-key': apiKey,
+        authorization: accessToken,
+        'x-client-id': userId,
+      },
+    });
+    if (response.status === 200) return response.data.metadata;
   } catch (error) {
     if (error.response) {
       console.error('Lỗi từ server: ', error.response.data);
@@ -553,8 +550,128 @@ const getCoupon = async (restaurantId) => {
       throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
     }
   }
-}
+};
+const addDiscountForListFood = async (restaurantId, formData, products) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const listProductId = products.map((item) => ({
+      product_id: item.product_id,
+    }));
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.post(
+      `/coupon/list/flashsale`,
+      {
+        couponDetails: {
+          restaurant_id: restaurantId,
+          ...formData,
+          coupon_type: 'ONE_TIME',
+        },
+        products: listProductId,
+        discount_type: formData.discount_type,
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+};
+const addDiscountForFood = async (restaurantId, formData, product_id) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
 
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.post(
+      `/coupon/flashsale`,
+      {
+        product_id: product_id,
+        body: {
+          restaurant_id: restaurantId,
+          ...formData,
+        },
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+};
+const getDiscount = async (restaurantId) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.get(`/coupon/${restaurantId}/flashsale`, {
+      headers: {
+        'x-api-key': apiKey,
+        authorization: accessToken,
+        'x-client-id': userId,
+      },
+    });
+    if (response.status === 200) return response.data.metadata;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+};
 export {
   signupApi,
   loginApi,
@@ -570,5 +687,8 @@ export {
   editListProduct,
   addCoupon,
   editCoupon,
-  getCoupon
+  getCoupon,
+  addDiscountForListFood,
+  addDiscountForFood,
+  getDiscount,
 };

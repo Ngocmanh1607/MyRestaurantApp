@@ -13,24 +13,68 @@ import {
 } from 'react-native';
 import { styles } from '../../assets/css/PromotionManagementStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addCoupon, getCoupon, editCoupon } from '../../api/restaurantApi';
-import formatTime from '../../utils/formatTime';
+import {
+  addCoupon,
+  getCoupon,
+  editCoupon,
+  getFoodRes,
+  addDiscountForFood,
+  addDiscountForListFood,
+  getDiscount,
+} from '../../api/restaurantApi';
 import formatPrice from '../../utils/formatPrice';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
+import {
+  formatDateTimeForAPI,
+  formatDateTimeForDisplay,
+  isFutureDateTime,
+} from '../../utils/utilsTime';
+const parseDateTime = (dateTimeString) => {
+  if (!dateTimeString) return new Date();
 
+  try {
+    // Parse "DD/MM/YYYY HH:MM" format
+    if (dateTimeString.includes('/')) {
+      const [datePart, timePart = '00:00'] = dateTimeString.split(' ');
+      const [day, month, year] = datePart.split('/');
+      const [hours, minutes] = timePart.split(':');
+
+      return new Date(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10),
+        parseInt(hours, 10),
+        parseInt(minutes, 10)
+      );
+    }
+    // Parse ISO format
+    else if (dateTimeString.includes('-')) {
+      return new Date(dateTimeString);
+    }
+  } catch (error) {
+    console.error('Error parsing date time:', error);
+  }
+
+  return new Date();
+};
 export default function PromotionManagementScreen() {
   const [promotions, setPromotions] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [formType, setFormType] = useState('ONE_TIME'); // 'ONE_TIME', 'ONE_TIME_EVERY_DAY', or 'FOOD_DISCOUNT'
+  const [formType, setFormType] = useState('ONE_TIME'); // 'ONE_TIME', or 'FOOD_DISCOUNT'
   const [restaurantId, setRestaurantId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [selectedFoodItems, setSelectedFoodItems] = useState([]);
   const [foodItemsModalVisible, setFoodItemsModalVisible] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
+
+  const navigation = useNavigation();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -45,8 +89,6 @@ export default function PromotionManagementScreen() {
     start_date: '',
     end_date: '',
     is_active: true,
-    appliedItems: '',
-    food_items: [],
   });
 
   useEffect(() => {
@@ -67,22 +109,26 @@ export default function PromotionManagementScreen() {
   useEffect(() => {
     fetchCoupons(restaurantId);
     fetchMenuItems(restaurantId);
+    fetchDiscount(restaurantId);
   }, [restaurantId]);
 
   const fetchMenuItems = async (restaurantID) => {
     try {
       if (restaurantID) {
-        // Giả định API lấy danh sách món ăn
-        // const items = await getMenuItems(restaurantID);
-        // Tạm thời dùng dữ liệu mẫu
-        const items = [
-          { id: '1', name: 'Cơm gà', price: 50000 },
-          { id: '2', name: 'Phở bò', price: 60000 },
-          { id: '3', name: 'Bún chả', price: 45000 },
-          { id: '4', name: 'Bánh mì', price: 25000 },
-          { id: '5', name: 'Cà phê', price: 30000 },
-        ];
-        setMenuItems(items);
+        const data = await getFoodRes(restaurantID, navigation);
+        const itemMap = new Map();
+
+        data.forEach((category) => {
+          category.products.forEach((product) => {
+            itemMap.set(product.product_id, {
+              product_id: product.product_id,
+              product_name: product.product_name,
+              product_price: product.product_price,
+            });
+          });
+        });
+
+        setMenuItems(Array.from(itemMap.values()));
       }
     } catch (error) {
       console.error('Lỗi khi lấy danh sách món ăn:', error);
@@ -101,7 +147,16 @@ export default function PromotionManagementScreen() {
       console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
     }
   };
-
+  const fetchDiscount = async (restaurantID) => {
+    try {
+      if (restaurantID) {
+        const discounts = await getDiscount(restaurantID);
+        console.log(discounts);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
+    }
+  };
   const filteredPromotions = promotions.filter((item) => {
     const matchesSearch =
       item.coupon_name.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -127,7 +182,6 @@ export default function PromotionManagementScreen() {
       end_date: '',
       is_active: true,
       appliedItems: '',
-      food_items: [],
     });
     setModalVisible(true);
   };
@@ -156,7 +210,6 @@ export default function PromotionManagementScreen() {
       end_date: item.end_date,
       is_active: item.is_active,
       appliedItems: item.appliedItems || '',
-      food_items: item.food_items || [],
     });
     setModalVisible(true);
   };
@@ -168,12 +221,14 @@ export default function PromotionManagementScreen() {
 
   const handleSelectFoodItem = (item) => {
     const isSelected = selectedFoodItems.some(
-      (selectedItem) => selectedItem.id === item.id
+      (selectedItem) => selectedItem.product_id === item.product_id
     );
 
     if (isSelected) {
       setSelectedFoodItems(
-        selectedFoodItems.filter((selectedItem) => selectedItem.id !== item.id)
+        selectedFoodItems.filter(
+          (selectedItem) => selectedItem.product_id !== item.product_id
+        )
       );
     } else {
       setSelectedFoodItems([...selectedFoodItems, item]);
@@ -183,8 +238,6 @@ export default function PromotionManagementScreen() {
   const handleConfirmFoodItems = () => {
     setFormData({
       ...formData,
-      food_items: selectedFoodItems,
-      appliedItems: selectedFoodItems.map((item) => item.name).join(', '),
     });
     setFoodItemsModalVisible(false);
     setModalVisible(true);
@@ -217,33 +270,15 @@ export default function PromotionManagementScreen() {
       );
       return;
     }
-
-    if (
-      formData.coupon_type === 'ONE_TIME_EVERY_DAY' &&
-      !formData.appliedItems
-    ) {
-      Alert.alert('Thông báo', 'Vui lòng nhập món áp dụng');
-      return;
-    }
-
-    // Định dạng lại ngày tháng thành năm-tháng-ngày
-    if (formData.start_date) {
-      const [day, month, year] = formData.start_date.split('/');
-      formData.start_date = `${year}-${month}-${day}`;
-    }
-
-    if (formData.end_date) {
-      const [day, month, year] = formData.end_date.split('/');
-      formData.end_date = `${year}-${month}-${day}`;
-    }
-
     try {
       const couponData = {
         ...formData,
-        food_items: selectedFoodItems,
+        start_date: formatDateTimeForAPI(formData.start_date),
+        end_date: formatDateTimeForAPI(formData.end_date),
+        is_active: isFutureDateTime(formData.start_date) || true,
       };
 
-      if (restaurantId) {
+      if (restaurantId && formType == 'ONE_TIME') {
         let result;
         if (isEditing) {
           result = await editCoupon(restaurantId, {
@@ -282,13 +317,63 @@ export default function PromotionManagementScreen() {
             end_date: '',
             is_active: true,
             appliedItems: '',
-            food_items: [],
           });
           setSelectedFoodItems([]);
           setModalVisible(false);
         }
-      } else {
-        Alert.alert('Lỗi', 'Không tìm thấy thông tin nhà hàng');
+      } else if (restaurantId && formType == 'FOOD_DISCOUNT') {
+        let result;
+        if (isEditing) {
+          result = await editCoupon(restaurantId, {
+            ...couponData,
+            coupon_id: editingId,
+          });
+          if (result) {
+            setPromotions(
+              promotions.map((item) =>
+                item.id === editingId
+                  ? { ...couponData, coupon_id: editingId }
+                  : item
+              )
+            );
+            Alert.alert('Thành công', 'Đã cập nhật thành công');
+          }
+        } else {
+          selectedFoodItems.length === 1
+            ? (result = await addDiscountForFood(
+                restaurantId,
+                couponData,
+                selectedFoodItems[0].product_id
+              ))
+            : (result = await addDiscountForListFood(
+                restaurantId,
+                couponData,
+                selectedFoodItems
+              ));
+          if (result) {
+            fetchCoupons(restaurantId);
+            Alert.alert('Thành công', 'Đã thêm mới thành công');
+          }
+        }
+
+        if (result) {
+          setFormData({
+            coupon_type: 'ONE_TIME',
+            coupon_name: '',
+            coupon_code: '',
+            discount_value: '',
+            discount_type: 'PERCENTAGE',
+            max_discount_amount: '',
+            min_order_value: '',
+            max_uses_per_user: '1',
+            start_date: '',
+            end_date: '',
+            is_active: true,
+            appliedItems: '',
+          });
+          setSelectedFoodItems([]);
+          setModalVisible(false);
+        }
       }
     } catch (error) {
       Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi thêm khuyến mãi');
@@ -310,25 +395,29 @@ export default function PromotionManagementScreen() {
     ]);
   };
 
-  const onStartDateChange = (event, selectedDate) => {
+  const onStartDateTimeChange = (event, selectedDate) => {
     setShowStartDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
       const day = selectedDate.getDate().toString().padStart(2, '0');
       const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
       const year = selectedDate.getFullYear();
-      const formattedDate = `${day}/${month}/${year}`;
-      setFormData({ ...formData, start_date: formattedDate });
+      const hours = selectedDate.getHours().toString().padStart(2, '0');
+      const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
+      const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+      setFormData({ ...formData, start_date: formattedDateTime });
     }
   };
 
-  const onEndDateChange = (event, selectedDate) => {
+  const onEndDateTimeChange = (event, selectedDate) => {
     setShowEndDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
       const day = selectedDate.getDate().toString().padStart(2, '0');
       const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
       const year = selectedDate.getFullYear();
-      const formattedDate = `${day}/${month}/${year}`;
-      setFormData({ ...formData, end_date: formattedDate });
+      const hours = selectedDate.getHours().toString().padStart(2, '0');
+      const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
+      const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+      setFormData({ ...formData, end_date: formattedDateTime });
     }
   };
 
@@ -378,21 +467,22 @@ export default function PromotionManagementScreen() {
         )}
 
         <Text style={styles.itemDate}>
-          Thời gian: {formatTime(item.start_date)} - {formatTime(item.end_date)}
+          Thời gian: {formatDateTimeForDisplay(item.start_date)} -{' '}
+          {formatDateTimeForDisplay(item.end_date)}
         </Text>
       </View>
 
       <View style={styles.itemActions}>
         <TouchableOpacity
-          style={styles.actionButton}
+          style={[styles.actionButton, styles.deleteButton]}
           onPress={() => openEditModal(item)}>
-          <Text style={styles.actionText}>Sửa</Text>
+          <Text style={styles.deleteText}>Sửa</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.actionButton, styles.deleteButton]}
           onPress={() => handleDelete(item.id)}>
           <Text style={styles.deleteText}>Xóa</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -401,14 +491,17 @@ export default function PromotionManagementScreen() {
     <TouchableOpacity
       style={[
         styles.foodItemContainer,
-        selectedFoodItems.some((selectedItem) => selectedItem.id === item.id) &&
-          styles.selectedFoodItem,
+        selectedFoodItems.some(
+          (selectedItem) => selectedItem.product_id === item.product_id
+        ) && styles.selectedFoodItem,
       ]}
       onPress={() => handleSelectFoodItem(item)}>
-      <Text style={styles.foodItemName}>{item.name}</Text>
-      <Text style={styles.foodItemPrice}>{formatPrice(item.price)}</Text>
+      <Text style={styles.foodItemName}>{item.product_name}</Text>
+      <Text style={styles.foodItemPrice}>
+        {formatPrice(item.product_price)}
+      </Text>
       {selectedFoodItems.some(
-        (selectedItem) => selectedItem.id === item.id
+        (selectedItem) => selectedItem.product_id === item.product_id
       ) && (
         <View style={styles.checkmark}>
           <Text style={styles.checkmarkText}>✓</Text>
@@ -451,13 +544,9 @@ export default function PromotionManagementScreen() {
               {isEditing
                 ? formType === 'ONE_TIME'
                   ? 'Sửa mã giảm giá'
-                  : formType === 'ONE_TIME_EVERY_DAY'
-                  ? 'Sửa khuyến mãi hàng ngày'
                   : 'Sửa khuyến mãi món ăn'
                 : formType === 'ONE_TIME'
                 ? 'Thêm mã giảm giá mới'
-                : formType === 'ONE_TIME_EVERY_DAY'
-                ? 'Thêm khuyến mãi hàng ngày mới'
                 : 'Thêm khuyến mãi món ăn mới'}
             </Text>
             <ScrollView style={styles.formContainer}>
@@ -578,9 +667,11 @@ export default function PromotionManagementScreen() {
                   {selectedFoodItems.length > 0 && (
                     <View style={styles.selectedFoodList}>
                       {selectedFoodItems.map((item) => (
-                        <View key={item.id} style={styles.selectedFoodTag}>
+                        <View
+                          key={item.product_id}
+                          style={styles.selectedFoodTag}>
                           <Text style={styles.selectedFoodTagText}>
-                            {item.name}
+                            {item.product_name}
                           </Text>
                         </View>
                       ))}
@@ -593,20 +684,45 @@ export default function PromotionManagementScreen() {
               <TouchableOpacity
                 style={styles.dateInput}
                 onPress={() => setShowStartDatePicker(true)}>
-                <Text>{formData.start_date || 'Chọn ngày bắt đầu'}</Text>
+                <Text>
+                  {formatDateTimeForDisplay(formData.start_date) ||
+                    'Chọn ngày bắt đầu'}
+                </Text>
               </TouchableOpacity>
               {showStartDatePicker && (
+                <View style={styles.dateTimeContainer}>
+                  <DateTimePicker
+                    value={
+                      formData.start_date
+                        ? parseDateTime(formData.start_date)
+                        : new Date()
+                    }
+                    mode={Platform.OS === 'ios' ? 'datetime' : 'date'}
+                    display="default"
+                    onChange={onStartDateTimeChange}
+                  />
+                  {Platform.OS === 'android' && (
+                    <TouchableOpacity
+                      style={styles.timePickerButton}
+                      onPress={() => {
+                        setShowStartTimePicker(true);
+                      }}>
+                      <Text>Chọn giờ</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+
+              {Platform.OS === 'android' && showStartTimePicker && (
                 <DateTimePicker
                   value={
                     formData.start_date
-                      ? new Date(
-                          formData.start_date.split('/').reverse().join('-')
-                        )
+                      ? parseDateTime(formData.start_date)
                       : new Date()
                   }
-                  mode="date"
+                  mode="time"
                   display="default"
-                  onChange={onStartDateChange}
+                  onChange={onStartDateTimeChange}
                 />
               )}
 
@@ -614,20 +730,45 @@ export default function PromotionManagementScreen() {
               <TouchableOpacity
                 style={styles.dateInput}
                 onPress={() => setShowEndDatePicker(true)}>
-                <Text>{formData.end_date || 'Chọn ngày kết thúc'}</Text>
+                <Text>
+                  {formatDateTimeForDisplay(formData.end_date) ||
+                    'Chọn ngày kết thúc'}
+                </Text>
               </TouchableOpacity>
               {showEndDatePicker && (
+                <View style={styles.dateTimeContainer}>
+                  <DateTimePicker
+                    value={
+                      formData.end_date
+                        ? parseDateTime(formData.end_date)
+                        : new Date()
+                    }
+                    mode={Platform.OS === 'ios' ? 'datetime' : 'date'}
+                    display="default"
+                    onChange={onEndDateTimeChange}
+                  />
+                  {Platform.OS === 'android' && (
+                    <TouchableOpacity
+                      style={styles.timePickerButton}
+                      onPress={() => {
+                        setShowEndTimePicker(true);
+                      }}>
+                      <Text>Chọn giờ</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+
+              {Platform.OS === 'android' && showEndTimePicker && (
                 <DateTimePicker
                   value={
                     formData.end_date
-                      ? new Date(
-                          formData.end_date.split('/').reverse().join('-')
-                        )
+                      ? parseDateTime(formData.end_date)
                       : new Date()
                   }
-                  mode="date"
+                  mode="time"
                   display="default"
-                  onChange={onEndDateChange}
+                  onChange={onEndDateTimeChange}
                 />
               )}
             </ScrollView>
@@ -662,7 +803,7 @@ export default function PromotionManagementScreen() {
             <FlatList
               data={menuItems}
               renderItem={renderFoodItem}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.product_id}
               contentContainerStyle={styles.foodListContainer}
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
