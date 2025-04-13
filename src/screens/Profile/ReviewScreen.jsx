@@ -1,8 +1,6 @@
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
   FlatList,
   SafeAreaView,
 } from 'react-native';

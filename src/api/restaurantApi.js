@@ -393,7 +393,6 @@ const getOrders = async () => {
         'x-client-id': userId,
       },
     });
-    console.log(response.data.metadata);
     return response.data.metadata;
   } catch (error) {
     console.error('Lỗi từ server: ', error.response.data);
@@ -439,6 +438,123 @@ const editListProduct = async (restaurantId, listProduct) => {
     }
   }
 };
+const addCoupon = async (restaurantId, formData) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.post(
+      `/coupon`,
+      {
+        restaurant_id: restaurantId,
+        ...formData
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+}
+const editCoupon = async (restaurantId, formData) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.put(
+      `/coupon/${restaurantId}/restautant`,
+      {
+        body: {
+          ...formData
+        }
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+}
+const getCoupon = async (restaurantId) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.get(
+      `/coupon/${restaurantId}/restaurant`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200)
+      return response.data.metadata
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+}
+
 export {
   signupApi,
   loginApi,
@@ -452,4 +568,7 @@ export {
   getReview,
   getOrders,
   editListProduct,
+  addCoupon,
+  editCoupon,
+  getCoupon
 };

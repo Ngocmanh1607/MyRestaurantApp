@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'f5f5f5',
+    backgroundColor: '#f5f5f5',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   activeFilterButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
   },
   filterText: {
     color: '#4b5563',
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBlockColor: '#e0e0e0',
+    borderBottomColor: '#e0e0e0',
   },
   searchInput: {
     backgroundColor: '#f5f5f5',
@@ -59,7 +59,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   discountButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
+    marginRight: 6,
+  },
+  foodDiscountButton: {
+    backgroundColor: '#f44336',
     marginRight: 6,
   },
   promotionButton: {
@@ -114,10 +118,20 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 8,
   },
+  itemCode: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
   itemDiscount: {
     fontSize: 16,
     color: '#0066FF',
     fontWeight: '600',
+    marginBottom: 4,
+  },
+  itemMinOrder: {
+    fontSize: 14,
+    color: '#6b7280',
     marginBottom: 4,
   },
   itemApplied: {
@@ -163,7 +177,7 @@ export const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 12,
     padding: 20,
-    shadowColor: '000',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -188,6 +202,15 @@ export const styles = StyleSheet.create({
     color: '#4b5563',
     marginBottom: 8,
   },
+  // Add this to your styles
+  dateInput: {
+    height: 48,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
   input: {
     backgroundColor: '#f9fafb',
     paddingHorizontal: 12,
@@ -196,6 +219,28 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d1d5db',
     marginBottom: 16,
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  radioButton: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginRight: 8,
+    alignItems: 'center',
+  },
+  radioButtonActive: {
+    backgroundColor: '#f00',
+    borderColor: '#f44336',
+  },
+  radioText: {
+    color: '#4b5563',
+    fontWeight: '500',
   },
   modalActions: {
     flexDirection: 'row',
@@ -216,7 +261,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   saveButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
     marginLeft: 8,
   },
   saveButtonText: {
@@ -231,5 +276,122 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#6b7280',
+  },
+  foodListContainer: {
+    marginVertical: 10,
+    maxHeight: 300,
+  },
+  foodItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
+  },
+  selectedFoodItem: {
+    backgroundColor: '#e6f7ff',
+  },
+  foodItemName: {
+    fontSize: 16,
+    color: '#333333',
+    flex: 1,
+  },
+  foodItemPrice: {
+    fontSize: 14,
+    color: '#0066FF',
+    fontWeight: '500',
+    marginRight: 10,
+  },
+  checkmark: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#0066FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  dateButton: {
+    backgroundColor: '#f9fafb',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateButtonText: {
+    color: '#4b5563',
+  },
+  typeSelector: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    justifyContent: 'space-between',
+  },
+  typeButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginHorizontal: 4,
+    alignItems: 'center',
+  },
+  typeButtonActive: {
+    backgroundColor: '#f44336',
+    borderColor: '#f44336',
+  },
+  typeButtonText: {
+    color: '#4b5563',
+    fontWeight: '500',
+    textAlign: 'center',
+    fontSize: 13,
+  },
+  typeButtonTextActive: {
+    color: '#ffffff',
+  },
+  selectFoodButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  selectFoodButtonText: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+  selectedFoodList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+
+  selectedFoodTag: {
+    backgroundColor: '#e0f2f1', // màu nền xanh nhạt
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  selectedFoodTagText: {
+    color: '#00796b',
+    fontWeight: '500',
+    fontSize: 14,
   },
 });
