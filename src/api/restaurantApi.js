@@ -37,7 +37,7 @@ const loginApi = async (email, password) => {
   try {
     const response = await apiClient.post(
       '/user/login',
-      { email, password },
+      { email, password, role: 'seller' },
       { headers: { 'x-api-key': apiKey } }
     );
     const { message, metadata } = response.data;

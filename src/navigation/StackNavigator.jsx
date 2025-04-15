@@ -136,7 +136,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="EditPrices"
         component={EditPriceScreen}
-        options={{ headerShown: true, headerBackTitle: 'Quay lại' }}
+        options={{
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+          title: 'Chỉnh sửa giá',
+        }}
       />
       <Stack.Screen
         name="PromotionManagementScreen"
