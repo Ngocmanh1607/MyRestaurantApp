@@ -93,6 +93,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f1f1',
+    paddingBottom: 8,
   },
   itemName: {
     fontSize: 18,
@@ -134,6 +137,26 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 4,
   },
+  itemCount: {
+    fontSize: 14,
+    color: '#059669',
+    fontWeight: '600',
+    marginBottom: 6,
+    backgroundColor: '#ecfdf5',
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  itemCountUse: {
+    fontSize: 14,
+    color: '#dc2626', // Màu tím cho số lần đã sử dụng
+    fontWeight: '600',
+    marginBottom: 6,
+    backgroundColor: '#f5f3ff',
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
   itemApplied: {
     fontSize: 16,
     color: '#7c3aed',
@@ -160,13 +183,10 @@ export const styles = StyleSheet.create({
     color: '#374151',
     fontWeight: '500',
   },
-  deleteButton: {
-    backgroundColor: '#fee2e2',
+  editButton: {
+    backgroundColor: '#f3f4f6',
   },
-  deleteText: {
-    color: '#b91c1c',
-    fontWeight: '500',
-  },
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -397,5 +417,12 @@ export const styles = StyleSheet.create({
     color: '#00796b',
     fontWeight: '500',
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
   },
 });

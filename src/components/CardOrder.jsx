@@ -40,7 +40,6 @@ const CardOrder = ({ item }) => {
     const socket = io('http://localhost:3000');
     socket.emit('joinOrder', item.id);
     socket.on('orderStatusUpdate', ({ orderId, status, detailDriver }) => {
-      console.log(status);
       dispatch(updateStatus({ id: item.id, status: status }));
       setShipper(detailDriver);
     });

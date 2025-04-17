@@ -21,6 +21,7 @@ import {
   addDiscountForFood,
   addDiscountForListFood,
   getDiscount,
+  editDiscounts,
 } from '../../api/restaurantApi';
 import formatPrice from '../../utils/formatPrice';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -28,7 +29,6 @@ import { useNavigation } from '@react-navigation/native';
 import {
   formatDateTimeForAPI,
   formatDateTimeForDisplay,
-  isFutureDateTime,
 } from '../../utils/utilsTime';
 const parseDateTime = (dateTimeString) => {
   if (!dateTimeString) return new Date();
@@ -58,6 +58,8 @@ const parseDateTime = (dateTimeString) => {
 
   return new Date();
 };
+import { getPromotionStatus } from '../../utils/getPromotionStatus';
+import { ActivityIndicator } from 'react-native-paper';
 export default function PromotionManagementScreen() {
   const [promotions, setPromotions] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -73,9 +75,11 @@ export default function PromotionManagementScreen() {
   const [selectedFoodItems, setSelectedFoodItems] = useState([]);
   const [foodItemsModalVisible, setFoodItemsModalVisible] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [addProduct, setAddProduct] = useState([]);
+  const [removeProduct, setRemoveProduct] = useState([]);
   const navigation = useNavigation();
-
+  const [flashSaleId, setFlashsaleID] = useState();
   // Form state
   const [formData, setFormData] = useState({
     coupon_type: 'ONE_TIME',
@@ -107,13 +111,17 @@ export default function PromotionManagementScreen() {
   }, []);
 
   useEffect(() => {
-    fetchCoupons(restaurantId);
-    fetchMenuItems(restaurantId);
-    fetchDiscount(restaurantId);
+    if (restaurantId) {
+      fetchCoupons(restaurantId);
+      fetchMenuItems(restaurantId);
+      fetchDiscounts(restaurantId);
+    }
+    console.log(promotions);
   }, [restaurantId]);
 
   const fetchMenuItems = async (restaurantID) => {
     try {
+      setLoading(true);
       if (restaurantID) {
         const data = await getFoodRes(restaurantID, navigation);
         const itemMap = new Map();
@@ -132,11 +140,14 @@ export default function PromotionManagementScreen() {
       }
     } catch (error) {
       console.error('Lỗi khi lấy danh sách món ăn:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCoupons = async (restaurantID) => {
     try {
+      setLoading(true);
       if (restaurantID) {
         const coupons = await getCoupon(restaurantID);
         if (coupons && Array.isArray(coupons)) {
@@ -145,22 +156,46 @@ export default function PromotionManagementScreen() {
       }
     } catch (error) {
       console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
+    } finally {
+      setLoading(false);
     }
   };
-  const fetchDiscount = async (restaurantID) => {
+  const fetchDiscounts = async (restaurantID) => {
     try {
+      setLoading(true);
       if (restaurantID) {
         const discounts = await getDiscount(restaurantID);
-        console.log(discounts);
+
+        if (discounts && Array.isArray(discounts)) {
+          const formattedDiscounts = discounts.map((discount) => ({
+            id: discount.id,
+            flash_sale_id: discount.flash_sale_id,
+            coupon_type: 'FOOD_DISCOUNT',
+            coupon_name: discount.coupon_name,
+            coupon_code: discount.coupon_code,
+            discount_value: discount.discount_value,
+            discount_type: discount.discount_type,
+            max_discount_amount: discount.max_discount_amount,
+            min_order_value: discount.min_order_value,
+            max_uses_per_user: discount.max_uses_per_user,
+            start_date: discount.start_date,
+            end_date: discount.end_date,
+            is_active: discount.is_active,
+            food_items: discount.food_items || [],
+          }));
+          setPromotions((prev) => [...prev, ...formattedDiscounts]);
+        }
       }
     } catch (error) {
       console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
+    } finally {
+      setLoading(false);
     }
   };
   const filteredPromotions = promotions.filter((item) => {
     const matchesSearch =
-      item.coupon_name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.coupon_code.toLowerCase().includes(searchText.toLowerCase());
+      item.coupon_name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.coupon_code?.toLowerCase().includes(searchText.toLowerCase());
     return matchesSearch;
   });
 
@@ -181,7 +216,6 @@ export default function PromotionManagementScreen() {
       start_date: '',
       end_date: '',
       is_active: true,
-      appliedItems: '',
     });
     setModalVisible(true);
   };
@@ -191,6 +225,7 @@ export default function PromotionManagementScreen() {
     setEditingId(item.id);
     setFormType(item.coupon_type);
     setSelectedFoodItems(item.food_items || []);
+    setFlashsaleID(item.flash_sale_id);
     setFormData({
       coupon_type: item.coupon_type,
       coupon_name: item.coupon_name,
@@ -209,7 +244,6 @@ export default function PromotionManagementScreen() {
       start_date: item.start_date,
       end_date: item.end_date,
       is_active: item.is_active,
-      appliedItems: item.appliedItems || '',
     });
     setModalVisible(true);
   };
@@ -230,8 +264,10 @@ export default function PromotionManagementScreen() {
           (selectedItem) => selectedItem.product_id !== item.product_id
         )
       );
+      setRemoveProduct([...removeProduct, item.product_id]);
     } else {
       setSelectedFoodItems([...selectedFoodItems, item]);
+      setAddProduct([...addProduct, item.product_id]);
     }
   };
 
@@ -275,7 +311,7 @@ export default function PromotionManagementScreen() {
         ...formData,
         start_date: formatDateTimeForAPI(formData.start_date),
         end_date: formatDateTimeForAPI(formData.end_date),
-        is_active: isFutureDateTime(formData.start_date) || true,
+        is_active: true,
       };
 
       if (restaurantId && formType == 'ONE_TIME') {
@@ -324,10 +360,16 @@ export default function PromotionManagementScreen() {
       } else if (restaurantId && formType == 'FOOD_DISCOUNT') {
         let result;
         if (isEditing) {
-          result = await editCoupon(restaurantId, {
-            ...couponData,
-            coupon_id: editingId,
-          });
+          result = await editDiscounts(
+            restaurantId,
+            {
+              ...couponData,
+              flash_sale_id: flashSaleId,
+              coupon_id: editingId,
+            },
+            addProduct,
+            removeProduct
+          );
           if (result) {
             setPromotions(
               promotions.map((item) =>
@@ -369,7 +411,6 @@ export default function PromotionManagementScreen() {
             start_date: '',
             end_date: '',
             is_active: true,
-            appliedItems: '',
           });
           setSelectedFoodItems([]);
           setModalVisible(false);
@@ -378,21 +419,6 @@ export default function PromotionManagementScreen() {
     } catch (error) {
       Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi thêm khuyến mãi');
     }
-  };
-
-  // Delete promotion
-  const handleDelete = (id) => {
-    Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn xóa?', [
-      { text: 'Hủy', style: 'cancel' },
-      {
-        text: 'Xóa',
-        style: 'destructive',
-        onPress: () => {
-          setPromotions(promotions.filter((item) => item.id !== id));
-          Alert.alert('Thành công', 'Đã xóa thành công');
-        },
-      },
-    ]);
   };
 
   const onStartDateTimeChange = (event, selectedDate) => {
@@ -421,72 +447,100 @@ export default function PromotionManagementScreen() {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <View style={styles.itemHeader}>
-        <Text style={styles.itemName}>{item.coupon_name}</Text>
-        <View
-          style={[
-            styles.statusBadge,
-            {
-              backgroundColor: item.is_active ? '#dcfce7' : '#fef9c3',
-            },
-          ]}>
-          <Text
+  const renderItem = ({ item }) => {
+    const status = getPromotionStatus(item.start_date, item.end_date);
+
+    const getStatusStyle = (status) => {
+      switch (status) {
+        case 'UPCOMING':
+          return {
+            backgroundColor: '#fef9c3',
+            textColor: '#854d0e',
+          };
+        case 'ACTIVE':
+          return {
+            backgroundColor: '#dcfce7',
+            textColor: '#166534',
+          };
+        case 'EXPIRED':
+          return {
+            backgroundColor: '#fee2e2',
+            textColor: '#991b1b',
+          };
+        default:
+          return {
+            backgroundColor: '#f3f4f6',
+            textColor: '#374151',
+          };
+      }
+    };
+    const statusStyle = getStatusStyle(status);
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemHeader}>
+          <Text style={styles.itemName}>{item.coupon_name}</Text>
+          <View
             style={[
-              styles.statusText,
-              { color: item.is_active ? '#166534' : '#854d0e' },
+              styles.statusBadge,
+              { backgroundColor: statusStyle.backgroundColor },
             ]}>
-            {item.is_active ? 'Đang hoạt động' : 'Sắp tới'}
+            <Text style={[styles.statusText, { color: statusStyle.textColor }]}>
+              {status === 'UPCOMING'
+                ? 'Sắp tới'
+                : status === 'ACTIVE'
+                ? 'Đang hoạt động'
+                : 'Đã hết hạn'}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.itemDetail}>
+          <Text>
+            {item.coupon_type === 'ONE_TIME'
+              ? '🏷️ Mã giảm giá'
+              : item.coupon_type === 'ONE_TIME_EVERY_DAY'
+              ? '🍽️ Khuyến mãi hàng ngày'
+              : '🍲 Khuyến mãi món ăn'}
+          </Text>
+          <Text style={styles.itemCode}>Mã: {item.coupon_code}</Text>
+          <Text style={styles.itemDiscount}>
+            Giảm: {item.discount_value}
+            {item.discount_type === 'PERCENTAGE' ? '%' : 'đ'}
+          </Text>
+
+          {item.min_order_value > 0 && (
+            <Text style={styles.itemMinOrder}>
+              Đơn tối thiểu: {formatPrice(item.min_order_value)}
+            </Text>
+          )}
+          <Text style={styles.itemCount}>
+            Số lượng :{item.max_uses_per_user}
+          </Text>
+          <Text style={styles.itemCountUse}>
+            Số lượng đã dùng :{item.current_uses}
+          </Text>
+
+          {item.coupon_type === 'FOOD_DISCOUNT' && item.food_items && (
+            <Text style={styles.itemApplied}>
+              Áp dụng cho: {item.food_items.length} món ăn
+            </Text>
+          )}
+
+          <Text style={styles.itemDate}>
+            Thời gian: {formatDateTimeForDisplay(item.start_date)} -{' '}
+            {formatDateTimeForDisplay(item.end_date)}
           </Text>
         </View>
+
+        <View style={styles.itemActions}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => openEditModal(item)}>
+            <Text style={styles.deleteText}>Sửa</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.itemDetail}>
-        <Text>
-          {item.coupon_type === 'ONE_TIME'
-            ? '🏷️ Mã giảm giá'
-            : item.coupon_type === 'ONE_TIME_EVERY_DAY'
-            ? '🍽️ Khuyến mãi hàng ngày'
-            : '🍲 Khuyến mãi món ăn'}
-        </Text>
-        <Text style={styles.itemCode}>Mã: {item.coupon_code}</Text>
-        <Text style={styles.itemDiscount}>
-          Giảm: {item.discount_value}
-          {item.discount_type === 'PERCENTAGE' ? '%' : 'đ'}
-        </Text>
-
-        {item.min_order_value > 0 && (
-          <Text style={styles.itemMinOrder}>
-            Đơn tối thiểu: {formatPrice(item.min_order_value)}
-          </Text>
-        )}
-
-        {(item.coupon_type === 'ONE_TIME_EVERY_DAY' ||
-          item.coupon_type === 'FOOD_DISCOUNT') && (
-          <Text style={styles.itemApplied}>Áp dụng: {item.appliedItems}</Text>
-        )}
-
-        <Text style={styles.itemDate}>
-          Thời gian: {formatDateTimeForDisplay(item.start_date)} -{' '}
-          {formatDateTimeForDisplay(item.end_date)}
-        </Text>
-      </View>
-
-      <View style={styles.itemActions}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => openEditModal(item)}>
-          <Text style={styles.deleteText}>Sửa</Text>
-        </TouchableOpacity>
-        {/* <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => handleDelete(item.id)}>
-          <Text style={styles.deleteText}>Xóa</Text>
-        </TouchableOpacity> */}
-      </View>
-    </View>
-  );
-
+    );
+  };
   const renderFoodItem = ({ item }) => (
     <TouchableOpacity
       style={[
@@ -547,7 +601,7 @@ export default function PromotionManagementScreen() {
                   : 'Sửa khuyến mãi món ăn'
                 : formType === 'ONE_TIME'
                 ? 'Thêm mã giảm giá mới'
-                : 'Thêm khuyến mãi món ăn mới'}
+                : 'Thêm giảm giá món ăn mới'}
             </Text>
             <ScrollView style={styles.formContainer}>
               <Text style={styles.inputLabel}>Tên khuyến mãi</Text>
@@ -838,6 +892,12 @@ export default function PromotionManagementScreen() {
           <Text style={styles.addButtonText}> + Giảm giá món ăn</Text>
         </TouchableOpacity>
       </View>
+      {/* modal loading */}
+      <Modal visible={loading} animationType="none" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <ActivityIndicator size="small" color="#f00" />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

@@ -105,7 +105,7 @@ const StatisticScreen = () => {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
-          } else if (order.order_status === 'ORDER_CANCELLED') {
+          } else if (order.order_status === 'ORDER_CANCELED') {
             stats.cancelledOrders++;
           }
           stats.totalOrders++;
@@ -127,7 +127,7 @@ const StatisticScreen = () => {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
-          } else if (order.order_status === 'ORDER_CANCELLED') {
+          } else if (order.order_status === 'ORDER_CANCELED') {
             stats.cancelledOrders++;
           }
           stats.totalOrders++;
@@ -149,7 +149,7 @@ const StatisticScreen = () => {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
-          } else if (order.order_status === 'ORDER_CANCELLED') {
+          } else if (order.order_status === 'ORDER_CANCELED') {
             stats.cancelledOrders++;
           }
           stats.totalOrders++;

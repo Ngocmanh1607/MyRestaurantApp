@@ -225,8 +225,6 @@ const getFoodRes = async (restaurantId, navigation) => {
       console.error('Error message:', message);
       return;
     }
-    console.log(metadata);
-
     return metadata;
   } catch (error) {
     if (error.response) {
@@ -612,6 +610,7 @@ const addDiscountForFood = async (restaurantId, formData, product_id) => {
         product_id: product_id,
         body: {
           restaurant_id: restaurantId,
+          coupon_type: 'ONE_TIME',
           ...formData,
         },
       },
@@ -672,6 +671,58 @@ const getDiscount = async (restaurantId) => {
     }
   }
 };
+const editDiscounts = async (
+  restaurantId,
+  formData,
+  addProduct,
+  removeProduct
+) => {
+  console.log(formData);
+
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+
+    if (!userId || !accessToken) {
+      throw new Error('User not logged in');
+    }
+    const response = await apiClient.put(
+      `/coupon/${restaurantId}/flashsale`,
+      {
+        restaurant_id: restaurantId,
+        body: {
+          ...formData,
+          coupon_type: 'ONE_TIME',
+          add_products: addProduct,
+          remove_products: removeProduct,
+        },
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    if (response.status === 200) {
+      return true;
+    } else return false;
+  } catch (error) {
+    if (error.response) {
+      console.error('Lỗi từ server: ', error.response.data);
+      const serverError =
+        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
+      throw new Error(serverError);
+    } else if (error.request) {
+      throw new Error(
+        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
+      );
+    } else {
+      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
+    }
+  }
+};
 export {
   signupApi,
   loginApi,
@@ -691,4 +742,5 @@ export {
   addDiscountForListFood,
   addDiscountForFood,
   getDiscount,
+  editDiscounts,
 };
