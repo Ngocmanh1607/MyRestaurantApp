@@ -1,6 +1,6 @@
 import { Text, View, Image, ScrollView } from 'react-native';
 import React from 'react';
-import styles from '../../assets/css/OrderDetailStyle';
+import styles from '../../assets/css/OrderHisDetailStyle';
 import formatPrice from '../../utils/formatPrice';
 import formatTime from '../../utils/formatTime';
 const OrderHisDetailScreen = ({ route }) => {

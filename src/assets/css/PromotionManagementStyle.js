@@ -44,12 +44,56 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
+  //scroll buton
+  filterContainer: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    textAlign: 'center',
+    maxHeight: 62,
+  },
+
+  filterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    marginRight: 12,
+    borderWidth: 1,
+    height: 40,
+    borderColor: '#e5e7eb',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  activeFilterButton: {
+    backgroundColor: '#f44336',
+    borderColor: '#f44336',
+  },
+
+  filterText: {
+    fontSize: 14,
+    color: '#4b5563',
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+
+  activeFilterText: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
   addContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
   },
   addButton: {
     flex: 1,
@@ -76,6 +120,7 @@ export const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
+    paddingBottom: 50,
   },
   itemContainer: {
     backgroundColor: '#ffffff',

@@ -74,12 +74,13 @@ export default function PromotionManagementScreen() {
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [selectedFoodItems, setSelectedFoodItems] = useState([]);
   const [foodItemsModalVisible, setFoodItemsModalVisible] = useState(false);
+  const [flashSaleId, setFlashsaleID] = useState();
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addProduct, setAddProduct] = useState([]);
   const [removeProduct, setRemoveProduct] = useState([]);
   const navigation = useNavigation();
-  const [flashSaleId, setFlashsaleID] = useState();
+  const [activeFilter, setActiveFilter] = useState('Tất cả');
   // Form state
   const [formData, setFormData] = useState({
     coupon_type: 'ONE_TIME',
@@ -109,24 +110,15 @@ export default function PromotionManagementScreen() {
 
     getRestaurantId();
   }, []);
-
-  useEffect(() => {
-    if (restaurantId) {
-      fetchCoupons(restaurantId);
-      fetchMenuItems(restaurantId);
-      fetchDiscounts(restaurantId);
-    }
-    console.log(promotions);
-  }, [restaurantId]);
-
-  const fetchMenuItems = async (restaurantID) => {
+  // Thay thế 3 hàm cũ bằng 1 hàm mới
+  const fetchAllData = async (restaurantID) => {
     try {
       setLoading(true);
       if (restaurantID) {
-        const data = await getFoodRes(restaurantID, navigation);
+        // Fetch menu items
+        const foodData = await getFoodRes(restaurantID, navigation);
         const itemMap = new Map();
-
-        data.forEach((category) => {
+        foodData.forEach((category) => {
           category.products.forEach((product) => {
             itemMap.set(product.product_id, {
               product_id: product.product_id,
@@ -135,39 +127,15 @@ export default function PromotionManagementScreen() {
             });
           });
         });
-
         setMenuItems(Array.from(itemMap.values()));
-      }
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách món ăn:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const fetchCoupons = async (restaurantID) => {
-    try {
-      setLoading(true);
-      if (restaurantID) {
+        // Fetch coupons
         const coupons = await getCoupon(restaurantID);
-        if (coupons && Array.isArray(coupons)) {
-          setPromotions(coupons);
-        }
-      }
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const fetchDiscounts = async (restaurantID) => {
-    try {
-      setLoading(true);
-      if (restaurantID) {
-        const discounts = await getDiscount(restaurantID);
 
-        if (discounts && Array.isArray(discounts)) {
-          const formattedDiscounts = discounts.map((discount) => ({
+        // Fetch discounts
+        const discounts = await getDiscount(restaurantID);
+        const formattedDiscounts =
+          discounts?.map((discount) => ({
             id: discount.id,
             flash_sale_id: discount.flash_sale_id,
             coupon_type: 'FOOD_DISCOUNT',
@@ -182,21 +150,31 @@ export default function PromotionManagementScreen() {
             end_date: discount.end_date,
             is_active: discount.is_active,
             food_items: discount.food_items || [],
-          }));
-          setPromotions((prev) => [...prev, ...formattedDiscounts]);
-        }
+          })) || [];
+
+        // Set all promotions at once
+        setPromotions([...(coupons || []), ...formattedDiscounts]);
       }
     } catch (error) {
-      console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
+      console.error('Lỗi khi tải dữ liệu:', error);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (restaurantId) {
+      fetchAllData(restaurantId);
+    }
+  }, [restaurantId]);
   const filteredPromotions = promotions.filter((item) => {
     const matchesSearch =
       item.coupon_name?.toLowerCase().includes(searchText.toLowerCase()) ||
       item.coupon_code?.toLowerCase().includes(searchText.toLowerCase());
-    return matchesSearch;
+
+    const matchesFilter =
+      activeFilter === 'Tất cả' || item.coupon_type === activeFilter;
+
+    return matchesSearch && matchesFilter;
   });
 
   const openAddModal = (type) => {
@@ -280,145 +258,136 @@ export default function PromotionManagementScreen() {
   };
 
   const handleAddPromotion = async () => {
-    // Validation
+    try {
+      setLoading(true);
+
+      const validationErrors = validateFormData();
+      if (validationErrors) {
+        Alert.alert('Thông báo', validationErrors);
+        return;
+      }
+      const couponData = formatCouponData();
+      const result = await submitPromotion(couponData);
+
+      if (result) {
+        // Show success message
+        Alert.alert(
+          'Thành công',
+          isEditing ? 'Đã cập nhật thành công' : 'Đã thêm mới thành công'
+        );
+        // Reset form and refresh data
+        resetForm();
+        await fetchAllData(restaurantId);
+        // Close modal
+        setModalVisible(false);
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi xử lý khuyến mãi');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper functions
+  const validateFormData = () => {
     if (
       !formData.coupon_name ||
       !formData.coupon_code ||
       !formData.start_date ||
       !formData.end_date
     ) {
-      Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin');
-      return;
+      return 'Vui lòng điền đầy đủ thông tin';
     }
 
     if (!formData.discount_value) {
-      Alert.alert('Thông báo', 'Vui lòng nhập giá trị giảm giá');
-      return;
+      return 'Vui lòng nhập giá trị giảm giá';
     }
 
     if (
       formData.coupon_type === 'FOOD_DISCOUNT' &&
       selectedFoodItems.length === 0
     ) {
-      Alert.alert(
-        'Thông báo',
-        'Vui lòng chọn ít nhất một món ăn để áp dụng khuyến mãi'
+      return 'Vui lòng chọn ít nhất một món ăn để áp dụng khuyến mãi';
+    }
+
+    return null;
+  };
+
+  const formatCouponData = () => {
+    return {
+      ...formData,
+      start_date: formatDateTimeForAPI(formData.start_date),
+      end_date: formatDateTimeForAPI(formData.end_date),
+      is_active: true,
+    };
+  };
+
+  const submitPromotion = async (couponData) => {
+    if (!restaurantId) throw new Error('Không tìm thấy thông tin nhà hàng');
+
+    if (formType === 'ONE_TIME') {
+      return await handleOnetime(couponData);
+    } else if (formType === 'FOOD_DISCOUNT') {
+      return await handleFoodDiscount(couponData);
+    }
+  };
+
+  const handleOnetime = async (couponData) => {
+    if (isEditing) {
+      return await editCoupon(restaurantId, {
+        ...couponData,
+        coupon_id: editingId,
+      });
+    }
+    return await addCoupon(restaurantId, couponData);
+  };
+
+  const handleFoodDiscount = async (couponData) => {
+    if (isEditing) {
+      return await editDiscounts(
+        restaurantId,
+        {
+          ...couponData,
+          flash_sale_id: flashSaleId,
+          coupon_id: editingId,
+        },
+        addProduct,
+        removeProduct
       );
-      return;
     }
-    try {
-      const couponData = {
-        ...formData,
-        start_date: formatDateTimeForAPI(formData.start_date),
-        end_date: formatDateTimeForAPI(formData.end_date),
-        is_active: true,
-      };
 
-      if (restaurantId && formType == 'ONE_TIME') {
-        let result;
-        if (isEditing) {
-          result = await editCoupon(restaurantId, {
-            ...couponData,
-            coupon_id: editingId,
-          });
-          if (result) {
-            setPromotions(
-              promotions.map((item) =>
-                item.id === editingId
-                  ? { ...couponData, coupon_id: editingId }
-                  : item
-              )
-            );
-            Alert.alert('Thành công', 'Đã cập nhật thành công');
-          }
-        } else {
-          result = await addCoupon(restaurantId, couponData);
-          if (result) {
-            fetchCoupons(restaurantId);
-            Alert.alert('Thành công', 'Đã thêm mới thành công');
-          }
-        }
-
-        if (result) {
-          setFormData({
-            coupon_type: 'ONE_TIME',
-            coupon_name: '',
-            coupon_code: '',
-            discount_value: '',
-            discount_type: 'PERCENTAGE',
-            max_discount_amount: '',
-            min_order_value: '',
-            max_uses_per_user: '1',
-            start_date: '',
-            end_date: '',
-            is_active: true,
-            appliedItems: '',
-          });
-          setSelectedFoodItems([]);
-          setModalVisible(false);
-        }
-      } else if (restaurantId && formType == 'FOOD_DISCOUNT') {
-        let result;
-        if (isEditing) {
-          result = await editDiscounts(
-            restaurantId,
-            {
-              ...couponData,
-              flash_sale_id: flashSaleId,
-              coupon_id: editingId,
-            },
-            addProduct,
-            removeProduct
-          );
-          if (result) {
-            setPromotions(
-              promotions.map((item) =>
-                item.id === editingId
-                  ? { ...couponData, coupon_id: editingId }
-                  : item
-              )
-            );
-            Alert.alert('Thành công', 'Đã cập nhật thành công');
-          }
-        } else {
-          selectedFoodItems.length === 1
-            ? (result = await addDiscountForFood(
-                restaurantId,
-                couponData,
-                selectedFoodItems[0].product_id
-              ))
-            : (result = await addDiscountForListFood(
-                restaurantId,
-                couponData,
-                selectedFoodItems
-              ));
-          if (result) {
-            fetchCoupons(restaurantId);
-            Alert.alert('Thành công', 'Đã thêm mới thành công');
-          }
-        }
-
-        if (result) {
-          setFormData({
-            coupon_type: 'ONE_TIME',
-            coupon_name: '',
-            coupon_code: '',
-            discount_value: '',
-            discount_type: 'PERCENTAGE',
-            max_discount_amount: '',
-            min_order_value: '',
-            max_uses_per_user: '1',
-            start_date: '',
-            end_date: '',
-            is_active: true,
-          });
-          setSelectedFoodItems([]);
-          setModalVisible(false);
-        }
-      }
-    } catch (error) {
-      Alert.alert('Lỗi', error.message || 'Đã xảy ra lỗi khi thêm khuyến mãi');
+    if (selectedFoodItems.length === 1) {
+      return await addDiscountForFood(
+        restaurantId,
+        couponData,
+        selectedFoodItems[0].product_id
+      );
     }
+
+    return await addDiscountForListFood(
+      restaurantId,
+      couponData,
+      selectedFoodItems
+    );
+  };
+
+  const resetForm = () => {
+    setFormData({
+      coupon_type: 'ONE_TIME',
+      coupon_name: '',
+      coupon_code: '',
+      discount_value: '',
+      discount_type: 'PERCENTAGE',
+      max_discount_amount: '',
+      min_order_value: '',
+      max_uses_per_user: '1',
+      start_date: '',
+      end_date: '',
+      is_active: true,
+    });
+    setSelectedFoodItems([]);
+    setAddProduct([]);
+    setRemoveProduct([]);
   };
 
   const onStartDateTimeChange = (event, selectedDate) => {
@@ -563,7 +532,22 @@ export default function PromotionManagementScreen() {
       )}
     </TouchableOpacity>
   );
-
+  const renderCategory = (category, text) => (
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        activeFilter === category && styles.activeFilterButton,
+      ]}
+      onPress={() => setActiveFilter(category)}>
+      <Text
+        style={[
+          styles.filterText,
+          activeFilter === category && styles.activeFilterText,
+        ]}>
+        {text}
+      </Text>
+    </TouchableOpacity>
+  );
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
@@ -573,7 +557,16 @@ export default function PromotionManagementScreen() {
           value={searchText}
           onChangeText={setSearchText}></TextInput>
       </View>
-
+      <View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterContainer}>
+          {renderCategory('Tất cả', 'Tất cả')}
+          {renderCategory('ONE_TIME', 'Mã giảm giá')}
+          {renderCategory('FOOD_DISCOUNT', 'Giảm giá món')}
+        </ScrollView>
+      </View>
       <FlatList
         data={filteredPromotions}
         renderItem={renderItem}
