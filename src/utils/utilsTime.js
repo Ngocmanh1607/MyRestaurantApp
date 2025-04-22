@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/vi';
 const getStartOfWeek = (inputDate) => {
   const startOfWeek = new Date(inputDate);
   const dayOfWeek = startOfWeek.getDay();
@@ -43,4 +45,67 @@ const getWeekOfMonth = (dateToCheck) => {
 
   return weekNumber;
 };
-export { checkDateInCurrentWeek, checkDateInMonth, getWeekOfMonth };
+// Format date-time for display
+const formatDateTimeForDisplay = (dateTimeString) => {
+  if (!dateTimeString) return '';
+
+  // Handle different date formats
+  let dateTime;
+  try {
+    if (dateTimeString.includes('/')) {
+      // DD/MM/YYYY HH:MM format
+      const [datePart, timePart = '00:00'] = dateTimeString.split(' ');
+      const [day, month, year] = datePart.split('/');
+      dateTime = dayjs(`${year}-${month}-${day} ${timePart}`);
+    } else if (dateTimeString.includes('-')) {
+      // YYYY-MM-DD HH:MM:SS format
+      dateTime = dayjs(dateTimeString);
+    } else {
+      return dateTimeString; // Return as is if format not recognized
+    }
+
+    return dateTime.format('DD/MM/YYYY HH:mm');
+  } catch (error) {
+    console.error('Error formatting date time:', error);
+    return dateTimeString;
+  }
+};
+
+// Format date-time for API
+const formatDateTimeForAPI = (dateTimeString) => {
+  if (!dateTimeString) return '';
+
+  try {
+    // Convert from DD/MM/YYYY HH:MM to YYYY-MM-DD HH:MM:SS
+    if (dateTimeString.includes('/')) {
+      const [datePart, timePart = '00:00'] = dateTimeString.split(' ');
+      const [day, month, year] = datePart.split('/');
+      return `${year}-${month}-${day}T${timePart}:00`;
+    }
+
+    return dateTimeString;
+  } catch (error) {
+    console.error('Error formatting date time for API:', error);
+    return dateTimeString;
+  }
+};
+const isFutureDateTime = (dateTimeString) => {
+  if (!dateTimeString) return false;
+
+  try {
+    const dateTime = new Date(dateTimeString);
+    const now = new Date();
+    return dateTime > now;
+  } catch (error) {
+    console.error('Error checking if date time is in the future:', error);
+    return false;
+  }
+};
+export {
+  checkDateInCurrentWeek,
+  checkDateInMonth,
+  getWeekOfMonth,
+  formatDateTimeForDisplay,
+  formatDateTimeForAPI,
+  isFutureDateTime,
+};

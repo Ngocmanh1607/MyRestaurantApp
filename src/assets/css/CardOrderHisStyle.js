@@ -1,0 +1,95 @@
+export const styles = {
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#333',
+    fontWeight: '500',
+  },
+  orderItem: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196F3',
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  orderIdContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    marginRight: 8,
+  },
+  orderId: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+  },
+  orderInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoIcon: {
+    marginRight: 12,
+    width: 20,
+    textAlign: 'center',
+  },
+  orderTime: {
+    fontSize: 14,
+    color: '#6c757d',
+  },
+  orderName: {
+    fontSize: 14,
+    color: '#212529',
+    fontWeight: '500',
+  },
+  orderItems: {
+    fontSize: 14,
+    color: '#212529',
+  },
+  orderAddress: {
+    fontSize: 14,
+    color: '#212529',
+    flex: 1,
+  },
+  viewDetailContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  viewDetailText: {
+    color: '#2196F3',
+    fontWeight: '600',
+    marginRight: 4,
+  },
+};

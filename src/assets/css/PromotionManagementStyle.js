@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'f5f5f5',
+    backgroundColor: '#f5f5f5',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   activeFilterButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
   },
   filterText: {
     color: '#4b5563',
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBlockColor: '#e0e0e0',
+    borderBottomColor: '#e0e0e0',
   },
   searchInput: {
     backgroundColor: '#f5f5f5',
@@ -44,12 +44,56 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
+  //scroll buton
+  filterContainer: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    textAlign: 'center',
+    maxHeight: 62,
+  },
+
+  filterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    marginRight: 12,
+    borderWidth: 1,
+    height: 40,
+    borderColor: '#e5e7eb',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  activeFilterButton: {
+    backgroundColor: '#f44336',
+    borderColor: '#f44336',
+  },
+
+  filterText: {
+    fontSize: 14,
+    color: '#4b5563',
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+
+  activeFilterText: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
   addContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
   },
   addButton: {
     flex: 1,
@@ -59,7 +103,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   discountButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
+    marginRight: 6,
+  },
+  foodDiscountButton: {
+    backgroundColor: '#f44336',
     marginRight: 6,
   },
   promotionButton: {
@@ -72,6 +120,7 @@ export const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
+    paddingBottom: 50,
   },
   itemContainer: {
     backgroundColor: '#ffffff',
@@ -89,6 +138,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f1f1',
+    paddingBottom: 8,
   },
   itemName: {
     fontSize: 18,
@@ -114,11 +166,41 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 8,
   },
+  itemCode: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
   itemDiscount: {
     fontSize: 16,
     color: '#0066FF',
     fontWeight: '600',
     marginBottom: 4,
+  },
+  itemMinOrder: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  itemCount: {
+    fontSize: 14,
+    color: '#059669',
+    fontWeight: '600',
+    marginBottom: 6,
+    backgroundColor: '#ecfdf5',
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  itemCountUse: {
+    fontSize: 14,
+    color: '#dc2626', // Màu tím cho số lần đã sử dụng
+    fontWeight: '600',
+    marginBottom: 6,
+    backgroundColor: '#f5f3ff',
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
   },
   itemApplied: {
     fontSize: 16,
@@ -146,13 +228,10 @@ export const styles = StyleSheet.create({
     color: '#374151',
     fontWeight: '500',
   },
-  deleteButton: {
-    backgroundColor: '#fee2e2',
+  editButton: {
+    backgroundColor: '#f3f4f6',
   },
-  deleteText: {
-    color: '#b91c1c',
-    fontWeight: '500',
-  },
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -163,7 +242,7 @@ export const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 12,
     padding: 20,
-    shadowColor: '000',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -188,6 +267,18 @@ export const styles = StyleSheet.create({
     color: '#4b5563',
     marginBottom: 8,
   },
+  dateTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  dateInput: {
+    height: 48,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
   input: {
     backgroundColor: '#f9fafb',
     paddingHorizontal: 12,
@@ -196,6 +287,28 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d1d5db',
     marginBottom: 16,
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  radioButton: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginRight: 8,
+    alignItems: 'center',
+  },
+  radioButtonActive: {
+    backgroundColor: '#f00',
+    borderColor: '#f44336',
+  },
+  radioText: {
+    color: '#4b5563',
+    fontWeight: '500',
   },
   modalActions: {
     flexDirection: 'row',
@@ -216,7 +329,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   saveButton: {
-    backgroundColor: '#f44',
+    backgroundColor: '#f44336',
     marginLeft: 8,
   },
   saveButtonText: {
@@ -231,5 +344,130 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#6b7280',
+  },
+  foodListContainer: {
+    marginVertical: 10,
+    maxHeight: 300,
+    marginBottom: 60,
+  },
+  foodItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
+  },
+  selectedFoodItem: {
+    backgroundColor: '#e6f7ff',
+  },
+  foodItemName: {
+    fontSize: 16,
+    color: '#333333',
+    flex: 1,
+  },
+  foodItemPrice: {
+    fontSize: 14,
+    color: '#0066FF',
+    fontWeight: '500',
+    marginRight: 10,
+  },
+  checkmark: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#0066FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  dateButton: {
+    backgroundColor: '#f9fafb',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateButtonText: {
+    color: '#4b5563',
+  },
+  typeSelector: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    justifyContent: 'space-between',
+  },
+  typeButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    marginHorizontal: 4,
+    alignItems: 'center',
+  },
+  typeButtonActive: {
+    backgroundColor: '#f44336',
+    borderColor: '#f44336',
+  },
+  typeButtonText: {
+    color: '#4b5563',
+    fontWeight: '500',
+    textAlign: 'center',
+    fontSize: 13,
+  },
+  typeButtonTextActive: {
+    color: '#ffffff',
+  },
+  selectFoodButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  selectFoodButtonText: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+  selectedFoodList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+
+  selectedFoodTag: {
+    backgroundColor: '#e0f2f1', // màu nền xanh nhạt
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  selectedFoodTagText: {
+    color: '#00796b',
+    fontWeight: '500',
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
   },
 });

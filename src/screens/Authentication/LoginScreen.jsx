@@ -50,19 +50,40 @@ const LoginScreen = () => {
     if (validate()) {
       try {
         setLoading(true);
-        await loginApi(email, password);
-      } catch (error) {
-        Alert.alert('Lỗi', error.message);
-        setErrors({ apiError: error.message });
-      } finally {
+        const response = await loginApi(email, password);
+
+        if (!response.success) {
+          Alert.alert('Lỗi', response.message || 'Đăng nhập thất bại');
+          setErrors({ apiError: response.message });
+          return;
+        }
         await checkRegisterInfo();
+      } catch (error) {
+        Alert.alert('Lỗi', 'Không thể kết nối đến server');
+        setErrors({ apiError: 'Lỗi kết nối' });
+      } finally {
         setLoading(false);
       }
     }
   };
+
   const checkRegisterInfo = async () => {
-    const res = await checkRegister(navigation);
-    res ? navigation.navigate('Home') : navigation.navigate('Register');
+    try {
+      const res = await checkRegister(navigation);
+      if (res) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Register' }],
+        });
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể kiểm tra thông tin đăng ký');
+    }
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

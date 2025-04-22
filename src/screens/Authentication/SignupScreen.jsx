@@ -56,8 +56,11 @@ const SignupScreen = () => {
     if (validate()) {
       try {
         setLoading(true);
-        await signupApi(email, password);
-        navigation.navigate('ConfirmEmail');
+        const response = await signupApi(email, password);
+        if (response.success) navigation.navigate('ConfirmEmail');
+        else {
+          Alert.alert('Lỗi', response.message);
+        }
       } catch (error) {
         Alert.alert('Lỗi', error.message);
       } finally {

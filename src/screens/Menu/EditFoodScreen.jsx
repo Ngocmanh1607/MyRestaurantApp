@@ -59,10 +59,9 @@ const EditFoodScreen = ({ route, navigation }) => {
         getToppingFood(foodData.id),
         getCategoryFood(foodData.id),
       ]);
-      console.log(categoriesData);
       setAllCategories(categoriesData);
       setToppings(toppingData);
-      const currentCats = categoriesData.filter((cat) =>
+      const currentCats = categoriesData.data.filter((cat) =>
         foodCategories.includes(cat.id)
       );
       setCurrentCategories(currentCats);

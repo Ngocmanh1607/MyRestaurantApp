@@ -35,6 +35,11 @@ const AccountScreen = () => {
       path: 'Wallet',
     },
     {
+      title: 'Lịch sử đơn hàng',
+      icon: 'payment',
+      path: 'OrdersHistory',
+    },
+    {
       title: 'Chương trình khuyến mãi',
       icon: 'confirmation-num',
       path: 'PromotionManagementScreen',

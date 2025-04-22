@@ -34,7 +34,7 @@ const EditPriceScreen = () => {
       try {
         setLoading(true);
         const res = await getInformationRes();
-        setRestaurantId(res.id);
+        if (res.success) setRestaurantId(res.metadata.id);
       } catch (error) {
         console.error('Error fetching restaurant ID:', error);
       } finally {
@@ -47,47 +47,39 @@ const EditPriceScreen = () => {
   useEffect(() => {
     const fetchFoodRes = async () => {
       try {
-        if (!restaurantId) {
-          console.log('Restaurant ID không hợp lệ');
-          return;
-        }
-
         const data = await getFoodRes(restaurantId, navigation);
-        console.log('Dữ liệu món ăn:', data);
+        if (data.success) {
+          const categoryList = [{ id: 'all', name: 'Tất cả' }];
+          const allProductsList = [];
 
-        if (!data || !Array.isArray(data)) {
-          throw new Error('Dữ liệu món ăn không hợp lệ');
-        }
+          data.data.forEach((category) => {
+            categoryList.push({
+              id: category.category_id,
+              name: category.category_name,
+            });
 
-        // Prepare categories with "Tất cả" as first option
-        const categoryList = [{ id: 'all', name: 'Tất cả' }];
-        const allProductsList = [];
-
-        // Process the data
-        data.forEach((category) => {
-          categoryList.push({
-            id: category.category_id,
-            name: category.category_name,
-          });
-
-          // Add all products to a flat list with category info
-          category.products.forEach((product) => {
-            allProductsList.push({
-              id: product.product_id,
-              name: product.product_name,
-              price: product.product_price,
-              image: product.image,
-              descriptions: product.product_description,
-              quantity: product.product_quantity,
-              toppings: product.toppings,
-              category: category.category_name,
-              categoryId: category.category_id,
+            // Add all products to a flat list with category info
+            category.products.forEach((product) => {
+              allProductsList.push({
+                id: product.product_id,
+                name: product.product_name,
+                price: product.product_price,
+                image: product.image,
+                descriptions: product.product_description,
+                quantity: product.product_quantity,
+                toppings: product.toppings,
+                category: category.category_name,
+                categoryId: category.category_id,
+              });
             });
           });
-        });
 
-        setCategories(categoryList);
-        setAllProducts(allProductsList);
+          setCategories(categoryList);
+          setAllProducts(allProductsList);
+        } else {
+          Alert.alert('Lỗi', data.message);
+          return;
+        }
       } catch (error) {
         Alert.alert('Lỗi', error.message || 'Lỗi lấy dữ liệu món ăn');
       }
