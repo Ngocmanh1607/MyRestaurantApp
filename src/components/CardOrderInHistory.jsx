@@ -102,7 +102,10 @@ const CardOrderInHistory = ({ item }) => {
   };
 
   const handlePress = async () => {
-    const shipper = await getInfo();
+    let shipper;
+    if (item.driver_id) {
+      shipper = await getInfo();
+    }
     navigation.navigate('OrderHisDetail', { item, shipper });
   };
 

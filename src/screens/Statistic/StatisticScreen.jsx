@@ -173,8 +173,10 @@ const StatisticScreen = () => {
   useEffect(() => {
     const getOrdersHistory = async () => {
       const response = await getOrders();
-      console.log('order', response);
-      setOrders(response);
+      if (response.success) {
+        console.log('order', response);
+        setOrders(response.data);
+      }
     };
     getOrdersHistory();
     const newStats = calculateStatistics();
@@ -186,7 +188,7 @@ const StatisticScreen = () => {
       try {
         setIsLoading(true);
         const res = await getInformationRes();
-        setRestaurantId(res.id);
+        if (res.success) setRestaurantId(res.metadata.id);
       } catch (error) {
         console.error('Error fetching restaurant ID:', error);
       } finally {

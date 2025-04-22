@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   SectionList,
+  Alert,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
@@ -32,7 +33,7 @@ const FoodManagementScreen = () => {
       try {
         setIsLoading(true);
         const res = await getInformationRes();
-        setRestaurantId(res.id);
+        setRestaurantId(res.metadata.id);
       } catch (error) {
         console.error('Error fetching restaurant ID:', error);
       } finally {
@@ -50,31 +51,36 @@ const FoodManagementScreen = () => {
             ('Restaurant ID không hợp lệ');
           }
           const data = await getFoodRes(restaurantId, navigation);
-          const cate = [];
-          console.log('Dữ liệu món ăn:', data);
-          if (!data || !Array.isArray(data)) {
-            throw new Error('Dữ liệu món ăn không hợp lệ');
-          }
-          const sections = data.map((category) => {
-            cate.push({
-              id: category.category_id,
-              name: category.category_name,
+          if (data.success) {
+            const cate = [];
+            console.log('Dữ liệu món ăn:', data.data);
+            if (!data.data || !Array.isArray(data.data)) {
+              throw new Error('Dữ liệu món ăn không hợp lệ');
+            }
+            const sections = data.data.map((category) => {
+              cate.push({
+                id: category.category_id,
+                name: category.category_name,
+              });
+              return {
+                title: category.category_name,
+                data: category.products.map((product) => ({
+                  id: product.product_id,
+                  name: product.product_name,
+                  price: product.product_price,
+                  image: product.image,
+                  descriptions: product.product_description,
+                  quantity: product.product_quantity,
+                  toppings: product.toppings,
+                })),
+              };
             });
-            return {
-              title: category.category_name,
-              data: category.products.map((product) => ({
-                id: product.product_id,
-                name: product.product_name,
-                price: product.product_price,
-                image: product.image,
-                descriptions: product.product_description,
-                quantity: product.product_quantity,
-                toppings: product.toppings,
-              })),
-            };
-          });
-          setFoodItems(sections);
-          setCategories(cate);
+            setFoodItems(sections);
+            setCategories(cate);
+          } else {
+            Alert.alert('Đã xảy ra lỗi', data.message);
+            return;
+          }
         } catch (error) {
           Snackbar.show({
             text: error.message || 'Lỗi lấy dữ liệu món ăn',
@@ -82,8 +88,9 @@ const FoodManagementScreen = () => {
           });
         }
       };
-
-      fetchFoodRes();
+      if (restaurantId) {
+        fetchFoodRes();
+      }
     }, [restaurantId])
   );
   const handleLayout = (event, index) => {

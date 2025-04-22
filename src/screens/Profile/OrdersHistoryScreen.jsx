@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { getOrders } from '../../api/restaurantApi';
 import { FlatList } from 'react-native-gesture-handler';
@@ -9,8 +9,27 @@ const OrdersHistoryScreen = () => {
     const getOrder = async () => {
       try {
         const response = await getOrders();
-        setOrders(response);
-        console.log(response);
+        if (response.success) {
+          setOrders(response.data);
+          console.log(response.data);
+        } else {
+          if (res.message === 'jwt expired') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  await AsyncStorage.clear();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
+              },
+            ]);
+            return;
+          }
+          Alert.alert('Lỗi', res.message);
+        }
       } catch (error) {}
     };
     getOrder();

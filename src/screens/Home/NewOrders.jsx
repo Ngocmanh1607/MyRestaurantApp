@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { getInformationRes } from '../../api/restaurantApi';
 import { useNavigation } from '@react-navigation/native';
@@ -18,12 +18,29 @@ const NewOrders = () => {
   );
   useEffect(() => {
     const fetchInfRes = async () => {
-      await getInformationRes(navigation);
+      const response = await getInformationRes(navigation);
+      if (!response.success) {
+        if (response.message === 'jwt expired') {
+          Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await AsyncStorage.clear();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
+              },
+            },
+          ]);
+          return;
+        }
+      }
     };
     fetchInfRes();
 
     // Tạo socket instance bên ngoài initializeSocket
-    const socket = io('http://localhost:3000');
+    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
 
     const initializeSocket = async () => {
       try {
@@ -63,7 +80,7 @@ const NewOrders = () => {
       socket.off('disconnect');
       socket.disconnect();
     };
-  }, []);
+  }, [restaurantId]);
   return (
     <View style={styles.container}>
       {newOrders.length === 0 ? (

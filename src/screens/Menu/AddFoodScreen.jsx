@@ -51,7 +51,11 @@ const AddFoodScreen = () => {
     const fetchCategories = async () => {
       try {
         const categories = await getCategories();
-        setAllCategories(categories);
+        if (categories.success) setAllCategories(categories.data);
+        else {
+          Alert.alert('Lỗi', categories.message);
+          return;
+        }
       } catch (error) {
         Snackbar.show({ text: error, duration: Snackbar.LENGTH_SHORT });
         setAllCategories([]);

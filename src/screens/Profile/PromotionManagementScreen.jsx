@@ -110,50 +110,66 @@ export default function PromotionManagementScreen() {
 
     getRestaurantId();
   }, []);
-  // Thay thế 3 hàm cũ bằng 1 hàm mới
+
   const fetchAllData = async (restaurantID) => {
     try {
       setLoading(true);
       if (restaurantID) {
         // Fetch menu items
         const foodData = await getFoodRes(restaurantID, navigation);
-        const itemMap = new Map();
-        foodData.forEach((category) => {
-          category.products.forEach((product) => {
-            itemMap.set(product.product_id, {
-              product_id: product.product_id,
-              product_name: product.product_name,
-              product_price: product.product_price,
+        if (foodData.success) {
+          const itemMap = new Map();
+          foodData.data.forEach((category) => {
+            category.products.forEach((product) => {
+              itemMap.set(product.product_id, {
+                product_id: product.product_id,
+                product_name: product.product_name,
+                product_price: product.product_price,
+              });
             });
           });
-        });
-        setMenuItems(Array.from(itemMap.values()));
+          setMenuItems(Array.from(itemMap.values()));
+        } else {
+          Alert.alert('Lỗi', foodData.message);
+          return;
+        }
 
         // Fetch coupons
         const coupons = await getCoupon(restaurantID);
 
         // Fetch discounts
         const discounts = await getDiscount(restaurantID);
-        const formattedDiscounts =
-          discounts?.map((discount) => ({
-            id: discount.id,
-            flash_sale_id: discount.flash_sale_id,
-            coupon_type: 'FOOD_DISCOUNT',
-            coupon_name: discount.coupon_name,
-            coupon_code: discount.coupon_code,
-            discount_value: discount.discount_value,
-            discount_type: discount.discount_type,
-            max_discount_amount: discount.max_discount_amount,
-            min_order_value: discount.min_order_value,
-            max_uses_per_user: discount.max_uses_per_user,
-            start_date: discount.start_date,
-            end_date: discount.end_date,
-            is_active: discount.is_active,
-            food_items: discount.food_items || [],
-          })) || [];
+        if (coupons.success && discounts.success) {
+          const formattedDiscounts =
+            discounts.data?.map((discount) => ({
+              id: discount.id,
+              flash_sale_id: discount.flash_sale_id,
+              coupon_type: 'FOOD_DISCOUNT',
+              coupon_name: discount.coupon_name,
+              coupon_code: discount.coupon_code,
+              discount_value: discount.discount_value,
+              discount_type: discount.discount_type,
+              max_discount_amount: discount.max_discount_amount,
+              min_order_value: discount.min_order_value,
+              max_uses_per_user: discount.max_uses_per_user,
+              start_date: discount.start_date,
+              end_date: discount.end_date,
+              is_active: discount.is_active,
+              food_items: discount.food_items || [],
+            })) || [];
 
-        // Set all promotions at once
-        setPromotions([...(coupons || []), ...formattedDiscounts]);
+          // Set all promotions at once
+          setPromotions([...(coupons.data || []), ...formattedDiscounts]);
+        } else {
+          if (coupons.success === false) {
+            Alert.alert('Lỗi', coupons.message);
+            return;
+          }
+          if (discounts.success === false) {
+            Alert.alert('Lỗi', discounts.message);
+            return;
+          }
+        }
       }
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu:', error);

@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, FlatList, SafeAreaView, Alert } from 'react-native';
 import React, { useMemo, useState, useEffect } from 'react';
 import styles from '../../assets/css/ReviewStyle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,7 +16,25 @@ const ReviewScreen = () => {
       try {
         setIsLoading(true);
         const res = await getInformationRes();
-        setRestaurantId(res.id);
+        if (res.success) {
+          setRestaurantId(res.metadata.id);
+        } else {
+          if (res.message === 'jwt expired') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  await AsyncStorage.clear();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
+              },
+            ]);
+            return;
+          }
+        }
       } catch (error) {
         console.error('Error fetching restaurant ID:', error);
       } finally {
@@ -31,12 +44,14 @@ const ReviewScreen = () => {
     fetchRestaurantId();
   }, []);
   useEffect(() => {
-    const fetchReviews = async () => {
-      const response = await getReview(restaurantId);
-      console.log(response);
-      setReviews(response);
-    };
-    fetchReviews();
+    if (restaurantId) {
+      const fetchReviews = async () => {
+        const response = await getReview(restaurantId);
+        if (response.success) setReviews(response.data);
+        else Alert.alert('Lỗi', response.message);
+      };
+      fetchReviews();
+    }
   }, [restaurantId]);
   const { ratingsData, totalReviews, averageRating } = useMemo(() => {
     const ratings = [0, 0, 0, 0, 0];

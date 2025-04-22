@@ -2,11 +2,20 @@ export default function handleApiError(error) {
   if (error.response) {
     // Lỗi từ backend (4xx, 5xx)
     console.error('Backend error:', error.response.data);
-    if (error.response.status === 500) {
-      return {
-        success: false,
-        message: 500,
-      };
+    // Handle HTML error messages
+    if (
+      typeof error.response.data === 'string' &&
+      error.response.data.includes('<pre>')
+    ) {
+      // Extract error message between <pre> tags
+      const errorMatch = error.response.data.match(/<pre>(.+?)<br>/);
+      if (errorMatch) {
+        const errorMessage = errorMatch[1].split(':').pop().trim();
+        return {
+          success: false,
+          message: errorMessage,
+        };
+      }
     }
     return {
       success: false,

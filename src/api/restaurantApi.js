@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
 import fetchFcmToken from '../utils/fcmToken';
 import { Alert } from 'react-native';
+import handleApiError from './handleApiError';
 const apiKey = '123';
 const signupApi = async (email, password) => {
   try {
     // const fcmToken = await fetchFcmToken();
-
     await apiClient.post(
       '/user/signup',
       { email, password, fcmToken: '123', role: 'seller' },
@@ -14,22 +14,9 @@ const signupApi = async (email, password) => {
         headers: { 'x-api-key': apiKey },
       }
     );
-    return true;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.log(error.response);
-      console.error('Lỗi từ server:', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server.';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra kết nối mạng.'
-      );
-    } else {
-      console.error('Lỗi không xác định:', error.message);
-      throw new Error('Đã xảy ra lỗi không xác định. Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
 
@@ -48,20 +35,9 @@ const loginApi = async (email, password) => {
       ['accessToken', accessToken],
       ['userId', userId.toString()],
     ]);
-    return metadata;
+    return { success: true, metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
 
@@ -75,7 +51,7 @@ const updateRestaurantApi = async (restaurant, navigation) => {
         'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
       );
       navigation.navigate('Đăng kí thông tin');
-      return;
+      return { success: false, message: 'Phiên đăng nhập đã hết hạn' };
     }
     const response = await apiClient.put(
       '/restaurant',
@@ -94,31 +70,15 @@ const updateRestaurantApi = async (restaurant, navigation) => {
     const { message, metadata } = response.data;
     if (!message) {
       console.error('Error message:', message);
-      return; // Or throw an error
+      return { success: false, message: 'Không có phản hồi từ server' };
     }
 
-    return metadata;
+    return { success: true, metadata };
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 401) {
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('userId');
-        Alert.alert('Phiên hết hạn', 'Vui lòng đăng nhập lại.');
-        navigation.navigate('Đăng kí thông tin');
-        return;
-      }
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const getInformationRes = async (navigation) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
@@ -130,7 +90,7 @@ const getInformationRes = async (navigation) => {
         'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
       );
       navigation.navigate('Đăng kí thông tin');
-      return;
+      return { success: false, message: 'Phiên đăng nhập đã hết hạn' };
     }
     const response = await apiClient.get('/restaurant/detail', {
       headers: {
@@ -141,36 +101,20 @@ const getInformationRes = async (navigation) => {
     });
     const { message, metadata } = response.data;
     if (!metadata) {
-      return;
+      return { success: false, message: 'Không có dữ liệu nhà hàng' };
     }
     await AsyncStorage.setItem('restaurantId', metadata.id.toString());
     console.log(metadata.id);
     if (!message) {
       console.error('Error message:', message);
-      return;
+      return { success: false, message: 'Không có phản hồi từ server' };
     }
-    return metadata;
+    return { success: true, metadata };
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 401) {
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('userId');
-        Alert.alert('Phiên hết hạn', 'Vui lòng đăng nhập lại.');
-        navigation.navigate('Đăng kí thông tin');
-        return;
-      }
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const getCategories = async () => {
   try {
     const response = await apiClient.get('/categories', {
@@ -178,36 +122,19 @@ const getCategories = async () => {
         'x-api-key': apiKey,
       },
     });
-    return response.data.metadata;
+    return { success: true, data: response.data.metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
-const getFoodRes = async (restaurantId, navigation) => {
+
+const getFoodRes = async (restaurantId) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      if (!userId || !accessToken) {
-        Alert.alert(
-          'Thông báo',
-          'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
-        );
-        navigation.navigate('Đăng kí thông tin');
-        return;
-      }
+      return { success: false, message: 'Phiên đăng nhập đã hết hạn' };
     }
     const response = await apiClient.get(
       `/products/${restaurantId}/restaurantId`,
@@ -223,36 +150,20 @@ const getFoodRes = async (restaurantId, navigation) => {
     const { message, metadata } = response.data;
     if (!message) {
       console.error('Error message:', message);
-      return;
+      return { success: false, message: 'Không có phản hồi từ server' };
     }
-    return metadata;
+    return { success: true, data: metadata };
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 500) {
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('userId');
-        Alert.alert('Phiên hết hạn', 'Vui lòng đăng nhập lại.');
-        navigation.navigate('Auth');
-        return;
-      }
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const changeOrderStatus = async (orderId, status) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.post(
       '/restaurant/order/status',
@@ -271,28 +182,18 @@ const changeOrderStatus = async (orderId, status) => {
 
     const { metadata } = response.data;
     console.log(metadata);
-    return metadata;
+    return { success: true, data: metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const findDriver = async (orderId) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(`restaurant/${orderId}/driver`, {
       headers: {
@@ -302,28 +203,18 @@ const findDriver = async (orderId) => {
       },
     });
     const { metadata } = response.data;
-    return metadata;
+    return { success: true, data: metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const rejectOrder = async (orderId, reason) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(
       `/restaurant/reject/${orderId}/${reason}`,
@@ -338,32 +229,22 @@ const rejectOrder = async (orderId, reason) => {
 
     const { metadata } = response.data;
     console.log(metadata);
-    return metadata;
+    return { success: true, data: metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const getReview = async (restaurantId) => {
   if (!restaurantId) {
-    return [];
+    return { success: false, message: 'Không có ID nhà hàng', data: [] };
   }
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(`/review/${restaurantId}/restaurant`, {
       headers: {
@@ -372,18 +253,19 @@ const getReview = async (restaurantId) => {
         'x-client-id': userId,
       },
     });
-    return response.data.metadata;
+    return { success: true, data: response.data.metadata };
   } catch (error) {
-    console.error('Lỗi từ server: ', error.response.data);
+    return handleApiError(error);
   }
 };
+
 const getOrders = async () => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(`/restaurant/order`, {
       headers: {
@@ -392,18 +274,19 @@ const getOrders = async () => {
         'x-client-id': userId,
       },
     });
-    return response.data.metadata;
+    return { success: true, data: response.data.metadata };
   } catch (error) {
-    console.error('Lỗi từ server: ', error.response.data);
+    return handleApiError(error);
   }
 };
+
 const editListProduct = async (restaurantId, listProduct) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.post(
       `/restaurant/price`,
@@ -419,31 +302,19 @@ const editListProduct = async (restaurantId, listProduct) => {
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const addCoupon = async (restaurantId, formData) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.post(
       `/coupon`,
@@ -459,31 +330,19 @@ const addCoupon = async (restaurantId, formData) => {
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const editCoupon = async (restaurantId, formData) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.put(
       `/coupon/${restaurantId}/restautant`,
@@ -500,31 +359,19 @@ const editCoupon = async (restaurantId, formData) => {
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const getCoupon = async (restaurantId) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(`/coupon/${restaurantId}/restaurant`, {
       headers: {
@@ -533,22 +380,12 @@ const getCoupon = async (restaurantId) => {
         'x-client-id': userId,
       },
     });
-    if (response.status === 200) return response.data.metadata;
+    return { success: true, data: response.data.metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const addDiscountForListFood = async (restaurantId, formData, products) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
@@ -557,7 +394,7 @@ const addDiscountForListFood = async (restaurantId, formData, products) => {
       product_id: item.product_id,
     }));
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.post(
       `/coupon/list/flashsale`,
@@ -578,31 +415,19 @@ const addDiscountForListFood = async (restaurantId, formData, products) => {
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const addDiscountForFood = async (restaurantId, formData, product_id) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.post(
       `/coupon/flashsale`,
@@ -622,31 +447,19 @@ const addDiscountForFood = async (restaurantId, formData, product_id) => {
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const getDiscount = async (restaurantId) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.get(`/coupon/${restaurantId}/flashsale`, {
       headers: {
@@ -655,22 +468,12 @@ const getDiscount = async (restaurantId) => {
         'x-client-id': userId,
       },
     });
-    if (response.status === 200) return response.data.metadata;
+    return { success: true, data: response.data.metadata };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 const editDiscounts = async (
   restaurantId,
   formData,
@@ -684,7 +487,7 @@ const editDiscounts = async (
     const accessToken = await AsyncStorage.getItem('accessToken');
 
     if (!userId || !accessToken) {
-      throw new Error('User not logged in');
+      return { success: false, message: 'Người dùng chưa đăng nhập' };
     }
     const response = await apiClient.put(
       `/coupon/${restaurantId}/flashsale`,
@@ -705,24 +508,12 @@ const editDiscounts = async (
         },
       }
     );
-    if (response.status === 200) {
-      return true;
-    } else return false;
+    return { success: true };
   } catch (error) {
-    if (error.response) {
-      console.error('Lỗi từ server: ', error.response.data);
-      const serverError =
-        error.response.data?.message || 'Có lỗi xảy ra từ phía server';
-      throw new Error(serverError);
-    } else if (error.request) {
-      throw new Error(
-        'Không nhận được phản hồi từ server. Vui lòng kiểm tra lại kết nối mạng.'
-      );
-    } else {
-      throw new Error('Đã xảy ra lỗi không xác định . Vui lòng thử lại.');
-    }
+    return handleApiError(error);
   }
 };
+
 export {
   signupApi,
   loginApi,

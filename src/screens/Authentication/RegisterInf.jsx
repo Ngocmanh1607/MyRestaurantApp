@@ -96,7 +96,7 @@ const RegisterInf = () => {
           updatedRestaurant,
           navigation
         );
-        if (response) {
+        if (response.success) {
           Snackbar.show({
             text: 'Thông tin nhà hàng đã được cập nhật!',
             duration: Snackbar.LENGTH_SHORT,
@@ -104,7 +104,7 @@ const RegisterInf = () => {
           navigation.navigate('Home');
         } else {
           Snackbar.show({
-            text: 'Cập nhật thất bại, vui lòng thử lại.',
+            text: `Cập nhật thất bại, ${response.message}`,
             duration: Snackbar.LENGTH_SHORT,
           });
         }

@@ -47,19 +47,39 @@ const RestaurantProfileScreen = () => {
     const fetchRestaurantInfo = async () => {
       try {
         setLoading(true);
-        const response = await getInformationRes(navigation);
-        const cleanedData = {
-          id: response.id || null,
-          name: response.name || 'Tên nhà hàng chưa xác định',
-          address: response.address || 'Địa chỉ chưa có',
-          phone_number: response.phone_number || 'Số điện thoại chưa có',
-          description: response.description || 'Chưa có mô tả',
-          image: response.image || 'https://via.placeholder.com/150',
-          opening_hours: JSON.parse(response.opening_hours || '[]'),
-        };
+        const res = await getInformationRes(navigation);
+        if (res.success) {
+          const response = res.metadata;
+          const cleanedData = {
+            id: response.id || null,
+            name: response.name || 'Tên nhà hàng chưa xác định',
+            address: response.address || 'Địa chỉ chưa có',
+            phone_number: response.phone_number || 'Số điện thoại chưa có',
+            description: response.description || 'Chưa có mô tả',
+            image: response.image || 'https://via.placeholder.com/150',
+            opening_hours: JSON.parse(response.opening_hours || '[]'),
+          };
 
-        setRestaurant(cleanedData);
-        setOriginalImage(cleanedData.image);
+          setRestaurant(cleanedData);
+          setOriginalImage(cleanedData.image);
+        } else {
+          if (res.message === 'jwt expired') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  await AsyncStorage.clear();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
+              },
+            ]);
+            return;
+          }
+          Alert.alert('Lỗi', res.message);
+        }
       } catch (error) {
         Snackbar.show({
           text: error.message,
@@ -152,15 +172,18 @@ const RestaurantProfileScreen = () => {
       };
 
       const response = await updateRestaurantApi(updatedData, navigation);
-      if (response) {
+      if (response.success) {
         Snackbar.show({
           text: 'Thông tin nhà hàng đã được cập nhật!',
           duration: Snackbar.LENGTH_SHORT,
         });
         setImageChange(false);
         setOriginalImage(updatedData.image);
+        return true;
+      } else {
+        Alert.alert('Lỗi', response.message);
+        return false;
       }
-      return true;
     } catch (error) {
       console.error('Lỗi cập nhật thông tin:', error.message);
       Snackbar.show({

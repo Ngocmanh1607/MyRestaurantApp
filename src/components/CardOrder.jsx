@@ -224,7 +224,9 @@ const CardOrder = ({ item }) => {
                 style={styles.infoIcon}
               />
               <Text style={styles.infoLabel}>Tổng tiền:</Text>
-              <Text style={styles.priceValue}>{formatPrice(item.price)} đ</Text>
+              <Text style={styles.priceValue}>
+                {formatPrice(Math.floor(item.price))} đ
+              </Text>
             </View>
 
             <View style={styles.addressRow}>
