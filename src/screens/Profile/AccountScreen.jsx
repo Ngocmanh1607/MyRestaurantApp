@@ -44,11 +44,11 @@ const AccountScreen = () => {
       icon: 'confirmation-num',
       path: 'PromotionManagementScreen',
     },
-    {
-      title: 'Cài đặt',
-      icon: 'settings',
-      path: 'Settings',
-    },
+    // {
+    //   title: 'Cài đặt',
+    //   icon: 'settings',
+    //   path: 'Settings',
+    // },
   ];
 
   const handleNavigate = (path) => {

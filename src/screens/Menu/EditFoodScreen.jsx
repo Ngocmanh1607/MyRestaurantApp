@@ -29,6 +29,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const EditFoodScreen = ({ route, navigation }) => {
   const { food } = route.params;
+
   const [foodData, setFoodData] = useState({
     id: food.id,
     name: food.name,
@@ -46,8 +47,6 @@ const EditFoodScreen = ({ route, navigation }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [allCategories, setAllCategories] = useState([]);
-  console.log(foodData.id);
-  // Fetch initial data
   const fetchInitialData = async () => {
     setIsLoading(true);
     try {
@@ -59,7 +58,7 @@ const EditFoodScreen = ({ route, navigation }) => {
         getToppingFood(foodData.id),
         getCategoryFood(foodData.id),
       ]);
-      setAllCategories(categoriesData);
+      setAllCategories(categoriesData.data);
       setToppings(toppingData);
       const currentCats = categoriesData.data.filter((cat) =>
         foodCategories.includes(cat.id)

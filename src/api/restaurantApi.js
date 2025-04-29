@@ -274,6 +274,7 @@ const getOrders = async () => {
         'x-client-id': userId,
       },
     });
+
     return { success: true, data: response.data.metadata };
   } catch (error) {
     return handleApiError(error);

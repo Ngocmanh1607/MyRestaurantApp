@@ -13,11 +13,11 @@ import Snackbar from 'react-native-snackbar';
 import Feather from 'react-native-vector-icons/Feather';
 import { getInformationRes } from '../../api/restaurantApi';
 import FoodCard from '../../components/FoodCard';
+
 import { getFoodRes } from '../../api/restaurantApi';
 const FoodManagementScreen = () => {
   const navigation = useNavigation();
   const [foodItems, setFoodItems] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [restaurantId, setRestaurantId] = useState(null);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(0);
@@ -51,6 +51,7 @@ const FoodManagementScreen = () => {
             ('Restaurant ID không hợp lệ');
           }
           const data = await getFoodRes(restaurantId, navigation);
+
           if (data.success) {
             const cate = [];
             console.log('Dữ liệu món ăn:', data.data);
@@ -72,6 +73,8 @@ const FoodManagementScreen = () => {
                   descriptions: product.product_description,
                   quantity: product.product_quantity,
                   toppings: product.toppings,
+                  is_active: product.is_available,
+                  flash_sale_amount: product.flash_sale_amount,
                 })),
               };
             });
@@ -210,11 +213,11 @@ const FoodManagementScreen = () => {
             navigation.navigate('EditPrices');
           }}>
           <Feather name="edit-2" size={18} color="#555" />
-          <Text style={styles.editPricesText}>Chỉnh sửa giá món ăn</Text>
+          <Text style={styles.editPricesText}>Chỉnh sửa giá</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={handlePress}>
-          <Feather name="edit-2" size={18} color="#555" />
-          <Text style={styles.editPricesText}>Thêm món</Text>
+          <Feather name="edit-2" size={18} color="#fff" />
+          <Text style={styles.addButtonText}>Thêm món</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -352,7 +355,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,
-    backgroundColor: '#e9ecef',
+    backgroundColor: '#FF6347',
     flex: 1,
     marginLeft: 10,
     shadowColor: '#000',
@@ -363,8 +366,9 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     fontSize: 15,
-    color: '#495057',
+    color: '#fff',
     fontWeight: '600',
+    marginLeft: 8,
   },
 });
 

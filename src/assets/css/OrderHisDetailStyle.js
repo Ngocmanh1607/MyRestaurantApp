@@ -1,57 +1,145 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-const { width } = Dimensions.get('window');
-
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
+    padding: 12,
   },
-
-  // Header Order Section
+  // Order ID and Status Section
   orderIdContainer: {
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  orderHeaderLeft: {
+    flexDirection: 'column',
   },
   orderId: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   orderTime: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#666',
+    marginTop: 4,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  statusText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 
-  // Driver Section
-  driverInfoContainer: {
-    backgroundColor: '#ffffff',
+  // Section Header
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    marginBottom: 12,
+  },
+  sectionHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 8,
+  },
+
+  // Customer Information
+  customerInfoContainer: {
+    backgroundColor: '#fff',
     padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  customerDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 8,
   },
-  vehicleInfo: {
-    marginBottom: 12,
-    backgroundColor: '#f3f4f6',
-    padding: 8,
-    borderRadius: 8,
+  customerImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
   },
-  car_name: {
+  customerInfo: {
+    flex: 1,
+  },
+  customerName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  customerPhone: {
     fontSize: 14,
-    color: '#4b5563',
-    fontWeight: '500',
+    color: '#666',
+    marginTop: 4,
+  },
+
+  // Address Information
+  addressContainer: {
+    backgroundColor: '#fff',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginBottom: 8,
+    padding: 16,
+  },
+  addressDetails: {
+    marginTop: 8,
+    paddingLeft: 4,
+  },
+  addressText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
+  },
+  addressNote: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  // Driver Information
+  driverInfoContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   driverDetails: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    padding: 12,
-    borderRadius: 12,
+    marginTop: 8,
   },
   driverImage: {
     width: 50,
@@ -64,125 +152,198 @@ export default StyleSheet.create({
   },
   driverName: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
-    marginBottom: 4,
+    fontWeight: 'bold',
+    color: '#333',
   },
-
-  // Order Items Section
-  orderItemContainer: {
-    backgroundColor: '#ffffff',
-    padding: 16,
+  driverPhone: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  vehicleInfo: {
     marginTop: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  orderItemDetails: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  licensePlate: {
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
+  // Order Items Section
+  itemsContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  orderItemContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  orderItemDetails: {
+    flexDirection: 'row',
+  },
   orderItemImage: {
-    width: width * 0.2,
-    height: width * 0.2,
+    width: 70,
+    height: 70,
     borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    marginRight: 12,
   },
   orderItemText: {
     flex: 1,
-    marginLeft: 12,
+    justifyContent: 'space-between',
   },
   orderItemName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 4,
   },
   orderItemOption: {
     fontSize: 13,
-    color: '#6b7280',
+    color: '#666',
     marginBottom: 2,
+  },
+  quantityPriceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
   },
   orderItemQuantity: {
     fontSize: 14,
-    color: '#4b5563',
-    marginTop: 4,
+    color: '#666',
   },
-  orderInfPayText: {
+  orderItemPrice: {
+    fontSize: 14,
+    color: '#666',
+  },
+  orderItemTotal: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#f43f5e',
+    fontWeight: 'bold',
+    color: '#e53935',
     marginTop: 4,
+    alignSelf: 'flex-end',
   },
 
   // Note Section
   noteContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     padding: 16,
-    marginTop: 8,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   noteText: {
     fontSize: 14,
-    color: '#4b5563',
-    backgroundColor: '#f3f4f6',
-    padding: 12,
-    borderRadius: 8,
+    color: '#666',
+    fontStyle: 'italic',
   },
 
-  // Payment Section
+  // Payment Information
   paymentInfoContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     padding: 16,
-    marginTop: 8,
-    marginBottom: 20,
+    borderRadius: 10,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  paymentMethodContainer: {
+  paymentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingVertical: 8,
     alignItems: 'center',
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-    marginBottom: 12,
   },
-  paymentMethod: {
-    fontSize: 15,
-    color: '#4b5563',
+  paymentLabel: {
+    fontSize: 14,
+    color: '#666',
   },
-  orderTotal: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#f43f5e',
-  },
-  paymentContainer: {
+  couponLabelContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
+    flex: 1,
   },
-  paymentText: {
-    fontSize: 15,
-    color: '#4b5563',
+  couponBadge: {
+    backgroundColor: '#f8e5e5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: '#e53935',
+    borderStyle: 'dashed',
+  },
+  couponCode: {
+    fontSize: 12,
+    color: '#e53935',
+    fontWeight: 'bold',
+  },
+  paymentValue: {
+    fontSize: 14,
+    color: '#333',
   },
   paymentSumContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    marginTop: 8,
+  },
+  totalDiscountRow: {
+    backgroundColor: '#f0fff0',
+    marginHorizontal: -16,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#daf0da',
+    marginTop: 8,
+  },
+  paymentTotalLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  paymentTotalValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#e53935',
+  },
+  paymentMethodContainer: {
+    marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: '#eee',
   },
-  totalText: {
+  paymentMethodLabel: {
+    fontSize: 14,
+    color: '#666',
+  },
+  paymentMethodValue: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  totalAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#f43f5e',
-  },
-
-  // Divider
-  divider: {
-    height: 8,
-    backgroundColor: '#f3f4f6',
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 4,
   },
 });
+
+export default styles;

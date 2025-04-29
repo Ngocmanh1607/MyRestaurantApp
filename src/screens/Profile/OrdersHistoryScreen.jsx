@@ -11,7 +11,7 @@ const OrdersHistoryScreen = () => {
         const response = await getOrders();
         if (response.success) {
           setOrders(response.data);
-          console.log(response.data);
+          console.log('OrdersHistoryScreen', response.data);
         } else {
           if (res.message === 'jwt expired') {
             Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
@@ -39,7 +39,7 @@ const OrdersHistoryScreen = () => {
       <FlatList
         style={styles.flatList}
         data={orders}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.order_id.toString()}
         renderItem={({ item }) => <CardOrderInHistory item={item} />}
       />
     </View>

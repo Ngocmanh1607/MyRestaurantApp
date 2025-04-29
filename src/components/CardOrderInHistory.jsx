@@ -90,6 +90,7 @@ const StatusBadge = ({ status }) => {
 const CardOrderInHistory = ({ item }) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  console.log('CardOrderInHistory', item);
 
   const getInfo = async () => {
     setIsLoading(true);
@@ -131,7 +132,7 @@ const CardOrderInHistory = ({ item }) => {
             color="#333"
             style={styles.headerIcon}
           />
-          <Text style={styles.orderId}>Đơn hàng #{item.id}</Text>
+          <Text style={styles.orderId}>Đơn hàng #{item.order_id}</Text>
         </View>
         <StatusBadge status={item.order_status} />
       </View>
@@ -143,7 +144,9 @@ const CardOrderInHistory = ({ item }) => {
           color="#6c757d"
           style={styles.infoIcon}
         />
-        <Text style={styles.orderTime}>{formatTime(item.createdAt)}</Text>
+        <Text style={styles.orderTime}>
+          {formatTime(item.order_created_at)}
+        </Text>
       </View>
 
       <View style={styles.orderInfoRow}>
@@ -183,4 +186,4 @@ const CardOrderInHistory = ({ item }) => {
     </TouchableOpacity>
   );
 };
-export default CardOrderInHistory;
+export default React.memo(CardOrderInHistory);
