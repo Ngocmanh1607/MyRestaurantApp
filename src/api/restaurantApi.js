@@ -514,7 +514,89 @@ const editDiscounts = async (
     return handleApiError(error);
   }
 };
-
+const getMoney = async (restaurantId) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const response = await apiClient.get(`/restaurant/money/${restaurantId}`, {
+      headers: {
+        'x-api-key': apiKey,
+        authorization: accessToken,
+        'x-client-id': userId,
+      },
+    });
+    return { success: true, data: response.data.metadata };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+const getListMoney = async (restaurantId) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const response = await apiClient.get(
+      `/restaurant/list/money/${restaurantId}`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    return { success: true, data: response.data.metadata };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+const getrequestWithdrawMoney = async (restaurantId) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const response = await apiClient.get(
+      `/restaurant/list/transaction/${restaurantId}`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    return { success: true, data: response.data.metadata };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+const requestWithdrawMoney = async (
+  restaurantId,
+  amount,
+  account_id,
+  bank_name
+) => {
+  try {
+    const userId = await AsyncStorage.getItem('userId');
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const response = await apiClient.post(
+      `/restaurant/list/transaction/${restaurantId}`,
+      {
+        amount: amount,
+        account_id: account_id,
+        bank_name: bank_name,
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          authorization: accessToken,
+          'x-client-id': userId,
+        },
+      }
+    );
+    return { success: true };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
 export {
   signupApi,
   loginApi,
@@ -535,4 +617,8 @@ export {
   addDiscountForFood,
   getDiscount,
   editDiscounts,
+  getMoney,
+  getListMoney,
+  getrequestWithdrawMoney,
+  requestWithdrawMoney,
 };

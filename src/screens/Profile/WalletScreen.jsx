@@ -11,51 +11,97 @@ import {
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from '../../assets/css/WalletStyle';
 import formatPrice from '../../utils/formatPrice';
+import { useNavigation } from '@react-navigation/native';
+import formatTime from '../../utils/formatTime';
+import {
+  getMoney,
+  getListMoney,
+  getrequestWithdrawMoney,
+  requestWithdrawMoney,
+  getInformationRes,
+} from '../../api/restaurantApi';
 
 const WalletScreen = () => {
-  const [balance, setBalance] = useState(1500000);
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: 'deposit',
-      amount: 500000,
-      date: '2024-03-20',
-      status: 'completed',
-      note: 'Tiền từ chuyến đi #123',
-    },
-    {
-      id: 2,
-      type: 'withdraw',
-      amount: 300000,
-      date: '2024-03-19',
-      status: 'completed',
-      note: 'Rút về STK: *****6789',
-    },
-  ]);
+  const navigation = useNavigation();
+  const [balance, setBalance] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [restauranId, setRestaurantId] = useState();
+  const [transactions, setTransactions] = useState();
+  const [withdrawalHistory, setWithdrawalHistory] = useState([]);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [bankAccount, setBankAccount] = useState('');
   const [bankName, setBankName] = useState('');
-  const [accountName, setAccountName] = useState('');
-  const [withdrawType, setWithdrawType] = useState('bank'); // 'bank' hoặc 'zalopay'
-  const [zaloPayNumber, setZaloPayNumber] = useState('');
-
-  const handleWithdraw = () => {
+  const [activeTab, setActiveTab] = useState('earnings');
+  useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        setIsLoading(true);
+        const res = await getInformationRes();
+        if (res.success) {
+          setRestaurantId(res.metadata.id);
+        } else {
+          if (res.message === 'jwt expired') {
+            Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  await AsyncStorage.clear();
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }],
+                  });
+                },
+              },
+            ]);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching restaurant ID:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRestaurantId();
+  }, []);
+  useEffect(() => {
+    fetchMoney();
+    fetchListMoney();
+    fetchListTransaction();
+  }, [restauranId]);
+  const fetchMoney = async () => {
+    try {
+      if (restauranId) {
+        const response = await getMoney(restauranId);
+        console.log('Số dư:', response.data);
+        setBalance(response.data);
+      }
+    } catch (error) {}
+  };
+  const fetchListMoney = async () => {
+    try {
+      if (restauranId) {
+        const response = await getListMoney(restauranId);
+        console.log('Danh sách tiền:', response.data);
+        setTransactions(response.data);
+      }
+    } catch (error) {}
+  };
+  const fetchListTransaction = async () => {
+    try {
+      if (restauranId) {
+        const response = await getrequestWithdrawMoney(restauranId);
+        setWithdrawalHistory(response.data);
+        console.log('Danh sách giao dịch:', response.data);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách giao dịch:', error.message);
+    }
+  };
+  const handleWithdraw = async () => {
     if (!withdrawAmount) {
       Alert.alert('Thông báo', 'Vui lòng nhập số tiền');
-      return;
-    }
-
-    if (
-      withdrawType === 'bank' &&
-      (!bankAccount || !bankName || !accountName)
-    ) {
-      Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin ngân hàng');
-      return;
-    }
-
-    if (withdrawType === 'zalopay' && !zaloPayNumber) {
-      Alert.alert('Thông báo', 'Vui lòng nhập số điện thoại ZaloPay');
       return;
     }
 
@@ -69,112 +115,114 @@ const WalletScreen = () => {
       Alert.alert('Thông báo', 'Số dư không đủ');
       return;
     }
-
-    // Thêm giao dịch mới
-    const newTransaction = {
-      id: transactions.length + 1,
-      type: 'withdraw',
-      amount: amount,
-      date: new Date().toISOString().split('T')[0],
-      status: 'pending',
-      note:
-        withdrawType === 'bank'
-          ? `Rút về STK: ${bankAccount}`
-          : `Rút về ZaloPay: ${zaloPayNumber}`,
-    };
-
-    setTransactions([newTransaction, ...transactions]);
     setShowWithdrawModal(false);
     setWithdrawAmount('');
     setBankAccount('');
     setBankName('');
-    setAccountName('');
-    setZaloPayNumber('');
-
+    const response = await requestWithdrawMoney(
+      restauranId,
+      withdrawAmount,
+      bankAccount,
+      bankName
+    );
     Alert.alert(
       'Thành công',
       'Yêu cầu rút tiền của bạn đã được ghi nhận và đang được xử lý'
     );
+    fetchListTransaction();
   };
-
   return (
     <View style={styles.container}>
-      {/* Header với số dư */}
-      <View style={styles.header}>
-        <View style={styles.balanceContainer}>
-          <Text style={styles.balanceLabel}>Số dư khả dụng</Text>
-          <Text style={styles.balanceAmount}>{formatPrice(balance)}</Text>
+      <View style={styles.headerWrapper}>
+        <View style={styles.header}>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceTitle}>Số dư ví</Text>
+            <Text style={styles.balanceAmount}>{formatPrice(balance)}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.withdrawButton}
+            onPress={() => setShowWithdrawModal(true)}>
+            <FontAwesome name="money" size={16} color="#FFF" />
+            <Text style={styles.withdrawText}>Rút tiền</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Các nút thao tác */}
-      <View style={styles.actionContainer}>
+      {/* Transaction History Tabs */}
+      <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setShowWithdrawModal(true)}>
-          <View style={styles.actionIcon}>
-            <FontAwesome name="money" size={24} color="#e74c3c" />
-          </View>
-          <Text style={styles.actionText}>Rút tiền</Text>
+          style={[styles.tab, activeTab === 'earnings' && styles.activeTab]}
+          onPress={() => setActiveTab('earnings')}>
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'earnings' && styles.activeTabText,
+            ]}>
+            Tiền nhận được
+          </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <View style={styles.actionIcon}>
-            <FontAwesome name="history" size={24} color="#e74c3c" />
-          </View>
-          <Text style={styles.actionText}>Lịch sử</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <View style={styles.actionIcon}>
-            <FontAwesome name="bank" size={24} color="#e74c3c" />
-          </View>
-          <Text style={styles.actionText}>Tài khoản</Text>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'withdrawals' && styles.activeTab]}
+          onPress={() => setActiveTab('withdrawals')}>
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'withdrawals' && styles.activeTabText,
+            ]}>
+            Lịch sử rút tiền
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lịch sử giao dịch */}
-      <Text style={styles.sectionTitle}>Lịch sử giao dịch</Text>
-      <ScrollView>
-        {transactions.map((transaction) => (
-          <View key={transaction.id} style={styles.transactionContainer}>
-            <View style={styles.transactionHeader}>
-              <Text
-                style={[
-                  styles.transactionAmount,
-                  transaction.type === 'withdraw'
-                    ? styles.withdrawAmount
-                    : styles.depositAmount,
-                ]}>
-                {transaction.type === 'withdraw' ? '-' : '+'}
-                {formatPrice(transaction.amount)}
-              </Text>
-              <Text style={styles.transactionDate}>{transaction.date}</Text>
-            </View>
-            <Text>{transaction.note}</Text>
-            <Text
-              style={[
-                styles.transactionStatus,
-                transaction.status === 'completed'
-                  ? styles.statusCompleted
-                  : transaction.status === 'pending'
-                  ? styles.statusPending
-                  : styles.statusFailed,
-              ]}>
-              {transaction.status === 'completed'
-                ? 'Hoàn thành'
-                : transaction.status === 'pending'
-                ? 'Đang xử lý'
-                : 'Thất bại'}
-            </Text>
-          </View>
-        ))}
+      <ScrollView style={styles.content}>
+        {activeTab === 'earnings'
+          ? // Earnings from completed orders
+            transactions?.map((transaction) => (
+              <View key={transaction.id} style={styles.transactionItem}>
+                <View style={styles.transactionLeft}>
+                  <Text style={styles.orderId}>
+                    Đơn hàng #{transaction.order_id}
+                  </Text>
+                  <Text style={styles.transactionDate}>
+                    {formatTime(transaction.createdAt)}
+                  </Text>
+                </View>
+                <View style={styles.transactionRight}>
+                  <Text style={styles.earnAmount}>
+                    + {formatPrice(transaction.restaurant_fee)}
+                  </Text>
+                  <View style={styles.statusTag}>
+                    <Text style={styles.statusText}>Đã nhận</Text>
+                  </View>
+                </View>
+              </View>
+            ))
+          : // Withdrawal history
+            withdrawalHistory?.map((withdrawal) => (
+              <View key={withdrawal.id} style={styles.withdrawalItem}>
+                <View style={styles.withdrawalLeft}>
+                  <Text style={styles.bankInfo}>
+                    {withdrawal.bank_name} - {withdrawal.account_id}
+                  </Text>
+                  <Text style={styles.withdrawalDate}>
+                    {formatTime(withdrawal.createdAt)}
+                  </Text>
+                </View>
+                <View style={styles.withdrawalRight}>
+                  <Text style={styles.withdrawAmount}>
+                    -{formatPrice(withdrawal.withdrawn_money)}
+                  </Text>
+                  <View style={[styles.statusTag, styles.statusTagSuccess]}>
+                    <Text style={styles.statusText}>Thành công</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
       </ScrollView>
-
       {/* Modal rút tiền */}
       <Modal
         visible={showWithdrawModal}
-        animationType="slide"
+        animationType="fide"
         transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -194,59 +242,20 @@ const WalletScreen = () => {
               onChangeText={setWithdrawAmount}
             />
 
-            <View style={styles.actionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.actionButton,
-                  withdrawType === 'bank' && styles.actionButtonActive,
-                ]}
-                onPress={() => setWithdrawType('bank')}>
-                <Text style={styles.actionText}>Ngân hàng</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.actionButton,
-                  withdrawType === 'zalopay' && styles.actionButtonActive,
-                ]}
-                onPress={() => setWithdrawType('zalopay')}>
-                <Text style={styles.actionText}>ZaloPay</Text>
-              </TouchableOpacity>
-            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Tên ngân hàng"
+              value={bankName}
+              onChangeText={setBankName}
+            />
 
-            {withdrawType === 'bank' ? (
-              <>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Tên ngân hàng"
-                  value={bankName}
-                  onChangeText={setBankName}
-                />
-
-                <TextInput
-                  style={styles.input}
-                  placeholder="Số tài khoản"
-                  keyboardType="numeric"
-                  value={bankAccount}
-                  onChangeText={setBankAccount}
-                />
-
-                <TextInput
-                  style={styles.input}
-                  placeholder="Tên chủ tài khoản"
-                  value={accountName}
-                  onChangeText={setAccountName}
-                />
-              </>
-            ) : (
-              <TextInput
-                style={styles.input}
-                placeholder="Số điện thoại ZaloPay"
-                keyboardType="numeric"
-                value={zaloPayNumber}
-                onChangeText={setZaloPayNumber}
-              />
-            )}
-
+            <TextInput
+              style={styles.input}
+              placeholder="Số tài khoản"
+              keyboardType="numeric"
+              value={bankAccount}
+              onChangeText={setBankAccount}
+            />
             <TouchableOpacity
               style={styles.withdrawButton}
               onPress={handleWithdraw}>
