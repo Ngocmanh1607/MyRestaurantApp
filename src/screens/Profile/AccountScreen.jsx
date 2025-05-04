@@ -20,11 +20,6 @@ const AccountScreen = () => {
       path: 'Profile',
     },
     {
-      title: 'Đổi mật khẩu',
-      icon: 'lock',
-      path: 'ChangePassword',
-    },
-    {
       title: 'Xem đánh giá',
       icon: 'star',
       path: 'Review',
@@ -44,11 +39,6 @@ const AccountScreen = () => {
       icon: 'confirmation-num',
       path: 'PromotionManagementScreen',
     },
-    // {
-    //   title: 'Cài đặt',
-    //   icon: 'settings',
-    //   path: 'Settings',
-    // },
   ];
 
   const handleNavigate = (path) => {

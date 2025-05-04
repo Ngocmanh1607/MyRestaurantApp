@@ -41,6 +41,21 @@ const loginApi = async (email, password) => {
   }
 };
 
+const resetPasswordApi = async (email, password) => {
+  const fcmToken =
+    'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  try {
+    const response = await apiClient.put(
+      '/user/forgot-password',
+      { email, password, role: 'seller', fcmToken: fcmToken },
+      { headers: { 'x-api-key': apiKey } }
+    );
+
+    return { success: true };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
 const updateRestaurantApi = async (restaurant, navigation) => {
   try {
     const userId = await AsyncStorage.getItem('userId');
@@ -621,4 +636,5 @@ export {
   getListMoney,
   getrequestWithdrawMoney,
   requestWithdrawMoney,
+  resetPasswordApi,
 };
