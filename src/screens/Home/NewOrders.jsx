@@ -40,7 +40,7 @@ const NewOrders = () => {
     fetchInfRes();
 
     // Tạo socket instance bên ngoài initializeSocket
-    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
+    const socket = io('http://localhost:3000');
 
     const initializeSocket = async () => {
       try {
