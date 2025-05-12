@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { styles } from '../../assets/css/PromotionManagementStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CheckBox from '@react-native-community/checkbox';
+
 import {
   addCoupon,
   getCoupon,
@@ -188,7 +190,12 @@ export default function PromotionManagementScreen() {
       item.coupon_code?.toLowerCase().includes(searchText.toLowerCase());
 
     const matchesFilter =
-      activeFilter === 'Tất cả' || item.coupon_type === activeFilter;
+      activeFilter === 'Tất cả' ||
+      (activeFilter === 'ONE_TIME' &&
+        (item.coupon_type === 'ONE_TIME' ||
+          item.coupon_type === 'ONE_TIME_EVERY_DAY')) ||
+      (activeFilter === 'FOOD_DISCOUNT' &&
+        item.coupon_type === 'FOOD_DISCOUNT');
 
     return matchesSearch && matchesFilter;
   });
@@ -480,10 +487,9 @@ export default function PromotionManagementScreen() {
         </View>
         <View style={styles.itemDetail}>
           <Text>
-            {item.coupon_type === 'ONE_TIME'
+            {item.coupon_type === 'ONE_TIME' ||
+            item.coupon_type === 'ONE_TIME_EVERY_DAY'
               ? '🏷️ Mã giảm giá'
-              : item.coupon_type === 'ONE_TIME_EVERY_DAY'
-              ? '🍽️ Khuyến mãi hàng ngày'
               : '🍲 Khuyến mãi món ăn'}
           </Text>
           <Text style={styles.itemCode}>Mã: {item.coupon_code}</Text>
@@ -742,6 +748,21 @@ export default function PromotionManagementScreen() {
                   )}
                 </>
               )}
+              <View style={styles.checkboxRow}>
+                <CheckBox
+                  value={formData.coupon_type === 'ONE_TIME' ? false : true}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      coupon_type: 'ONE_TIME_EVERY_DAY',
+                    })
+                  }
+                  tintColors={{ true: '#FF6347', false: '#666' }}
+                />
+                <Text style={styles.checkboxLabel}>
+                  Cho phép người dùng sử dụng nhiều lần
+                </Text>
+              </View>
 
               <Text style={styles.inputLabel}>Ngày bắt đầu</Text>
               <TouchableOpacity

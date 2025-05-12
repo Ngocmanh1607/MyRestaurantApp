@@ -27,7 +27,7 @@ const AddFoodScreen = () => {
     price: '',
     number: '',
     image: null,
-    options: [{ topping_name: '', price: '' }],
+    options: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState('');
@@ -194,7 +194,12 @@ const AddFoodScreen = () => {
     );
     setFoodData({ ...foodData, options: newOptions });
   };
-
+  const RequiredLabel = ({ text }) => (
+    <View style={styles.labelContainer}>
+      <Text style={styles.sectionTitle}>{text}</Text>
+      <Text style={styles.requiredAsterisk}>*</Text>
+    </View>
+  );
   return (
     <View style={styles.mainContainer}>
       {isLoading ? (
@@ -211,7 +216,9 @@ const AddFoodScreen = () => {
               <Image source={{ uri: foodData.image }} style={styles.image} />
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Text style={styles.imagePlaceholderText}>Chọn ảnh món ăn</Text>
+                <Text style={styles.imagePlaceholderText}>
+                  Chọn ảnh món ăn <Text style={styles.requiredAsterisk}>*</Text>
+                </Text>
               </View>
             )}
           </TouchableOpacity>
@@ -220,7 +227,11 @@ const AddFoodScreen = () => {
           <View style={styles.section}>
             <TextInput
               mode="outlined"
-              label="Tên món"
+              label={
+                <Text>
+                  Tên món <Text style={styles.requiredAsterisk}>*</Text>
+                </Text>
+              }
               activeOutlineColor="#FF6347"
               textColor="#333"
               style={styles.input}
@@ -231,7 +242,11 @@ const AddFoodScreen = () => {
 
             <TextInput
               mode="outlined"
-              label="Mô tả"
+              label={
+                <Text>
+                  Mô tả <Text style={styles.requiredAsterisk}>*</Text>
+                </Text>
+              }
               activeOutlineColor="#FF6347"
               textColor="#333"
               style={styles.textArea}
@@ -245,7 +260,11 @@ const AddFoodScreen = () => {
             <View style={styles.priceRow}>
               <TextInput
                 mode="outlined"
-                label="Giá gốc"
+                label={
+                  <Text>
+                    Giá gốc <Text style={styles.requiredAsterisk}>*</Text>
+                  </Text>
+                }
                 textColor="#333"
                 activeOutlineColor="#FF6347"
                 style={[styles.input, styles.halfInput]}
@@ -271,7 +290,7 @@ const AddFoodScreen = () => {
 
           {/* Categories Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Chọn danh mục *</Text>
+            <RequiredLabel text="Chọn danh mục" />
             <View style={styles.categoriesContainer}>
               {allCategories.map((category) => (
                 <View key={category.id} style={styles.checkboxContainer}>

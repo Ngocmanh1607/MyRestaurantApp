@@ -74,6 +74,16 @@ const styles = StyleSheet.create({
   halfInput: {
     width: '48%',
   },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  requiredAsterisk: {
+    color: '#FF0000',
+    marginLeft: 4,
+    fontSize: 16,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',

@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from './apiClient';
-import { Alert } from 'react-native';
 import handleApiError from './handleApiError';
 const apiKey = '123';
 const createFoodInApi = async (newFood) => {
@@ -14,6 +13,7 @@ const createFoodInApi = async (newFood) => {
     image: newFood.image,
     descriptions: newFood.descriptions,
     price: newFood.price,
+    quantity: newFood.number,
   };
   const toppingData = newFood.options.map((option) => ({
     topping_name: option.topping_name,

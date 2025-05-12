@@ -463,6 +463,18 @@ export const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 14,
   },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+    paddingHorizontal: 5,
+  },
+  checkboxLabel: {
+    marginLeft: 10,
+    fontSize: 14,
+    color: '#333',
+    flex: 1,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',

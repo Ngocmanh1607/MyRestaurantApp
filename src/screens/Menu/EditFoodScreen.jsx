@@ -110,8 +110,8 @@ const EditFoodScreen = ({ route, navigation }) => {
       const imageUri = await selectImage();
       if (imageUri) {
         setIsLoading(true);
-        const uploadedImageUrl = await handleImageUpload(imageUri);
-        setFoodData((prev) => ({ ...prev, image: uploadedImageUrl }));
+
+        setFoodData((prev) => ({ ...prev, image: imageUri }));
       }
     } catch (error) {
       showError('Cập nhật ảnh thất bại. Thử lại sau');
@@ -161,13 +161,13 @@ const EditFoodScreen = ({ route, navigation }) => {
       if (!foodData.name || !foodData.price) {
         throw new Error('Name and price are required');
       }
-
+      const uploadedImageUrl = await handleImageUpload(foodData.image);
       const updateData = {
         id: foodData.id,
         name: foodData.name,
         descriptions: foodData.descriptions,
         price: parseFloat(foodData.price),
-        image: foodData.image,
+        image: uploadedImageUrl,
         categories: selectedCategories,
         toppings: toppings.map((topping) => ({
           ...topping,
@@ -233,7 +233,17 @@ const EditFoodScreen = ({ route, navigation }) => {
       </View>
     );
   }
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    fetchInitialData();
+  };
 
+  const RequiredLabel = ({ text }) => (
+    <View style={styles.labelContainer}>
+      <Text style={styles.inputLabel}>{text}</Text>
+      <Text style={styles.requiredAsterisk}>*</Text>
+    </View>
+  );
   return (
     <View style={styles.mainContainer}>
       <KeyboardAvoidingView
@@ -294,7 +304,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                 <Text style={styles.sectionTitle}>Thông tin cơ bản</Text>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Tên sản phẩm *</Text>
+                  <RequiredLabel text="Tên sản phẩm" />
                   <TextInput
                     style={[
                       styles.textInput,
@@ -308,7 +318,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Giá *</Text>
+                  <RequiredLabel text="Giá" />
                   <TextInput
                     style={[
                       styles.textInput,
@@ -323,7 +333,7 @@ const EditFoodScreen = ({ route, navigation }) => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Mô tả *</Text>
+                  <RequiredLabel text="Mô tả" />
                   <TextInput
                     style={[
                       styles.textAreaInput,
@@ -344,7 +354,10 @@ const EditFoodScreen = ({ route, navigation }) => {
 
               {/* Categories Section */}
               <View style={styles.formSection}>
-                <Text style={styles.sectionTitle}>Danh mục *</Text>
+                <View style={styles.sectionTitleContainer}>
+                  <Text style={styles.sectionTitle}>Danh mục</Text>
+                  <Text style={styles.requiredAsterisk}>*</Text>
+                </View>
                 <View style={styles.categoriesContainer}>
                   {allCategories.map((category) => (
                     <View key={category.id} style={styles.checkboxContainer}>
@@ -440,7 +453,7 @@ const EditFoodScreen = ({ route, navigation }) => {
 
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={() => setIsEditing(false)}>
+              onPress={handleCancelEdit}>
               <Icon name="times" size={18} color="#FFFFFF" />
               <Text style={styles.buttonText}>Hủy</Text>
             </TouchableOpacity>

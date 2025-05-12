@@ -20,7 +20,10 @@ const NewOrders = () => {
     const fetchInfRes = async () => {
       const response = await getInformationRes(navigation);
       if (!response.success) {
-        if (response.message === 'jwt expired') {
+        if (
+          response.message === 'jwt expired' ||
+          response.message === 'invalid signature'
+        ) {
           Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
             {
               text: 'OK',
@@ -39,7 +42,6 @@ const NewOrders = () => {
     };
     fetchInfRes();
 
-    // Tạo socket instance bên ngoài initializeSocket
     const socket = io('http://localhost:3000');
 
     const initializeSocket = async () => {

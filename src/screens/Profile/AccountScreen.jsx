@@ -39,6 +39,11 @@ const AccountScreen = () => {
       icon: 'confirmation-num',
       path: 'PromotionManagementScreen',
     },
+    {
+      title: 'Feedback',
+      icon: 'feedback',
+      path: 'FeedbackScreen',
+    },
   ];
 
   const handleNavigate = (path) => {
