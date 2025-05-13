@@ -1,7 +1,7 @@
 export default function handleApiError(error) {
   if (error.response) {
     // Lỗi từ backend (4xx, 5xx)
-    console.error('Backend error:', error.response.data);
+    console.error('Backend error:', error.response);
     // Handle HTML error messages
     if (
       typeof error.response.data === 'string' &&

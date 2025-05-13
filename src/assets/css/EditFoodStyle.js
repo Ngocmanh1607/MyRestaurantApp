@@ -130,10 +130,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
+
   disabledInput: {
     backgroundColor: '#F5F5F5',
     color: '#666666',
     borderColor: '#E0E0E0',
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  requiredAsterisk: {
+    color: '#FF0000',
+    marginLeft: 4,
+    fontSize: 16,
+  },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   categoriesContainer: {
     flexDirection: 'row',
@@ -179,6 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    justifyContent: 'space-between',
   },
   toppingHeaderText: {
     fontSize: 14,
@@ -189,6 +206,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   toppingName: {
     flex: 3,
