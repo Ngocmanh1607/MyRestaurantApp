@@ -174,7 +174,6 @@ const StatisticScreen = () => {
     const getOrdersHistory = async () => {
       const response = await getOrders();
       if (response.success) {
-        console.log('order', response);
         setOrders(response.data);
       }
     };
@@ -200,9 +199,11 @@ const StatisticScreen = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       const response = await getReview(restaurantId);
+      console.log(response.data);
+
       const averageRating =
-        response.reduce((sum, review) => sum + review.res_rating, 0) /
-        response.length;
+        response.data.reduce((sum, review) => sum + review.res_rating, 0) /
+        response.data.length;
       setAverageRating(averageRating);
     };
     fetchReviews();
@@ -343,7 +344,7 @@ const StatisticScreen = () => {
         {renderChart()}
 
         <View style={styles.orderStatsContainer}>
-          <Text style={styles.orderStatsTitle}>Chi tiết đơn hàng</Text>
+          {/* <Text style={styles.orderStatsTitle}>Chi tiết đơn hàng</Text> */}
           <View style={styles.orderStats}>
             <View style={styles.orderStatItem}>
               <Text style={styles.orderStatLabel}>Tỷ lệ hoàn thành</Text>
