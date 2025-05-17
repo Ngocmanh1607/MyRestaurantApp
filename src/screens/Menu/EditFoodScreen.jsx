@@ -110,7 +110,6 @@ const EditFoodScreen = ({ route, navigation }) => {
       const imageUri = await selectImage();
       if (imageUri) {
         setIsLoading(true);
-
         setFoodData((prev) => ({ ...prev, image: imageUri }));
       }
     } catch (error) {
@@ -135,7 +134,6 @@ const EditFoodScreen = ({ route, navigation }) => {
       id: Date.now(),
       topping_name: '',
       price: '',
-      food_id: foodData.id,
     };
     setToppings([...toppings, newTopping]);
   };
@@ -154,12 +152,55 @@ const EditFoodScreen = ({ route, navigation }) => {
       return newSelection;
     });
   };
-
+  const validateInputs = () => {
+    // Validate tên sản phẩm
+    if (!foodData.name || foodData.name.trim() === '') {
+      showError('Tên sản phẩm không được để trống');
+      return false;
+    }
+    // Validate giá sản phẩm
+    if (
+      foodData.price === '' ||
+      isNaN(Number(foodData.price)) ||
+      Number(foodData.price) <= 0
+    ) {
+      showError('Giá sản phẩm phải là số lớn hơn 0');
+      return false;
+    }
+    // Validate mô tả
+    if (!foodData.descriptions || foodData.descriptions.trim() === '') {
+      showError('Mô tả sản phẩm không được để trống');
+      return false;
+    }
+    // Validate danh mục
+    if (!selectedCategories || selectedCategories.length === 0) {
+      showError('Vui lòng chọn ít nhất một danh mục');
+      return false;
+    }
+    // Validate topping
+    for (let i = 0; i < toppings.length; i++) {
+      const topping = toppings[i];
+      if (!topping.topping_name || topping.topping_name.trim() === '') {
+        showError(`Tên lựa chọn thứ ${i + 1} không được để trống`);
+        return false;
+      }
+      if (
+        topping.price === '' ||
+        isNaN(Number(topping.price)) ||
+        Number(topping.price) <= 0
+      ) {
+        showError(`Giá lựa chọn thứ ${i + 1} phải là số lớn hơn 0`);
+        return false;
+      }
+    }
+    return true;
+  };
   const updateFoodData = async () => {
     setIsLoading(true);
     try {
-      if (!foodData.name || !foodData.price) {
-        throw new Error('Name and price are required');
+      if (!validateInputs()) {
+        setIsLoading(false);
+        return;
       }
       const uploadedImageUrl = await handleImageUpload(foodData.image);
       const updateData = {
@@ -416,7 +457,11 @@ const EditFoodScreen = ({ route, navigation }) => {
                             styles.toppingPrice,
                             !isEditing && styles.disabledInput,
                           ]}
-                          value={formatPrice(topping.price)}
+                          value={
+                            isEditing
+                              ? String(topping.price)
+                              : formatPrice(topping.price)
+                          }
                           placeholder="Giá"
                           editable={isEditing}
                           onChangeText={(value) =>

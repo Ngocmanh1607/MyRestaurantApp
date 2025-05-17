@@ -14,6 +14,7 @@ import { feedbackApi } from '../../api/feedbackApi';
 
 import { useFocusEffect } from '@react-navigation/native';
 import CardFeedback from '../../components/CardFeedback';
+import { ActivityIndicator, Modal } from 'react-native-paper';
 
 const FeedbackScreen = () => {
   const [feedbacks, setFeedbacks] = useState('');
@@ -115,10 +116,25 @@ const FeedbackScreen = () => {
         handleCall={handleCall}
         restaurantId={restaurantId}
         responseInfo={responseInfo}
+        fetchFeedBack={fetchFeedbacks}
       />
     );
   };
-
+  if (loading) {
+    return (
+      <Modal visible={true} transparent>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#00000055',
+          }}>
+          <ActivityIndicator size="large" color="#f00" />
+        </View>
+      </Modal>
+    );
+  }
   return (
     <View style={styles.container}>
       <FlatList

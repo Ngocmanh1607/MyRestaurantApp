@@ -311,8 +311,8 @@ export default function PromotionManagementScreen() {
     }
   };
 
-  // Helper functions
   const validateFormData = () => {
+    // Kiểm tra bắt buộc
     if (
       !formData.coupon_name ||
       !formData.coupon_code ||
@@ -322,13 +322,67 @@ export default function PromotionManagementScreen() {
       return 'Vui lòng điền đầy đủ thông tin';
     }
 
-    if (!formData.discount_value) {
-      return 'Vui lòng nhập giá trị giảm giá';
+    // Không cho phép ký tự đặc biệt trong mã khuyến mãi
+    if (!/^[A-Za-z0-9_]+$/.test(formData.coupon_code)) {
+      return 'Mã khuyến mãi chỉ được chứa chữ, số hoặc dấu gạch dưới';
     }
 
+    // Giá trị giảm giá phải là số dương
+    if (
+      !formData.discount_value ||
+      isNaN(Number(formData.discount_value)) ||
+      Number(formData.discount_value) <= 0
+    ) {
+      return 'Vui lòng nhập giá trị giảm giá là số lớn hơn 0';
+    }
+
+    // Nếu giảm giá phần trăm thì không vượt quá 100%
+    if (
+      formData.discount_type === 'PERCENTAGE' &&
+      Number(formData.discount_value) > 100
+    ) {
+      return 'Giá trị giảm phần trăm không được vượt quá 100%';
+    }
+
+    // Giảm tối đa (nếu nhập) phải là số dương
+    if (
+      formData.max_discount_amount &&
+      (isNaN(Number(formData.max_discount_amount)) ||
+        Number(formData.max_discount_amount) < 0)
+    ) {
+      return 'Giảm tối đa phải là số không âm';
+    }
+
+    // Giá trị đơn hàng tối thiểu (nếu nhập) phải là số dương
+    if (
+      formData.min_order_value &&
+      (isNaN(Number(formData.min_order_value)) ||
+        Number(formData.min_order_value) < 0)
+    ) {
+      return 'Giá trị đơn hàng tối thiểu phải là số không âm';
+    }
+
+    // Số lượng phải là số nguyên dương
+    if (
+      !formData.max_uses_per_user ||
+      isNaN(Number(formData.max_uses_per_user)) ||
+      Number(formData.max_uses_per_user) <= 0 ||
+      !Number.isInteger(Number(formData.max_uses_per_user))
+    ) {
+      return 'Số lượng phải là số nguyên dương';
+    }
+
+    // Ngày bắt đầu phải trước ngày kết thúc
+    const start = parseDateTime(formData.start_date);
+    const end = parseDateTime(formData.end_date);
+    if (start >= end) {
+      return 'Ngày bắt đầu phải trước ngày kết thúc';
+    }
+
+    // Nếu là giảm giá món ăn thì phải chọn ít nhất 1 món
     if (
       formData.coupon_type === 'FOOD_DISCOUNT' &&
-      selectedFoodItems.length === 0
+      (!selectedFoodItems || selectedFoodItems.length === 0)
     ) {
       return 'Vui lòng chọn ít nhất một món ăn để áp dụng khuyến mãi';
     }
@@ -348,7 +402,7 @@ export default function PromotionManagementScreen() {
   const submitPromotion = async (couponData) => {
     if (!restaurantId) throw new Error('Không tìm thấy thông tin nhà hàng');
 
-    if (formType === 'ONE_TIME') {
+    if (formType === 'ONE_TIME' || formType === 'ONE_TIME_EVERY_DAY') {
       return await handleOnetime(couponData);
     } else if (formType === 'FOOD_DISCOUNT') {
       return await handleFoodDiscount(couponData);

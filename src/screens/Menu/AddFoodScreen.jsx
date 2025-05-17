@@ -98,7 +98,8 @@ const AddFoodScreen = () => {
   };
 
   const handleSave = async () => {
-    validateInputs();
+    const tempt = validateInputs();
+    if (!tempt) return;
     try {
       setIsLoading(true);
       const uploadedImageUrl = await uploadImage(foodData.name, foodData.image);

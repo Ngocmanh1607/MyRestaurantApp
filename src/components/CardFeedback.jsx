@@ -20,16 +20,27 @@ const formatDate = (dateString) => {
     minute: '2-digit',
   });
 };
-const CardFeedback = ({ item, handleCall, restaurantId, responseInfo }) => {
+const CardFeedback = ({
+  item,
+  handleCall,
+  restaurantId,
+  responseInfo,
+  fetchFeedBack,
+}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [response, setResponse] = useState('');
   const handleResponse = async () => {
+    if (response.trim() === '') {
+      Alert.alert('Lỗi', 'Vui lòng nhập nội dung phản hồi');
+      return;
+    }
     const formatOrderId = (orderId) => {
       if (!orderId) return '';
       const firstChar = orderId.charAt(3);
       const length = firstChar === '0' ? 2 : 3;
       return orderId.slice(-length);
     };
+
     const orderId = formatOrderId(item.order_id);
     const feedback = {
       restaurant_id: restaurantId,
@@ -44,6 +55,7 @@ const CardFeedback = ({ item, handleCall, restaurantId, responseInfo }) => {
       if (response.success) {
         setModalVisible(false);
         setResponse('');
+        fetchFeedBack();
       }
     } catch {
       Alert.alert('Lỗi', 'Đã xảy ra lỗi vui lòng thử lại sau');

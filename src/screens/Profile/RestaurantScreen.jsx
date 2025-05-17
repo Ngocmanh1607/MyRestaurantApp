@@ -42,54 +42,53 @@ const RestaurantProfileScreen = () => {
 
   const route = useRoute();
   const location = route.params?.location;
+  const fetchRestaurantInfo = async () => {
+    try {
+      setLoading(true);
+      const res = await getInformationRes(navigation);
+      if (res.success) {
+        const response = res.metadata;
+        const cleanedData = {
+          id: response.id || null,
+          name: response.name || 'Tên nhà hàng chưa xác định',
+          address: response.address || 'Địa chỉ chưa có',
+          phone_number: response.phone_number || 'Số điện thoại chưa có',
+          description: response.description || 'Chưa có mô tả',
+          image: response.image || 'https://via.placeholder.com/150',
+          opening_hours: JSON.parse(response.opening_hours || '[]'),
+        };
 
-  useEffect(() => {
-    const fetchRestaurantInfo = async () => {
-      try {
-        setLoading(true);
-        const res = await getInformationRes(navigation);
-        if (res.success) {
-          const response = res.metadata;
-          const cleanedData = {
-            id: response.id || null,
-            name: response.name || 'Tên nhà hàng chưa xác định',
-            address: response.address || 'Địa chỉ chưa có',
-            phone_number: response.phone_number || 'Số điện thoại chưa có',
-            description: response.description || 'Chưa có mô tả',
-            image: response.image || 'https://via.placeholder.com/150',
-            opening_hours: JSON.parse(response.opening_hours || '[]'),
-          };
-
-          setRestaurant(cleanedData);
-          setOriginalImage(cleanedData.image);
-        } else {
-          if (res.message === 'jwt expired') {
-            Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
-              {
-                text: 'OK',
-                onPress: async () => {
-                  await AsyncStorage.clear();
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth' }],
-                  });
-                },
+        setRestaurant(cleanedData);
+        setOriginalImage(cleanedData.image);
+      } else {
+        if (res.message === 'jwt expired') {
+          Alert.alert('Lỗi', 'Hết phiên làm việc. Vui lòng đăng nhập lại', [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await AsyncStorage.clear();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Auth' }],
+                });
               },
-            ]);
-            return;
-          }
-          Alert.alert('Lỗi', res.message);
+            },
+          ]);
+          return;
         }
-      } catch (error) {
-        Snackbar.show({
-          text: error.message,
-          duration: Snackbar.LENGTH_SHORT,
-        });
-        console.log(error);
-      } finally {
-        setLoading(false);
+        Alert.alert('Lỗi', res.message);
       }
-    };
+    } catch (error) {
+      Snackbar.show({
+        text: error.message,
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchRestaurantInfo();
   }, [navigation]);
 
@@ -282,7 +281,10 @@ const RestaurantProfileScreen = () => {
     });
   };
 
-  const handleCancel = () => setIsEditing(!isEditing);
+  const handleCancel = () => {
+    setIsEditing(!isEditing);
+    fetchRestaurantInfo();
+  };
 
   return (
     <View style={styles.container}>
