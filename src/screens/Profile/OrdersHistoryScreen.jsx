@@ -10,7 +10,7 @@ const OrdersHistoryScreen = () => {
       try {
         const response = await getOrders();
         if (response.success) {
-          setOrders(response.data);
+          setOrders(response.data.slice().reverse());
           console.log('OrdersHistoryScreen', response.data);
         } else {
           if (res.message === 'jwt expired') {

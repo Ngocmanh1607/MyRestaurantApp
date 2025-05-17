@@ -13,8 +13,7 @@ const NewOrders = () => {
   const orders = useSelector((state) => state.orders.data);
   const dispatch = useDispatch();
   const newOrders = orders.filter(
-    (order) =>
-      order.order_status === 'ORDER_UNPAID' || order.order_status === 'PAID'
+    (order) => order.order_status === 'UNPAID' || order.order_status === 'PAID'
   );
   useEffect(() => {
     const fetchInfRes = async () => {
@@ -42,7 +41,8 @@ const NewOrders = () => {
     };
     fetchInfRes();
 
-    const socket = io('http://localhost:3000');
+    // const socket = io('http://localhost:3000');
+    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
 
     const initializeSocket = async () => {
       try {

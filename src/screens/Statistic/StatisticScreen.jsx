@@ -98,10 +98,17 @@ const StatisticScreen = () => {
       },
     };
     if (selectedPeriod === 'day') {
-      const day = new Date().getDate();
+      const today = new Date();
+      const currentDay = today.getDate();
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
       orders.forEach((order) => {
-        const orderDate = new Date(order.order_date).getDate();
-        if (orderDate === day) {
+        const orderDate = new Date(order.order_created_at);
+        if (
+          orderDate.getDate() === currentDay &&
+          orderDate.getMonth() === currentMonth &&
+          orderDate.getFullYear() === currentYear
+        ) {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
@@ -110,9 +117,9 @@ const StatisticScreen = () => {
           }
           stats.totalOrders++;
         }
-        if (checkDateInCurrentWeek(order.order_date)) {
+        if (checkDateInCurrentWeek(order.order_created_at)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
-            const dayOrder = new Date(order.order_date).getDay();
+            const dayOrder = new Date(order.order_created_at).getDay();
             stats.dailyData.earnings[dayOrder - 1] += parseFloat(
               order.price.toString()
             );
@@ -123,7 +130,7 @@ const StatisticScreen = () => {
       return stats;
     } else if (selectedPeriod === 'week') {
       orders.forEach((order) => {
-        if (checkDateInCurrentWeek(order.order_date)) {
+        if (checkDateInCurrentWeek(order.order_created_at)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
@@ -132,9 +139,9 @@ const StatisticScreen = () => {
           }
           stats.totalOrders++;
         }
-        if (checkDateInMonth(order.order_date)) {
+        if (checkDateInMonth(order.order_created_at)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
-            const dayOfWeek = getWeekOfMonth(order.order_date);
+            const dayOfWeek = getWeekOfMonth(order.order_created_at);
             stats.weeklyData.earnings[dayOfWeek] += parseFloat(
               order.price.toString()
             );
@@ -145,7 +152,7 @@ const StatisticScreen = () => {
       return stats;
     } else if (selectedPeriod === 'month') {
       orders.forEach((order) => {
-        if (checkDateInMonth(order.order_date)) {
+        if (checkDateInMonth(order.order_created_at)) {
           if (order.order_status === 'ORDER_CONFIRMED') {
             stats.totalEarnings += parseFloat(order.price.toString());
             stats.completedOrders++;
@@ -154,7 +161,7 @@ const StatisticScreen = () => {
           }
           stats.totalOrders++;
         }
-        const orderDate = new Date(order.order_date);
+        const orderDate = new Date(order.order_created_at);
         const currentYear = new Date().getFullYear();
         const month = orderDate.getMonth(); // Lấy tháng (0 - 11)
         if (
@@ -178,10 +185,11 @@ const StatisticScreen = () => {
       }
     };
     getOrdersHistory();
+  }, []);
+  useEffect(() => {
     const newStats = calculateStatistics();
     setStatistics(newStats);
-  }, []);
-
+  }, [orders]);
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {
@@ -199,8 +207,6 @@ const StatisticScreen = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       const response = await getReview(restaurantId);
-      console.log(response.data);
-
       const averageRating =
         response.data.reduce((sum, review) => sum + review.res_rating, 0) /
         response.data.length;

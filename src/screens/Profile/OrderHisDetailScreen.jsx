@@ -284,7 +284,7 @@ const OrderHisDetailScreen = ({ route }) => {
         <View style={styles.paymentMethodContainer}>
           <Text style={styles.paymentMethodLabel}>Phương thức thanh toán:</Text>
           <Text style={styles.paymentMethodValue}>
-            {parseFloat(item.order_pay) > 0 ? 'Tiền mặt' : 'Thanh toán online'}
+            {item.order_pay === 'COD' > 0 ? 'Tiền mặt' : 'Thanh toán online'}
           </Text>
         </View>
       </View>

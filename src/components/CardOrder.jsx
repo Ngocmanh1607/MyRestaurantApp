@@ -86,6 +86,12 @@ const CardOrder = ({ item }) => {
           text: 'Đơn hàng mới',
           icon: 'bell-ring',
         };
+      case 'UNPAID':
+        return {
+          color: '#FF6347',
+          text: 'Đơn hàng mới',
+          icon: 'bell-ring',
+        };
       case 'PREPARING_ORDER':
         return {
           color: '#FF9800',

@@ -23,6 +23,13 @@ const StatusBadge = ({ status }) => {
           bgColor: '#FFEBEE',
           text: 'Đơn hàng mới',
         };
+      case 'UNPAID':
+        return {
+          icon: 'bell-ring',
+          color: '#FF0000',
+          bgColor: '#FFEBEE',
+          text: 'Đơn hàng mới',
+        };
       case 'PREPARING_ORDER':
         return {
           icon: 'food-variant',

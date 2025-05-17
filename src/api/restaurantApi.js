@@ -6,10 +6,10 @@ import handleApiError from './handleApiError';
 const apiKey = '123';
 const signupApi = async (email, password) => {
   try {
-    // const fcmToken = await fetchFcmToken();
+    const fcmToken = await fetchFcmToken();
     await apiClient.post(
       '/user/signup',
-      { email, password, fcmToken: '123', role: 'seller' },
+      { email, password, fcmToken: fcmToken, role: 'seller' },
       {
         headers: { 'x-api-key': apiKey },
       }
@@ -42,8 +42,7 @@ const loginApi = async (email, password) => {
 };
 
 const resetPasswordApi = async (email, password) => {
-  const fcmToken =
-    'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const fcmToken = fetchFcmToken();
   try {
     const response = await apiClient.put(
       '/user/forgot-password',

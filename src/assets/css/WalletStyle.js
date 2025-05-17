@@ -295,7 +295,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-
+  bankSelector: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 15,
+    width: '100%',
+  },
+  bankSelectorText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'left',
+  },
   withdrawButtonText: {
     color: '#fff',
     fontSize: 15,
