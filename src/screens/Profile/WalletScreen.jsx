@@ -31,7 +31,6 @@ const WalletScreen = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [bankAccount, setBankAccount] = useState('');
-  const [bankName, setBankName] = useState('');
 
   const [selectedBank, setSelectedBank] = useState(null);
   const [showBankModal, setShowBankModal] = useState(false);
@@ -132,7 +131,6 @@ const WalletScreen = () => {
     );
     setWithdrawAmount('');
     setBankAccount('');
-    setBankName('');
     setSelectedBank();
     fetchListTransaction();
     fetchMoney();

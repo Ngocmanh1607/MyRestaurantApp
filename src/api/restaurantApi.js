@@ -42,7 +42,7 @@ const loginApi = async (email, password) => {
 };
 
 const resetPasswordApi = async (email, password) => {
-  const fcmToken = fetchFcmToken();
+  const fcmToken = await fetchFcmToken();
   try {
     const response = await apiClient.put(
       '/user/forgot-password',

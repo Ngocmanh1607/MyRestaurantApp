@@ -540,7 +540,7 @@ export default function PromotionManagementScreen() {
           </View>
         </View>
         <View style={styles.itemDetail}>
-          <Text>
+          <Text style={styles.itemTextDetail}>
             {item.coupon_type === 'ONE_TIME' ||
             item.coupon_type === 'ONE_TIME_EVERY_DAY'
               ? '🏷️ Mã giảm giá'

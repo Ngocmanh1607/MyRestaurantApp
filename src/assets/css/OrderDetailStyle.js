@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
+    color: '#333',
   },
   // Driver styles
   driverInfoContainer: {
@@ -181,6 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: '#333',
   },
   orderItemOption: {
     fontSize: 14,
@@ -248,6 +250,7 @@ const styles = StyleSheet.create({
   paymentDetailValue: {
     fontSize: 14,
     fontWeight: '500',
+    color: '#333',
   },
   paymentSumContainer: {
     flexDirection: 'row',
@@ -258,6 +261,7 @@ const styles = StyleSheet.create({
   paymentTotalLabel: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
   paymentTotalValue: {
     fontSize: 16,

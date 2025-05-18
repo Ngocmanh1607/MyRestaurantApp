@@ -43,6 +43,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    color: '#6b7280',
   },
   //scroll buton
   filterContainer: {
@@ -161,6 +162,9 @@ export const styles = StyleSheet.create({
   itemDetail: {
     marginBottom: 15,
   },
+  itemTextDetail: {
+    color: '#6b7280',
+  },
   itemType: {
     fontSize: 14,
     color: '#6b7280',
@@ -231,7 +235,9 @@ export const styles = StyleSheet.create({
   editButton: {
     backgroundColor: '#f3f4f6',
   },
-
+  deleteText: {
+    color: '#333',
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -287,6 +293,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d1d5db',
     marginBottom: 16,
+    color: '#6b7280',
   },
   radioGroup: {
     flexDirection: 'row',

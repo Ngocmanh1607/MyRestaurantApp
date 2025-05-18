@@ -122,6 +122,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     minWidth: 80,
     textAlign: 'right',
+    color: '#333',
   },
   currency: {
     marginLeft: 4,

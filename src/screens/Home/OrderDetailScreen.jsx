@@ -56,6 +56,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
         return 'Đã hủy';
       case 'ORDER_RECEIVED':
         return 'Đã nhận đơn';
+      case 'GIVED ORDER':
       case 'DELIVERING':
         return 'Đang giao hàng';
       case 'ORDER_CONFIRMED':
