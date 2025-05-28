@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import {
   getWeekOfMonth,
 } from '../../utils/utilsTime';
 import { styles } from '../../assets/css/StatisticStyle';
+import { useFocusEffect } from '@react-navigation/native';
 const StatisticScreen = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('day');
   const [restaurantId, setRestaurantId] = useState(null);
@@ -177,15 +178,17 @@ const StatisticScreen = () => {
       return stats;
     }
   };
-  useEffect(() => {
-    const getOrdersHistory = async () => {
-      const response = await getOrders();
-      if (response.success) {
-        setOrders(response.data);
-      }
-    };
-    getOrdersHistory();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getOrdersHistory = async () => {
+        const response = await getOrders();
+        if (response.success) {
+          setOrders(response.data);
+        }
+      };
+      getOrdersHistory();
+    }, [])
+  );
   useEffect(() => {
     const newStats = calculateStatistics();
     setStatistics(newStats);
