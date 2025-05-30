@@ -42,7 +42,7 @@ const NewOrders = () => {
     fetchInfRes();
 
     // const socket = io('http://localhost:3000');
-    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
+    const socket = io('https://vpvt75qh-3000.asse.devtunnels.ms');
 
     const initializeSocket = async () => {
       try {

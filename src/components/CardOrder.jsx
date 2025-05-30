@@ -37,7 +37,7 @@ const CardOrder = ({ item }) => {
   };
 
   useEffect(() => {
-    const socket = io('https://sbr09801-3000.asse.devtunnels.ms');
+    const socket = io('https://vpvt75qh-3000.asse.devtunnels.ms');
     socket.emit('joinOrder', item.id);
     socket.on('orderStatusUpdate', ({ orderId, status, detailDriver }) => {
       dispatch(updateStatus({ id: item.id, status: status }));

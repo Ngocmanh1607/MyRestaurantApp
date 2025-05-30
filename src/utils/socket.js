@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 // Connect to the WebSocket
-const socket = io('https://sbr09801-3000.asse.devtunnels.ms'); // Replace with your server URL
+const socket = io('https://vpvt75qh-3000.asse.devtunnels.ms');
 
 socket.on('connect', () => {
   console.log('Connected to WebSocket!');
